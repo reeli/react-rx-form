@@ -1,1 +1,1 @@
-# infrastructure for react typescript project
+# rx form for react

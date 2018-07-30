@@ -12,8 +12,8 @@ import * as config from "config";
 // import { isEmpty, reduce } from "lodash";
 import * as React from "react";
 import { DispatchProp } from "react-redux";
-import { Field } from "../../src-modules/rx-form/Field";
-import { RxForm } from "../../src-modules/rx-form/RxForm";
+import { Field } from "../src-modules/rx-form/Field";
+import { RxForm } from "../src-modules/rx-form/RxForm";
 
 interface IPageHomeProps extends DispatchProp {}
 
@@ -45,7 +45,7 @@ const DemoInput = ({ name, value, error, onChange, placeholder, type }: any) => 
 //   };
 // };
 
-export class PageHome extends React.Component<IPageHomeProps> {
+export class SimpleForm extends React.Component<IPageHomeProps> {
   button: any = null;
 
   state = {
