@@ -11,15 +11,9 @@ import MenuIcon from "@material-ui/icons/Menu";
 import * as config from "config";
 // import { isEmpty, reduce } from "lodash";
 import * as React from "react";
-import { findDOMNode } from "react-dom";
-import { connect, DispatchProp } from "react-redux";
-import { fromEvent } from "rxjs/internal/observable/fromEvent";
-import { Subject } from "rxjs/internal/Subject";
-import { scan } from "rxjs/operators";
-import { isRequestAction } from "../../src-modules/request";
+import { DispatchProp } from "react-redux";
 import { Field } from "../../src-modules/rx-form/Field";
 import { RxForm } from "../../src-modules/rx-form/RxForm";
-import { fetchHomeData } from "./redux/actions";
 
 interface IPageHomeProps extends DispatchProp {}
 
@@ -51,7 +45,7 @@ const DemoInput = ({ name, value, error, onChange, placeholder, type }: any) => 
 //   };
 // };
 
-class PageHomeCore extends React.Component<IPageHomeProps> {
+export class PageHome extends React.Component<IPageHomeProps> {
   button: any = null;
 
   state = {
@@ -64,43 +58,6 @@ class PageHomeCore extends React.Component<IPageHomeProps> {
       error: [],
     },
   };
-
-  componentDidMount() {
-    // const subscription = observable$.subscribe((response: AxiosResponse) => {
-    //   console.log("-----do something after api call success------", response, `${fetchHomeData.success}`);
-    // });
-
-    // setTimeout(() => {
-    //   subscription.unsubscribe();
-    // }, 100);
-
-    const subject$ = new Subject();
-    subject$.subscribe({
-      next: (action: any) => {
-        if (isRequestAction(action)) {
-          // do something here
-          console.log(action.type);
-        }
-      },
-    });
-
-    this.props.dispatch(subject$ as any);
-
-    this.props.dispatch(fetchHomeData());
-    this.props.dispatch({
-      type: "A",
-      payload: {
-        data: "AAA",
-      },
-    });
-
-    const button = findDOMNode(this.button) as Element;
-    fromEvent(button, "click")
-      .pipe(scan((count) => count + 1, 0))
-      .subscribe((count) => {
-        console.log("clicked!", count);
-      });
-  }
 
   handleSubmit = (values: any, onSubmitError: any) => {
     console.log(values, "values on Submit");
@@ -146,5 +103,3 @@ class PageHomeCore extends React.Component<IPageHomeProps> {
     );
   }
 }
-
-export const PageHome = connect()(PageHomeCore);

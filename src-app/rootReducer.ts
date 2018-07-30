@@ -1,6 +1,9 @@
 import { combineReducers } from "redux";
-import { tempDataReducer } from "../src-modules/tempData/tempDataReducer";
+
+const demoReducer = (state = {}) => {
+  return state;
+};
 
 export const rootReducer = combineReducers({
-  tempData: tempDataReducer,
+  demo: demoReducer,
 });
