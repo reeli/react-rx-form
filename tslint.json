@@ -1,0 +1,21 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:latest"],
+  "rules": {
+    "object-literal-key-quotes": false,
+    "no-string-literal": false,
+    "object-literal-sort-keys": false,
+    "member-ordering": false,
+    "no-object-literal-type-assertion": false,
+    "member-access": false,
+    "no-empty-interface": false,
+    "no-unnecessary-semicolons": false,
+    "no-empty": false,
+    "no-submodule-imports": false,
+    "semicolon": [true, "always", "ignore-bound-class-methods"],
+    "trailing-comma": true,
+    "no-implicit-dependencies": false,
+    "no-console": false,
+    "max-classes-per-file": false
+  }
+}

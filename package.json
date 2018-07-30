@@ -1,0 +1,98 @@
+{
+  "name": "gov-tech",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": "true",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "webpack-dev-server --config=webpack.config.ts --port=3000 --compress --open --history-api-fallback",
+    "release": "NODE_ENV=production webpack --config=webpack.config.ts",
+    "release:all": "rm -rf public/ && npm run release:internet && npm run release:intranet",
+    "release:internet": "rm -rf public/internet && NETWORK_ENV=internet npm run release",
+    "release:intranet": "rm -rf public/intranet && NETWORK_ENV=intranet npm run release",
+    "test": "jest",
+    "precommit": "lint-staged",
+    "prepush": "tsc --outDir .tmp && npm test"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --parser typescript --write",
+      "tslint --fix",
+      "git add"
+    ],
+    "*.{json,md}": [
+      "prettier --printWidth=120 --write",
+      "git add"
+    ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "dependencies": {
+    "@material-ui/core": "1.4.2",
+    "@material-ui/icons": "2.0.0",
+    "@types/config": "0.0.34",
+    "@types/lodash": "4.14.115",
+    "@types/react-dom": "16.0.6",
+    "@types/react-redux": "6.0.5",
+    "@types/react-router": "4.0.29",
+    "@types/redux-actions": "2.3.0",
+    "axios": "0.18.0",
+    "config": "2.0.0",
+    "lodash": "4.17.10",
+    "react": "16.4.1",
+    "react-dom": "16.4.1",
+    "react-redux": "5.0.7",
+    "react-router": "4.3.1",
+    "redux": "4.0.0",
+    "redux-actions": "2.6.1",
+    "rxjs": "6.2.2"
+  },
+  "devDependencies": {
+    "@types/axios-mock-adapter": "1.10.0",
+    "@types/html-webpack-plugin": "3.2.0",
+    "@types/jest": "23.3.1",
+    "@types/redux-logger": "3.0.6",
+    "@types/uglifyjs-webpack-plugin": "1.1.0",
+    "axios-mock-adapter": "1.15.0",
+    "file-loader": "1.1.11",
+    "html-webpack-plugin": "4.0.0-alpha",
+    "husky": "0.14.3",
+    "jest": "23.4.2",
+    "lint-staged": "7.2.0",
+    "prettier": "1.14.0",
+    "raw-loader": "0.5.1",
+    "redux-logger": "3.0.6",
+    "ts-jest": "23.0.1",
+    "ts-loader": "4.4.2",
+    "ts-node": "7.0.0",
+    "tslint": "5.11.0",
+    "typescript": "2.9.2",
+    "uglifyjs-webpack-plugin": "1.2.7",
+    "webpack": "4.16.3",
+    "webpack-cli": "3.1.0",
+    "webpack-dev-server": "3.1.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HelloRuiLi/gov-tech.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": ""
+}
