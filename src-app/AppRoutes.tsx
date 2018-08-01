@@ -23,20 +23,20 @@ req.keys().forEach((key: string) => {
 
 export const Nav = () => {
   return (
-    <>
+    <div style={{ width: 200 }}>
       {req.keys().map((key: string) => {
         const path = key.split(".")[1];
         return (
           <div key={key}>
-            <a href={path}>{path}</a>
+            <a href={path}>{path.split("/")[1]}</a>
           </div>
         );
       })}
-    </>
+    </div>
   );
 };
 
-export const AppRouteConfig = () => {
+export const AppRoutes = () => {
   return (
     <Router history={history}>
       <div>
