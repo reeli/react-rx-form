@@ -2,6 +2,7 @@ import createBrowserHistory from "history/createBrowserHistory";
 import { map } from "lodash";
 import * as React from "react";
 import { Route, Router } from "react-router";
+import { WithHighlight } from "../src-components/WithHighlight";
 
 const history = createBrowserHistory();
 
@@ -18,7 +19,11 @@ req.keys().forEach((key: string) => {
         return (
           <React.Fragment key={i}>
             <Comp />
-            <pre>{require(`!!raw-loader!../src-examples/${Comp.name}.tsx`)}</pre>
+            <WithHighlight>
+              <pre>
+                <code>{require(`!!raw-loader!../src-examples/${Comp.name}.tsx`)}</code>
+              </pre>
+            </WithHighlight>
           </React.Fragment>
         );
       }),

@@ -3,7 +3,7 @@ import FormControl from "@material-ui/core/FormControl/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
 import Input from "@material-ui/core/Input/Input";
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
-// import { isEmpty, reduce } from "lodash";
+import { isEmpty, reduce } from "lodash";
 import * as React from "react";
 import { DispatchProp } from "react-redux";
 import { Field } from "../src-modules/rx-form/Field";
@@ -19,27 +19,27 @@ const DemoInput = ({ name, value, error, onChange, placeholder, type }: any) => 
   </FormControl>
 );
 
-// const required = (value: string) => {
-//   return isEmpty(value) ? "no empty value" : undefined;
-// };
-//
-// const maxLength5 = (value: string) => {
-//   return value.length > 5 ? "value length must less than 5" : undefined;
-// };
-//
-// const compose = (validators: any) => {
-//   return (value: string) => {
-//     return reduce(
-//       validators,
-//       (error: string | undefined, validator) => {
-//         return !error ? validator(value) : error;
-//       },
-//       undefined,
-//     );
-//   };
-// };
+const required = (value: string) => {
+  return isEmpty(value) ? "no empty value" : undefined;
+};
 
-export class SimpleForm extends React.Component<IPageHomeProps> {
+const maxLength5 = (value: string) => {
+  return value.length > 5 ? "value length must less than 5" : undefined;
+};
+
+const compose = (validators: any) => {
+  return (value: string) => {
+    return reduce(
+      validators,
+      (error: string | undefined, validator) => {
+        return !error ? validator(value) : error;
+      },
+      undefined,
+    );
+  };
+};
+
+export class FieldLevelValidationForm extends React.Component<IPageHomeProps> {
   button: any = null;
 
   state = {
@@ -68,7 +68,7 @@ export class SimpleForm extends React.Component<IPageHomeProps> {
       <RxForm onSubmit={this.handleSubmit}>
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>
-            <Field name={"username"} component={DemoInput} value="" />
+            <Field name={"username"} component={DemoInput} validate={compose([required, maxLength5])} value="" />
             <Field
               name={"password"}
               type={"password"}
