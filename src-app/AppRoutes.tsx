@@ -15,7 +15,12 @@ req.keys().forEach((key: string) => {
     path: key.split(".")[1],
     component: () =>
       map(module, (Comp, i) => {
-        return <Comp key={i} />;
+        return (
+          <React.Fragment key={i}>
+            <Comp />
+            <pre>{require(`!!raw-loader!../src-examples/${Comp.name}.tsx`)}</pre>
+          </React.Fragment>
+        );
       }),
   };
   routes = routes.concat(route);

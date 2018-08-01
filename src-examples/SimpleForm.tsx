@@ -1,14 +1,8 @@
-import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button/Button";
 import FormControl from "@material-ui/core/FormControl/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
-import IconButton from "@material-ui/core/IconButton/IconButton";
 import Input from "@material-ui/core/Input/Input";
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
-import Toolbar from "@material-ui/core/Toolbar/Toolbar";
-import Typography from "@material-ui/core/Typography/Typography";
-import MenuIcon from "@material-ui/icons/Menu";
-import * as config from "config";
 // import { isEmpty, reduce } from "lodash";
 import * as React from "react";
 import { DispatchProp } from "react-redux";
@@ -71,35 +65,15 @@ export class SimpleForm extends React.Component<IPageHomeProps> {
 
   render() {
     return (
-      <div>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <IconButton color="inherit" aria-label="Menu">
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="title" color="inherit">
-              MSF
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <div>{(config as any).NETWORK_ENV}</div>
-        <RxForm onSubmit={this.handleSubmit}>
-          {({ onSubmit }) => (
-            <form onSubmit={onSubmit}>
-              <Field name={"username"} component={DemoInput} />
-              <Field name={"password"} type={"password"} component={DemoInput} placeholder="type password here..." />
-              <Button type="submit">Submit</Button>
-            </form>
-          )}
-        </RxForm>
-        <button
-          ref={(ref: any) => {
-            this.button = ref;
-          }}
-        >
-          this is a button
-        </button>
-      </div>
+      <RxForm onSubmit={this.handleSubmit}>
+        {({ onSubmit }) => (
+          <form onSubmit={onSubmit}>
+            <Field name={"username"} component={DemoInput} />
+            <Field name={"password"} type={"password"} component={DemoInput} placeholder="type password here..." />
+            <Button type="submit">Submit</Button>
+          </form>
+        )}
+      </RxForm>
     );
   }
 }
