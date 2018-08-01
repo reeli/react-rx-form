@@ -3,11 +3,11 @@ import * as React from "react";
 import { findDOMNode } from "react-dom";
 
 export class WithHighlight extends React.Component {
-  codeblock: any = null;
-
   componentDidMount() {
-    const current = findDOMNode(this) as any;
-    highlightBlock(current);
+    const current = findDOMNode(this) as Element;
+    if (current) {
+      highlightBlock(current);
+    }
   }
 
   render() {
