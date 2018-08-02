@@ -4,15 +4,15 @@ import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { Observer } from "rxjs/internal/types";
 import { TChildrenRender } from "../types/common";
-import { IFieldState } from "./Field";
+import { IFieldAction, IFieldState } from "./Field";
 import { FormContext } from "./FormContext";
 
 export interface IFormState {
-  [name: string]: IFieldState;
+  [fieldName: string]: IFieldState;
 }
 
 export interface IFormValues {
-  [name: string]: string;
+  [fieldName: string]: string;
 }
 
 interface IIRxFormInnerProps {
@@ -27,7 +27,7 @@ interface IRxFormProps {
 export interface IFormAction {
   type: string;
   payload: {
-    fields: IFormState;
+    formState: IFormState;
   };
 }
 
@@ -41,19 +41,14 @@ export enum FormActionTypes {
   startSubmit = "startSubmit",
 }
 
-interface IFieldAction {
-  type: FieldActionTypes;
-  name: string;
-  value?: string;
-  error?: string;
-}
-
 export class RxForm extends React.Component<IRxFormProps> {
-  private formState$ = new Subject();
-  private formStateSubject$ = new Subject();
-  private formActionsSubscription: Subscription | null = null;
   private formState = {} as IFormState;
+
+  private formState$ = new Subject();
+  private formActions$ = new Subject();
+
   private formStateSubscription: Subscription | null = null;
+  private formActionsSubscription: Subscription | null = null;
 
   componentWillUnmount() {
     if (this.formStateSubscription) {
@@ -66,12 +61,30 @@ export class RxForm extends React.Component<IRxFormProps> {
     }
   }
 
-  initFields = (action: IFieldAction) => {
+  initField = (action: IFieldAction) => {
     this.formState = {
       ...this.formState,
-      [action.name]: {
-        name: action.name,
+      [action.payload.name]: {
+        name: action.payload.name,
       } as IFieldState,
+    };
+    this.formState$.next(this.formState);
+  };
+
+  updateFields = (action: IFieldAction) => {
+    const fieldState = {
+      name: action.payload.name,
+    } as IFieldState;
+
+    if (action.payload.value) {
+      fieldState.value = action.payload.value;
+    }
+    if (action.payload.error) {
+      fieldState.error = action.payload.error;
+    }
+    this.formState = {
+      ...this.formState,
+      [action.payload.name]: fieldState,
     };
     this.formState$.next(this.formState);
   };
@@ -86,27 +99,10 @@ export class RxForm extends React.Component<IRxFormProps> {
     this.formState$.next(this.formState);
   };
 
-  updateFields = (action: IFieldAction) => {
-    const fieldState = {
-      name: action.name,
-    } as IFieldState;
-    if (action.value) {
-      fieldState.value = action.value;
-    }
-    if (action.error) {
-      fieldState.error = action.error;
-    }
-    this.formState = {
-      ...this.formState,
-      [action.name]: fieldState,
-    };
-    this.formState$.next(this.formState);
-  };
-
   dispatch = (fieldAction: IFieldAction) => {
     switch (fieldAction.type) {
       case FieldActionTypes.register: {
-        return this.initFields(fieldAction);
+        return this.initField(fieldAction);
       }
       case FieldActionTypes.change: {
         return this.updateFields(fieldAction);
@@ -119,15 +115,15 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   subscribeFormSubmit = (observer: Observer<any>) => {
-    return this.formStateSubject$.subscribe(observer);
+    return this.formActions$.subscribe(observer);
   };
 
   onSubmit = (evt: any) => {
     evt.preventDefault();
-    this.formStateSubject$.next({
+    this.formActions$.next({
       type: FormActionTypes.startSubmit,
       payload: {
-        fields: this.formState,
+        formState: this.formState,
       },
     } as IFormAction);
 

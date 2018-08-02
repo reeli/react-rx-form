@@ -30,14 +30,12 @@ export interface IField extends IFieldCommon {
   onChange?: (value: string) => void;
 }
 
+export interface IFieldState extends IFieldCommon {}
+
 export interface IFieldAction {
   type: FieldActionTypes;
-  name: string;
-  value?: string;
-  error?: TError;
+  payload: IFieldState;
 }
-
-export interface IFieldState extends IFieldCommon {}
 
 interface IFieldCoreProps extends IField, IFormContextValue {}
 
@@ -59,9 +57,11 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     // register field
     this.props.dispatch({
       type: FieldActionTypes.register,
-      name,
-      value,
-      error,
+      payload: {
+        name,
+        value,
+        error,
+      },
     });
 
     this.onFormStateChange();
@@ -72,8 +72,8 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     const formStateObserver$ = new Subject();
     formStateObserver$
       .pipe(
-        map((fields: IFormState) => {
-          return fields[this.props.name];
+        map((formState: IFormState) => {
+          return formState[this.props.name];
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
@@ -94,7 +94,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
         .pipe(
           filter((action: IFormAction) => action.type === FormActionTypes.startSubmit),
           map((action: IFormAction) => {
-            return action.payload.fields[this.props.name];
+            return action.payload.formState[this.props.name];
           }),
           distinctUntilChanged(),
           tap((field: IField) => {
@@ -122,9 +122,11 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
   onChange = (value: string) => {
     this.props.dispatch({
       type: FieldActionTypes.change,
-      name: this.props.name,
-      value,
-      error: this.props.validate ? this.validate(value) : undefined,
+      payload: {
+        name: this.props.name,
+        value,
+        error: this.props.validate ? this.validate(value) : undefined,
+      },
     });
   };
 
