@@ -3,7 +3,7 @@ import FormControl from "@material-ui/core/FormControl/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
 import Input from "@material-ui/core/Input/Input";
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
-import { isEmpty, reduce } from "lodash";
+import { isEmpty } from "lodash";
 import * as React from "react";
 import { DispatchProp } from "react-redux";
 import { Field } from "../src-modules/rx-form/Field";
@@ -27,18 +27,6 @@ const maxLength5 = (value: string) => {
   return value.length > 5 ? "value length must less than 5" : undefined;
 };
 
-const compose = (validators: any) => {
-  return (value: string) => {
-    return reduce(
-      validators,
-      (error: string | undefined, validator) => {
-        return !error ? validator(value) : error;
-      },
-      undefined,
-    );
-  };
-};
-
 export class FieldLevelValidationForm extends React.Component<IPageHomeProps> {
   button: any = null;
 
@@ -60,13 +48,14 @@ export class FieldLevelValidationForm extends React.Component<IPageHomeProps> {
       <RxForm onSubmit={this.handleSubmit}>
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>
-            <Field name={"username"} component={DemoInput} validate={compose([required, maxLength5])} value="" />
+            <Field name={"username"} component={DemoInput} validate={[required, maxLength5]} value="" />
             <Field
               name={"password"}
               type={"password"}
               component={DemoInput}
               placeholder="type password here..."
               value=""
+              validate={required}
             />
             <Button type="submit">Submit</Button>
           </form>

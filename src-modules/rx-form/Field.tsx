@@ -1,10 +1,11 @@
-import { isArray, reduce } from "lodash";
+import { isArray } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
-import { distinctUntilChanged, map, tap } from "rxjs/operators";
-import { FormContext, IFormContext } from "./FormContext";
-import { IFields } from "./RxForm";
+import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
+import { FormContext, IFormContextValue } from "./FormContext";
+import { FormActionTypes, IFormAction, IFormState } from "./RxForm";
+import { combine } from "./utils";
 
 enum FieldActionTypes {
   register = "register",
@@ -15,25 +16,16 @@ enum FieldActionTypes {
 type TError = string;
 type TValidator = (value: string) => TError | undefined;
 
-const compose = (validators: any) => {
-  return (value: string) => {
-    return reduce(
-      validators,
-      (error: string | undefined, validator) => {
-        return !error ? validator(value) : error;
-      },
-      undefined,
-    );
-  };
-};
-
-export interface IField {
+interface IFieldCommon {
   name: string;
+  value: string;
+  error?: TError;
+}
+
+export interface IField extends IFieldCommon {
   component: any;
   type?: string;
-  value?: string;
-  error?: TError;
-  validate?: TValidator;
+  validate?: TValidator | TValidator[];
   placeholder?: string;
   onChange?: (value: string) => void;
 }
@@ -45,63 +37,75 @@ export interface IFieldAction {
   error?: TError;
 }
 
-interface IFieldCoreProps extends IField, IFormContext {}
+export interface IFieldState extends IFieldCommon {}
 
-interface IFieldState {
-  field: IField;
+interface IFieldCoreProps extends IField, IFormContextValue {}
+
+interface IFieldCoreState {
+  fieldState: IFieldState;
 }
 
-class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
-  private subscription: Subscription | null = null;
-  private formSubscription: Subscription | null = null;
+class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
+  private formStateSubscription: Subscription | null = null;
+  private formActionsSubscription: Subscription | null = null;
 
   state = {
-    field: {} as IField,
+    fieldState: {} as IFieldState,
   };
 
   componentDidMount() {
+    const { name, value, error } = this.props;
+
+    // register field
     this.props.dispatch({
       type: FieldActionTypes.register,
-      name: this.props.name,
-      value: this.props.value,
-      error: this.props.error,
+      name,
+      value,
+      error,
     });
 
-    const fieldSubject$ = new Subject();
-    fieldSubject$
+    this.onFormStateChange();
+    this.onFormStartSubmit();
+  }
+
+  onFormStateChange = () => {
+    const formStateObserver$ = new Subject();
+    formStateObserver$
       .pipe(
-        map((fields: IFields) => {
+        map((fields: IFormState) => {
           return fields[this.props.name];
         }),
         distinctUntilChanged(),
-        tap((field: IField) => {
-          console.log(field, "fieldState");
+        tap((fieldState: IFieldState) => {
           this.setState({
-            field,
+            fieldState,
           });
         }),
       )
       .subscribe();
 
-    this.subscription = this.props.subscribe(fieldSubject$);
+    this.formStateSubscription = this.props.subscribe(formStateObserver$);
+  };
 
+  onFormStartSubmit = () => {
     if (this.props.validate) {
-      const sub$ = new Subject();
-      sub$
+      const formActionsObserver$ = new Subject();
+      formActionsObserver$
         .pipe(
-          map((fields: IFields) => {
-            return fields[this.props.name];
+          filter((action: IFormAction) => action.type === FormActionTypes.startSubmit),
+          map((action: IFormAction) => {
+            return action.payload.fields[this.props.name];
           }),
           distinctUntilChanged(),
           tap((field: IField) => {
             const value = field ? field.value || "" : "";
-            this.sendData(value);
+            this.onChange(value);
           }),
         )
         .subscribe();
-      this.formSubscription = this.props.subscribeFormSubmit(sub$);
+      this.formActionsSubscription = this.props.subscribeFormSubmit(formActionsObserver$);
     }
-  }
+  };
 
   validate = (value: string) => {
     const { validate } = this.props;
@@ -110,38 +114,42 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
     }
 
     if (isArray(validate)) {
-      return compose(validate)(value);
+      return combine(validate)(value);
     }
     return;
   };
 
-  sendData = (value: string) => {
+  onChange = (value: string) => {
     this.props.dispatch({
       type: FieldActionTypes.change,
       name: this.props.name,
       value,
-      error: this.validate(value),
+      error: this.props.validate ? this.validate(value) : undefined,
     });
   };
 
-  onChange = (evt: React.ChangeEvent<any>) => {
-    this.sendData(evt.target.value);
+  handleChange = (evt: React.ChangeEvent<any>) => {
+    this.onChange(evt.target.value);
   };
 
   componentWillUnmount() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-      this.subscription = null;
+    if (this.formStateSubscription) {
+      this.formStateSubscription.unsubscribe();
+      this.formStateSubscription = null;
     }
-    if (this.formSubscription) {
-      this.formSubscription.unsubscribe();
-      this.formSubscription = null;
+    if (this.formActionsSubscription) {
+      this.formActionsSubscription.unsubscribe();
+      this.formActionsSubscription = null;
     }
   }
 
   render() {
     const { component, ...otherProps } = this.props;
-    return React.createElement(component, { ...otherProps, onChange: this.onChange, ...this.state.field });
+    return React.createElement(component, {
+      ...otherProps,
+      onChange: this.handleChange,
+      ...this.state.fieldState,
+    });
   }
 }
 

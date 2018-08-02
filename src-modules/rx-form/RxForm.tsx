@@ -4,19 +4,11 @@ import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { Observer } from "rxjs/internal/types";
 import { TChildrenRender } from "../types/common";
+import { IFieldState } from "./Field";
 import { FormContext } from "./FormContext";
-// interface IWithRxFormInnerProps {
-//   onSubmit: () => void;
-// }
 
-interface IField {
-  name: string;
-  value: string;
-  error?: string;
-}
-
-export interface IFields {
-  [name: string]: IField;
+export interface IFormState {
+  [name: string]: IFieldState;
 }
 
 export interface IFormValues {
@@ -32,15 +24,21 @@ interface IRxFormProps {
   children: TChildrenRender<IIRxFormInnerProps>;
 }
 
-// 1. 把 field 的基本信息创建一个大配置
-// 2. 创建一个 WithRxForm 用来管理 form 状态
-// 3. 向下提供 value 和 onValueChange 方法，当表单元素 onChange 时，调用 onValueChange 更新 form 状态
-// 4. 创建一个 formSubject，当 field 值更新时，把值发给 formSubject，通过 formSubject.subscribe 就能够拿到所有 fields 的信息
+export interface IFormAction {
+  type: string;
+  payload: {
+    fields: IFormState;
+  };
+}
 
 export enum FieldActionTypes {
   register = "register",
   change = "change",
   unregister = "unregister",
+}
+
+export enum FormActionTypes {
+  startSubmit = "startSubmit",
 }
 
 interface IFieldAction {
@@ -52,21 +50,15 @@ interface IFieldAction {
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState$ = new Subject();
-  private formSubject$ = new Subject();
+  private formStateSubject$ = new Subject();
   private formActionsSubscription: Subscription | null = null;
-  private fields = {} as IFields;
-  private subscription: Subscription | null = null;
-
-  componentDidMount() {
-    this.subscription = this.formState$.subscribe((fields) => {
-      console.log(fields, "------");
-    });
-  }
+  private formState = {} as IFormState;
+  private formStateSubscription: Subscription | null = null;
 
   componentWillUnmount() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-      this.subscription = null;
+    if (this.formStateSubscription) {
+      this.formStateSubscription.unsubscribe();
+      this.formStateSubscription = null;
     }
     if (this.formActionsSubscription) {
       this.formActionsSubscription.unsubscribe();
@@ -75,40 +67,40 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   initFields = (action: IFieldAction) => {
-    this.fields = {
-      ...this.fields,
+    this.formState = {
+      ...this.formState,
       [action.name]: {
         name: action.name,
-      } as IField,
+      } as IFieldState,
     };
-    this.formState$.next(this.fields);
+    this.formState$.next(this.formState);
   };
 
   onSubmitError = (error: Dictionary<string>) => {
-    this.fields = mapValues(this.fields, (field) => {
+    this.formState = mapValues(this.formState, (field) => {
       return {
         ...field,
         error: error[field.name],
       };
     });
-    this.formState$.next(this.fields);
+    this.formState$.next(this.formState);
   };
 
   updateFields = (action: IFieldAction) => {
-    const field = {
+    const fieldState = {
       name: action.name,
-    } as IField;
+    } as IFieldState;
     if (action.value) {
-      field.value = action.value;
+      fieldState.value = action.value;
     }
     if (action.error) {
-      field.error = action.error;
+      fieldState.error = action.error;
     }
-    this.fields = {
-      ...this.fields,
-      [action.name]: field,
+    this.formState = {
+      ...this.formState,
+      [action.name]: fieldState,
     };
-    this.formState$.next(this.fields);
+    this.formState$.next(this.formState);
   };
 
   dispatch = (fieldAction: IFieldAction) => {
@@ -127,21 +119,21 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   subscribeFormSubmit = (observer: Observer<any>) => {
-    return this.formSubject$.subscribe(observer);
+    return this.formStateSubject$.subscribe(observer);
   };
 
   onSubmit = (evt: any) => {
     evt.preventDefault();
-    this.formSubject$.next({
-      type: "FORM_SUBMIT_START",
+    this.formStateSubject$.next({
+      type: FormActionTypes.startSubmit,
       payload: {
-        fields: this.fields,
+        fields: this.formState,
       },
-    });
+    } as IFormAction);
 
     const hasError = reduce(
-      this.fields,
-      (result: boolean, item: IField) => {
+      this.formState,
+      (result: boolean, item: IFieldState) => {
         return result || !!item.error;
       },
       false,
@@ -151,9 +143,10 @@ export class RxForm extends React.Component<IRxFormProps> {
       return;
     }
 
-    const values = mapValues(this.fields, (field) => {
+    const values = mapValues(this.formState, (field) => {
       return field.value;
     });
+
     this.props.onSubmit(values, this.onSubmitError);
   };
 

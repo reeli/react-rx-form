@@ -34,9 +34,14 @@ export class SubmitValidationForm extends React.Component<IPageHomeProps> {
 
   handleSubmit = (values: any, onSubmitError: any) => {
     console.log(values, "values on Submit");
-    if (values.username === undefined || values.password === undefined) {
+    if (values.username === undefined) {
       onSubmitError({
         username: "not empty error",
+      });
+    }
+
+    if (values.password === undefined) {
+      onSubmitError({
         password: "login failed!",
       });
     }
