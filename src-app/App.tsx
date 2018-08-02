@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Provider } from "react-redux";
-import { AppRoutes, Nav } from "./AppRoutes";
+import { AppRoutes } from "./AppRoutes";
+import { Nav } from "./components/Nav";
 import { configureStore } from "./configureStore";
 
 const store = configureStore();

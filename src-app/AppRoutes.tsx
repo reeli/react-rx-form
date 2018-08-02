@@ -6,7 +6,7 @@ import { WithHighlight } from "../src-components/WithHighlight";
 
 const history = createBrowserHistory();
 
-const req = (require as any).context("../src-examples", true, /\.tsx/);
+export const req = (require as any).context("../src-examples", true, /\.tsx/);
 
 let routes: any[] = [];
 req.keys().forEach((key: string) => {
@@ -28,23 +28,9 @@ req.keys().forEach((key: string) => {
         );
       }),
   };
+
   routes = routes.concat(route);
 });
-
-export const Nav = () => {
-  return (
-    <div style={{ width: 200 }}>
-      {req.keys().map((key: string) => {
-        const path = key.split(".")[1];
-        return (
-          <div key={key}>
-            <a href={path}>{path.split("/")[1]}</a>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
 
 export const AppRoutes = () => {
   return (
