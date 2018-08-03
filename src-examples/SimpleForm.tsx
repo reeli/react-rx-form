@@ -41,14 +41,10 @@ export class SimpleForm extends React.Component<IPageHomeProps> {
       <RxForm onSubmit={this.handleSubmit}>
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>
-            <Field name={"username"} component={DemoInput} value="" />
-            <Field
-              name={"password"}
-              type={"password"}
-              component={DemoInput}
-              placeholder="type password here..."
-              value=""
-            />
+            <Field name="firstName" type="text" component={DemoInput} value="" placeholder="First Name" />
+            <Field name="lastName" type="text" placeholder="Last Name" value="" component={DemoInput} />
+            <Field name="email" type="email" placeholder="Email" value="" component={DemoInput} />
+            <Field name="sex" type="radio" placeholder="Sex" value="" component={DemoInput} />
             <Button type="submit">Submit</Button>
           </form>
         )}
