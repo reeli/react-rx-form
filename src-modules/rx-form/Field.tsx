@@ -53,7 +53,13 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
 
   componentDidMount() {
     const { name, value, error } = this.props;
+    this.register({ name, value, error });
 
+    this.onFormStateChange();
+    this.onFormStartSubmit();
+  }
+
+  register = ({ name, value, error }: IFieldCommon) => {
     // register field
     this.props.dispatch({
       type: FieldActionTypes.register,
@@ -63,10 +69,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
         error,
       },
     });
-
-    this.onFormStateChange();
-    this.onFormStartSubmit();
-  }
+  };
 
   onFormStateChange = () => {
     const formStateObserver$ = new Subject();
@@ -91,6 +94,18 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     if (this.props.validate) {
       const formActionsObserver$ = new Subject();
       formActionsObserver$
+        .pipe(
+          filter((action: IFormAction) => action.type === FormActionTypes.initial),
+          map((action: IFormAction) => {
+            console.log(action, this.props.name, action.payload.formState[this.props.name], "------");
+            return action.payload.formState[this.props.name];
+          }),
+          distinctUntilChanged(),
+          tap((field: IField) => {
+            const value = field ? field.value || "" : "";
+            this.onChange(value);
+          }),
+        )
         .pipe(
           filter((action: IFormAction) => action.type === FormActionTypes.startSubmit),
           map((action: IFormAction) => {

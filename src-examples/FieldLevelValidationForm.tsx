@@ -45,7 +45,13 @@ export class FieldLevelValidationForm extends React.Component<IPageHomeProps> {
 
   render() {
     return (
-      <RxForm onSubmit={this.handleSubmit}>
+      <RxForm
+        onSubmit={this.handleSubmit}
+        initialValues={{
+          username: "hello",
+          password: "123456",
+        }}
+      >
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>
             <Field name={"username"} component={DemoInput} validate={[required, maxLength5]} value="" />

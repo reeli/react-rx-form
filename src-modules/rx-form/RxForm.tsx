@@ -1,4 +1,4 @@
-import { Dictionary, mapValues, reduce } from "lodash";
+import { Dictionary, forEach, mapValues, reduce } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -22,6 +22,7 @@ interface IIRxFormInnerProps {
 interface IRxFormProps {
   onSubmit: (values: IFormValues, onSubmitError: any) => void;
   children: TChildrenRender<IIRxFormInnerProps>;
+  initialValues?: IFormValues;
 }
 
 export interface IFormAction {
@@ -38,6 +39,7 @@ export enum FieldActionTypes {
 }
 
 export enum FormActionTypes {
+  initial = "initial",
   startSubmit = "startSubmit",
 }
 
@@ -49,6 +51,27 @@ export class RxForm extends React.Component<IRxFormProps> {
 
   private formStateSubscription: Subscription | null = null;
   private formActionsSubscription: Subscription | null = null;
+
+  componentDidMount() {
+    if (this.props.initialValues) {
+      const initialFormState = {} as IFormState;
+
+      forEach(this.props.initialValues, (value, key) => {
+        initialFormState[key] = {
+          value,
+          name: key,
+          error: "",
+        };
+      });
+
+      this.formActions$.next({
+        type: FormActionTypes.initial,
+        payload: {
+          formState: initialFormState,
+        },
+      } as IFormAction);
+    }
+  }
 
   componentWillUnmount() {
     if (this.formStateSubscription) {
