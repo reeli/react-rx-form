@@ -7,10 +7,10 @@ import { FormContext, IFormContextValue } from "./FormContext";
 import { FormActionTypes, IFormAction, IFormState } from "./RxForm";
 import { combine } from "./utils";
 
-enum FieldActionTypes {
-  register = "register",
-  change = "change",
-  unregister = "unregister",
+export enum FieldActionTypes {
+  register = "@@rx-form/REGISTER_FIELD",
+  change = "@@rx-form/CHANGE",
+  destroy = "@@rx-form/DESTROY_FIELD",
 }
 
 type TError = string;

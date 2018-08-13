@@ -4,7 +4,7 @@ import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { Observer } from "rxjs/internal/types";
 import { TChildrenRender } from "../types/common";
-import { IFieldAction, IFieldState } from "./Field";
+import { FieldActionTypes, IFieldAction, IFieldState } from "./Field";
 import { FormContext } from "./FormContext";
 
 export interface IFormState {
@@ -30,12 +30,6 @@ export interface IFormAction {
   payload: {
     formState: IFormState;
   };
-}
-
-export enum FieldActionTypes {
-  register = "register",
-  change = "change",
-  unregister = "unregister",
 }
 
 export enum FormActionTypes {
