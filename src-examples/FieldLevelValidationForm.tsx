@@ -6,7 +6,7 @@ import InputLabel from "@material-ui/core/InputLabel/InputLabel";
 import { isEmpty } from "lodash";
 import * as React from "react";
 import { DispatchProp } from "react-redux";
-import { Field } from "../src-modules/rx-form/Field";
+import { Field, TFieldValue } from "../src-modules/rx-form/Field";
 import { RxForm } from "../src-modules/rx-form/RxForm";
 
 interface IPageHomeProps extends DispatchProp {}
@@ -19,12 +19,12 @@ const DemoInput = ({ name, value, error, onChange, placeholder, type }: any) => 
   </FormControl>
 );
 
-const required = (value: string) => {
+const required = (value: TFieldValue) => {
   return isEmpty(value) ? "no empty value" : undefined;
 };
 
-const maxLength5 = (value: string) => {
-  return value.length > 5 ? "value length must less than 5" : undefined;
+const maxLength5 = (value: TFieldValue) => {
+  return (value as string).length > 5 ? "value length must less than 5" : undefined;
 };
 
 export class FieldLevelValidationForm extends React.Component<IPageHomeProps> {

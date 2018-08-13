@@ -1,4 +1,5 @@
 import Button from "@material-ui/core/Button/Button";
+import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import FormControl from "@material-ui/core/FormControl/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
 import Input from "@material-ui/core/Input/Input";
@@ -13,7 +14,7 @@ interface IPageHomeProps extends DispatchProp {}
 const DemoInput = ({ name, value, error, onChange, placeholder, type }: any) => (
   <FormControl error={!!error} aria-describedby="name-error-text">
     <InputLabel htmlFor="name-error">{name}</InputLabel>
-    <Input value={value} onChange={onChange} placeholder={placeholder} type={type} />
+    <Input value={value} onChange={onChange} placeholder={placeholder} type={type} name={name} />
     {error && <FormHelperText>{error}</FormHelperText>}
   </FormControl>
 );
@@ -38,13 +39,31 @@ export class SimpleForm extends React.Component<IPageHomeProps> {
 
   render() {
     return (
-      <RxForm onSubmit={this.handleSubmit}>
+      <RxForm
+        onSubmit={this.handleSubmit}
+        initialValues={{
+          firstName: "rui",
+          lastName: "li",
+        }}
+      >
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>
-            <Field name="firstName" type="text" component={DemoInput} value="" placeholder="First Name" />
-            <Field name="lastName" type="text" placeholder="Last Name" value="" component={DemoInput} />
-            <Field name="email" type="email" placeholder="Email" value="" component={DemoInput} />
-            <Field name="sex" type="radio" placeholder="Sex" value="" component={DemoInput} />
+            <div>
+              <Field name="firstName" type="text" component={DemoInput} value="" placeholder="First Name" />
+              <Field name="lastName" type="text" placeholder="Last Name" value="" component={DemoInput} />
+              <Field name="email" type="email" placeholder="Email" value="" component={DemoInput} />
+              <Field name="checkbox" type="checkbox" value="" component={Checkbox} />
+              <FormControl>
+                <label>
+                  <Field name="sex" component={DemoInput} type="radio" value="male" />
+                  male
+                </label>
+                <label>
+                  <Field name="sex" component={DemoInput} type="radio" value="female" />
+                  female
+                </label>
+              </FormControl>
+            </div>
             <Button type="submit">Submit</Button>
           </form>
         )}
