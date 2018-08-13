@@ -95,9 +95,8 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
       const formActionsObserver$ = new Subject();
       formActionsObserver$
         .pipe(
-          filter((action: IFormAction) => action.type === FormActionTypes.initial),
+          filter((action: IFormAction) => action.type === FormActionTypes.initialize),
           map((action: IFormAction) => {
-            console.log(action, this.props.name, action.payload.formState[this.props.name], "------");
             return action.payload.formState[this.props.name];
           }),
           distinctUntilChanged(),
