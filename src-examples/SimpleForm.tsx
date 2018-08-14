@@ -1,9 +1,7 @@
 import Button from "@material-ui/core/Button/Button";
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import FormControl from "@material-ui/core/FormControl/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
 import Input from "@material-ui/core/Input/Input";
-import InputLabel from "@material-ui/core/InputLabel/InputLabel";
 import * as React from "react";
 import { DispatchProp } from "react-redux";
 import { Field } from "../src-modules/rx-form/Field";
@@ -11,13 +9,14 @@ import { RxForm } from "../src-modules/rx-form/RxForm";
 
 interface IPageHomeProps extends DispatchProp {}
 
-const DemoInput = ({ name, value, error, onChange, placeholder, type }: any) => (
-  <FormControl error={!!error} aria-describedby="name-error-text">
-    <InputLabel htmlFor="name-error">{name}</InputLabel>
-    <Input value={value} onChange={onChange} placeholder={placeholder} type={type} name={name} />
-    {error && <FormHelperText>{error}</FormHelperText>}
-  </FormControl>
-);
+const DemoInput = ({ name, value, error, onChange, placeholder, type }: any) => {
+  return (
+    <FormControl error={!!error}>
+      <Input value={value} onChange={onChange} placeholder={placeholder} type={type} name={name} />
+      {error && <FormHelperText>{error}</FormHelperText>}
+    </FormControl>
+  );
+};
 
 export class SimpleForm extends React.Component<IPageHomeProps> {
   button: any = null;
@@ -49,17 +48,24 @@ export class SimpleForm extends React.Component<IPageHomeProps> {
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>
             <div>
-              <Field name="firstName" type="text" component={DemoInput} value="" placeholder="First Name" />
-              <Field name="lastName" type="text" placeholder="Last Name" value="" component={DemoInput} />
-              <Field name="email" type="email" placeholder="Email" value="" component={DemoInput} />
-              <Field name="checkbox" type="checkbox" value="" component={Checkbox} />
+              <Field name="firstName">
+                {(fieldProps) => <DemoInput {...fieldProps} type="text" placeholder="First Name" />}
+              </Field>
+              <Field name="lastName">
+                {(fieldProps) => <DemoInput {...fieldProps} type="password" placeholder="Last Name" />}
+              </Field>
+              <Field name="email">
+                {(fieldProps) => <DemoInput {...fieldProps} type="email" placeholder="Email" />}
+              </Field>
               <FormControl>
                 <label>
-                  <Field name="sex" component={DemoInput} type="radio" value="male" />
+                  <Field name="sex">{(fieldProps) => <DemoInput {...fieldProps} type="radio" />}</Field>
                   male
                 </label>
                 <label>
-                  <Field name="sex" component={DemoInput} type="radio" value="female" />
+                  <Field name="sex" value="female">
+                    {(fieldProps) => <DemoInput {...fieldProps} type="radio" />}
+                  </Field>
                   female
                 </label>
               </FormControl>

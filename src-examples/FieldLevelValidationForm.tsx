@@ -12,8 +12,8 @@ import { RxForm } from "../src-modules/rx-form/RxForm";
 interface IPageHomeProps extends DispatchProp {}
 
 const DemoInput = ({ name, value, error, onChange, placeholder, type }: any) => (
-  <FormControl error={!!error} aria-describedby="name-error-text">
-    <InputLabel htmlFor="name-error">{name}</InputLabel>
+  <FormControl error={!!error}>
+    <InputLabel htmlFor={name}>{name}</InputLabel>
     <Input value={value} onChange={onChange} placeholder={placeholder} type={type} />
     {error && <FormHelperText>{error}</FormHelperText>}
   </FormControl>
@@ -54,15 +54,12 @@ export class FieldLevelValidationForm extends React.Component<IPageHomeProps> {
       >
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>
-            <Field name={"username"} component={DemoInput} validate={[required, maxLength5]} value="" />
-            <Field
-              name={"password"}
-              type={"password"}
-              component={DemoInput}
-              placeholder="type password here..."
-              value=""
-              validate={required}
-            />
+            <Field name="username" validate={[required, maxLength5]} value="">
+              {(fieldProps) => <DemoInput {...fieldProps} type="text" placeholder="type username here..." />}
+            </Field>
+            <Field name="password" validate={required} value="">
+              {(fieldProps) => <DemoInput {...fieldProps} type="text" placeholder="type password here..." />}
+            </Field>
             <Button type="submit">Submit</Button>
           </form>
         )}
