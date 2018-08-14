@@ -35,12 +35,21 @@ export class SubmitValidationForm extends React.Component<IPageHomeProps> {
   handleSubmit = (values: any, onSubmitError: any) => {
     console.log(values, "values on Submit");
     const errors = {} as any;
-    if (values.username === undefined) {
+
+    if (values.username.length === 0) {
       errors.username = "not empty error";
     }
 
-    if (values.password === undefined) {
-      errors.password = "login failed!";
+    if (values.password.length === 0) {
+      errors.password = "not empty error";
+    }
+
+    if (values.password.length >= 5) {
+      errors.username = "Password must less that 5 digits!";
+    }
+
+    if (values.password.length <= 6 && values.password.length > 0) {
+      errors.password = "Password must more that 6 digits!";
     }
 
     onSubmitError(errors);
