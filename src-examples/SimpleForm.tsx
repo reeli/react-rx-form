@@ -1,6 +1,7 @@
 import Button from "@material-ui/core/Button/Button";
 import FormControl from "@material-ui/core/FormControl/FormControl";
 import * as React from "react";
+import { CustomCheckbox } from "../src-components/CustomCheckbox";
 import { CustomInput } from "../src-components/CustomInput";
 import { Field } from "../src-modules/rx-form/Field";
 import { RxForm } from "../src-modules/rx-form/RxForm";
@@ -30,6 +31,9 @@ export class SimpleForm extends React.Component {
               </Field>
               <Field name="email">
                 {(fieldProps) => <CustomInput {...fieldProps} type="email" placeholder="Email" />}
+              </Field>
+              <Field name="checkbox" value={false}>
+                {(fieldProps) => <CustomCheckbox {...fieldProps} placeholder="Checkbox" />}
               </Field>
               <FormControl>
                 <label>

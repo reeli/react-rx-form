@@ -4,6 +4,7 @@ import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
 import { TChildrenRender } from "../types/common";
+import { isExist } from "../utils/common";
 import { FormContext, IFormContextValue } from "./FormContext";
 import { IFormState } from "./RxForm";
 import { combine } from "./utils";
@@ -25,7 +26,7 @@ interface IFieldCommonProps {
 }
 
 interface IFieldInnerProps extends IFieldCommonProps {
-  onChange?: (evt: React.ChangeEvent<any>) => void;
+  onChange?: (value: TFieldValue) => void;
 }
 
 export interface IField extends IFieldCommonProps {
@@ -54,8 +55,8 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
   state = {
     fieldState: {
       name: this.props.name,
-      value: this.props.value || "",
-      error: this.props.error || "",
+      value: isExist(this.props.value) ? this.props.value : "",
+      error: isExist(this.props.error) ? this.props.error : "",
     } as IFieldState,
   };
 
@@ -125,14 +126,10 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     });
   };
 
-  handleChange = (evt: React.ChangeEvent<any>) => {
-    this.onChange(evt.target.value);
-  };
-
   render() {
     return this.props.children({
       ...this.state.fieldState,
-      onChange: this.handleChange,
+      onChange: this.onChange,
     });
   }
 }
