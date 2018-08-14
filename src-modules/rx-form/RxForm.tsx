@@ -39,19 +39,15 @@ export enum FormActionTypes {
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {} as IFormState;
-
-  private formState$ = new Subject();
-  private formActions$ = new Subject();
-
+  private formStateSubject$ = new Subject();
   private formStateSubscription: Subscription | null = null;
-  private formActionsSubscription: Subscription | null = null;
 
   componentDidMount() {
     if (this.props.initialValues) {
-      forEach(this.props.initialValues, (value, key) => {
-        this.formState[key] = {
+      forEach(this.props.initialValues, (value, name) => {
+        this.formState[name] = {
           value,
-          name: key,
+          name,
           error: "",
         };
       });
@@ -62,13 +58,6 @@ export class RxForm extends React.Component<IRxFormProps> {
           formState: this.formState,
         },
       });
-      // this.formActions$.next({
-      //   type: FormActionTypes.initialize,
-      //   payload: {
-      //     formState: initialFormState,
-      //   },
-      // } as IFormAction);
-      // console.log(FormActionTypes.initialize, { formState: this.formState });
     }
   }
 
@@ -76,10 +65,6 @@ export class RxForm extends React.Component<IRxFormProps> {
     if (this.formStateSubscription) {
       this.formStateSubscription.unsubscribe();
       this.formStateSubscription = null;
-    }
-    if (this.formActionsSubscription) {
-      this.formActionsSubscription.unsubscribe();
-      this.formActionsSubscription = null;
     }
   }
 
@@ -95,7 +80,7 @@ export class RxForm extends React.Component<IRxFormProps> {
         ...action.payload,
       } as IFieldState,
     });
-    this.formState$.next(this.formState);
+    this.formStateSubject$.next(this.formState);
   };
 
   updateField = (action: IFieldAction) => {
@@ -116,7 +101,7 @@ export class RxForm extends React.Component<IRxFormProps> {
       [action.payload.name]: fieldState,
     };
     console.log(action.type, { formState: this.formState });
-    this.formState$.next(this.formState);
+    this.formStateSubject$.next(this.formState);
   };
 
   onSubmitError = (error: Dictionary<string>) => {
@@ -126,12 +111,12 @@ export class RxForm extends React.Component<IRxFormProps> {
         error: error[field.name],
       };
     });
-    this.formState$.next(this.formState);
+    this.formStateSubject$.next(this.formState);
   };
 
   updateFormState = (action: IFormAction) => {
     this.formState = action.payload.formState;
-    this.formState$.next(this.formState);
+    this.formStateSubject$.next(this.formState);
     console.log(action.type, { formState: this.formState });
   };
 
@@ -153,21 +138,12 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   subscribe = (observer: Observer<any>) => {
-    return this.formState$.subscribe(observer);
-  };
-
-  subscribeFormSubmit = (observer: Observer<any>) => {
-    return this.formActions$.subscribe(observer);
+    return this.formStateSubject$.subscribe(observer);
   };
 
   onSubmit = (evt: any) => {
     evt.preventDefault();
-    // this.formActions$.next({
-    //   type: FormActionTypes.startSubmit,
-    //   payload: {
-    //     formState: this.formState,
-    //   },
-    // } as IFormAction);
+
     this.dispatch({
       type: FormActionTypes.startSubmit,
       payload: {
@@ -200,7 +176,6 @@ export class RxForm extends React.Component<IRxFormProps> {
         value={{
           subscribe: this.subscribe,
           dispatch: this.dispatch,
-          subscribeFormSubmit: this.subscribeFormSubmit,
         }}
       >
         {this.props.children({
