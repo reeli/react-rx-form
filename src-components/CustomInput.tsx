@@ -7,7 +7,13 @@ import * as React from "react";
 export const CustomInput = ({ name, value, error, onChange, placeholder, type }: any) => (
   <FormControl error={!!error}>
     <InputLabel htmlFor={name}>{name}</InputLabel>
-    <Input value={value} onChange={(evt) => onChange(evt.target.value)} placeholder={placeholder} type={type} />
+    <Input
+      name={name}
+      value={value}
+      onChange={(evt) => onChange(evt.target.value)}
+      placeholder={placeholder}
+      type={type}
+    />
     {error && <FormHelperText>{error}</FormHelperText>}
   </FormControl>
 );

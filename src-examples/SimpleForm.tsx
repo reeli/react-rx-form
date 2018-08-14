@@ -13,13 +13,7 @@ export class SimpleForm extends React.Component {
 
   render() {
     return (
-      <RxForm
-        onSubmit={this.handleSubmit}
-        initialValues={{
-          firstName: "rui",
-          lastName: "li",
-        }}
-      >
+      <RxForm onSubmit={this.handleSubmit} initialValues={{ firstName: "rui", lastName: "li" }}>
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>
             <div>
@@ -37,12 +31,12 @@ export class SimpleForm extends React.Component {
               </Field>
               <FormControl>
                 <label>
-                  <Field name="sex">{(fieldProps) => <CustomInput {...fieldProps} type="radio" />}</Field>
+                  <Field name="sex">{(fieldProps) => <CustomInput {...fieldProps} type="radio" value="male" />}</Field>
                   male
                 </label>
                 <label>
-                  <Field name="sex" value="female">
-                    {(fieldProps) => <CustomInput {...fieldProps} type="radio" />}
+                  <Field name="sex">
+                    {(fieldProps) => <CustomInput {...fieldProps} type="radio" value="female" />}
                   </Field>
                   female
                 </label>
