@@ -12,10 +12,10 @@ export class FieldLevelValidationForm extends React.Component {
     return (
       <RxForm
         onSubmit={this.handleSubmit}
-        initialValues={{
-          username: "hello",
-          password: "123456",
-        }}
+        // initialValues={{
+        //   username: "hello",
+        //   password: "123456",
+        // }}
       >
         {({ onSubmit }) => (
           <form onSubmit={onSubmit}>

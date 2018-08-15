@@ -40,6 +40,7 @@ export enum FormActionTypes {
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {} as IFormState;
   private formStateSubject$ = new Subject();
+  private formActionSubject$ = new Subject();
   private formStateSubscription: Subscription | null = null;
 
   componentDidMount() {
@@ -141,16 +142,11 @@ export class RxForm extends React.Component<IRxFormProps> {
     return this.formStateSubject$.subscribe(observer);
   };
 
-  onSubmit = (evt: any) => {
-    evt.preventDefault();
+  subscribeFormAction = (observer: Observer<any>) => {
+    return this.formActionSubject$.subscribe(observer);
+  };
 
-    this.dispatch({
-      type: FormActionTypes.startSubmit,
-      payload: {
-        formState: this.formState,
-      },
-    });
-
+  validateForm = () => {
     const hasError = reduce(
       this.formState,
       (result: boolean, item: IFieldState) => {
@@ -163,11 +159,37 @@ export class RxForm extends React.Component<IRxFormProps> {
       return;
     }
 
-    const values = mapValues(this.formState, (field) => {
+    return mapValues(this.formState, (field) => {
       return field.value;
     });
+  };
 
-    this.props.onSubmit(values, this.onSubmitError);
+  onSubmit = (evt: any) => {
+    evt.preventDefault();
+
+    // this.dispatch({
+    //   type: FormActionTypes.startSubmit,
+    //   payload: {
+    //     formState: this.formState,
+    //   },
+    // });
+
+    console.log("before start submit");
+    this.formActionSubject$.next({
+      type: FormActionTypes.startSubmit,
+      payload: {
+        formState: this.formState,
+      },
+    });
+
+    console.log(this.formState, "formState");
+    console.log("after start submit");
+
+    const values = this.validateForm();
+
+    if (values) {
+      this.props.onSubmit(values, this.onSubmitError);
+    }
   };
 
   render() {
@@ -176,6 +198,7 @@ export class RxForm extends React.Component<IRxFormProps> {
         value={{
           subscribe: this.subscribe,
           dispatch: this.dispatch,
+          subscribeFormAction: this.subscribeFormAction,
         }}
       >
         {this.props.children({

@@ -2,11 +2,11 @@ import { isArray } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
-import { distinctUntilChanged, map, tap } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
 import { TChildrenRender } from "../types/common";
 import { isExist } from "../utils/common";
 import { FormContext, IFormContextValue } from "./FormContext";
-import { IFormState } from "./RxForm";
+import { FormActionTypes, IFormAction, IFormState } from "./RxForm";
 import { combine } from "./utils";
 
 export enum FieldActionTypes {
@@ -51,6 +51,7 @@ interface IFieldCoreState {
 
 class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
   private formStateSubscription: Subscription | null = null;
+  private formActionSubscription: Subscription | null = null;
 
   state = {
     fieldState: {
@@ -63,12 +64,48 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
   componentDidMount() {
     this.registerField(this.state.fieldState);
     this.onFormStateChange();
+    this.onStartSubmitForm();
   }
+
+  onStartSubmitForm = () => {
+    const formActionObserver$ = new Subject();
+    formActionObserver$
+      .pipe(
+        filter((formAction: IFormAction) => {
+          return formAction.type === FormActionTypes.startSubmit;
+        }),
+        map((formAction: IFormAction) => {
+          return formAction.payload.formState[this.props.name];
+        }),
+        distinctUntilChanged(),
+        tap((fieldState: IFieldState) => {
+          const error = this.validate(fieldState.value);
+
+          if (error) {
+            this.props.formContextValue.dispatch({
+              type: FieldActionTypes.change,
+              payload: {
+                name: this.props.name,
+                value: fieldState.value,
+                error,
+              },
+            });
+          }
+        }),
+      )
+      .subscribe();
+
+    this.formActionSubscription = this.props.formContextValue.subscribeFormAction(formActionObserver$);
+  };
 
   componentWillUnmount() {
     if (this.formStateSubscription) {
       this.formStateSubscription.unsubscribe();
       this.formStateSubscription = null;
+    }
+    if (this.formActionSubscription) {
+      this.formActionSubscription.unsubscribe();
+      this.formActionSubscription = null;
     }
   }
 
@@ -93,6 +130,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
+          console.log("-------------on change-----------");
           this.setState({
             fieldState,
           });

@@ -5,9 +5,11 @@ import { IFieldAction } from "./Field";
 export interface IFormContextValue {
   dispatch: (fieldAction: IFieldAction) => any;
   subscribe: (observer: Observer<any>) => any;
+  subscribeFormAction: (observer: Observer<any>) => any;
 }
 
 export const FormContext = createContext<IFormContextValue>({
   subscribe: (_: any) => {},
   dispatch: (_: any) => {},
+  subscribeFormAction: (_: any) => {},
 });
