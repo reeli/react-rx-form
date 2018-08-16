@@ -30,7 +30,7 @@ export class SubmitValidationForm extends React.Component {
       errors.password = "not empty error";
     }
 
-    if (values.password.length >= 5) {
+    if (values.username.length >= 5) {
       errors.username = "Password must less that 5 digits!";
     }
 
