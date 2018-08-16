@@ -26,7 +26,7 @@ interface IFieldCommonProps {
 }
 
 interface IFieldInnerProps extends IFieldCommonProps {
-  onChange?: (value: TFieldValue) => void;
+  onChange: (value: TFieldValue) => void;
 }
 
 export interface IField extends IFieldCommonProps {
