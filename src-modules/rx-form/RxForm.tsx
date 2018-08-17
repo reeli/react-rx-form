@@ -15,13 +15,14 @@ export interface IFormValues {
   [fieldName: string]: TFieldValue;
 }
 
-interface IIRxFormInnerProps {
-  onSubmit: (evt: any) => void;
+type TOnSubmit = (values: IFormValues, onSubmitError: any) => any;
+
+interface IRxFormInnerProps {
+  handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any;
 }
 
 interface IRxFormProps {
-  onSubmit: (values: IFormValues, onSubmitError: any) => void;
-  children: TChildrenRender<IIRxFormInnerProps>;
+  children: TChildrenRender<IRxFormInnerProps>;
   initialValues?: IFormValues;
 }
 
@@ -164,32 +165,34 @@ export class RxForm extends React.Component<IRxFormProps> {
     });
   };
 
-  onSubmit = (evt: any) => {
-    evt.preventDefault();
+  handleSubmit = (onSubmit: TOnSubmit) => {
+    return (evt: React.FormEvent) => {
+      evt.preventDefault();
 
-    // this.dispatch({
-    //   type: FormActionTypes.startSubmit,
-    //   payload: {
-    //     formState: this.formState,
-    //   },
-    // });
+      // this.dispatch({
+      //   type: FormActionTypes.startSubmit,
+      //   payload: {
+      //     formState: this.formState,
+      //   },
+      // });
 
-    console.log("before start submit");
-    this.formActionSubject$.next({
-      type: FormActionTypes.startSubmit,
-      payload: {
-        formState: this.formState,
-      },
-    });
+      console.log("before start submit");
+      this.formActionSubject$.next({
+        type: FormActionTypes.startSubmit,
+        payload: {
+          formState: this.formState,
+        },
+      });
 
-    console.log(this.formState, "formState");
-    console.log("after start submit");
+      console.log(this.formState, "formState");
+      console.log("after start submit");
 
-    const values = this.validateForm();
+      const values = this.validateForm();
 
-    if (values) {
-      this.props.onSubmit(values, this.onSubmitError);
-    }
+      if (values) {
+        onSubmit(values, this.onSubmitError);
+      }
+    };
   };
 
   render() {
@@ -202,7 +205,7 @@ export class RxForm extends React.Component<IRxFormProps> {
         }}
       >
         {this.props.children({
-          onSubmit: this.onSubmit,
+          handleSubmit: this.handleSubmit,
         })}
       </FormContext.Provider>
     );

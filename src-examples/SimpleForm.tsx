@@ -7,15 +7,15 @@ import { Field } from "../src-modules/rx-form/Field";
 import { RxForm } from "../src-modules/rx-form/RxForm";
 
 export class SimpleForm extends React.Component {
-  handleSubmit = (values: any) => {
+  onSubmit = (values: any) => {
     alert(JSON.stringify(values, null, 2));
   };
 
   render() {
     return (
-      <RxForm onSubmit={this.handleSubmit} initialValues={{ firstName: "rui", lastName: "li" }}>
-        {({ onSubmit }) => (
-          <form onSubmit={onSubmit}>
+      <RxForm initialValues={{ firstName: "rui", lastName: "li" }}>
+        {({ handleSubmit }) => (
+          <form onSubmit={handleSubmit(this.onSubmit)}>
             <div>
               <Field name="firstName">
                 {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="First Name" />}

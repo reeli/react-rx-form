@@ -19,7 +19,7 @@ export class SubmitValidationForm extends React.Component {
     },
   };
 
-  handleSubmit = (values: any, onSubmitError: any) => {
+  onSubmit = (values: any, onSubmitError: any) => {
     console.log(values, "values on Submit");
     const errors = {} as any;
 
@@ -48,9 +48,9 @@ export class SubmitValidationForm extends React.Component {
 
   render() {
     return (
-      <RxForm onSubmit={this.handleSubmit}>
-        {({ onSubmit }) => (
-          <form onSubmit={onSubmit}>
+      <RxForm>
+        {({ handleSubmit }) => (
+          <form onSubmit={handleSubmit(this.onSubmit)}>
             <Field name="username" value="">
               {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="Username" />}
             </Field>

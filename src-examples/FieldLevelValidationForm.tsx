@@ -9,19 +9,18 @@ import { RxForm } from "../src-modules/rx-form/RxForm";
 import { maxLength5, required } from "../src-modules/utils/validations";
 
 export class FieldLevelValidationForm extends React.Component {
-  handleSubmit = () => {};
+  onSubmit = () => {};
 
   render() {
     return (
       <RxForm
-        onSubmit={this.handleSubmit}
-        // initialValues={{
-        //   username: "hello",
-        //   password: "123456",
-        // }}
+      // initialValues={{
+      //   username: "hello",
+      //   password: "123456",
+      // }}
       >
-        {({ onSubmit }) => (
-          <form onSubmit={onSubmit}>
+        {({ handleSubmit }) => (
+          <form onSubmit={handleSubmit(this.onSubmit)}>
             <Field name="username" validate={[required, maxLength5]}>
               {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="type username here..." />}
             </Field>
