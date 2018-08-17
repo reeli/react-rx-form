@@ -28,12 +28,11 @@ export class FieldLevelValidationForm extends React.Component {
             <Field name="password" validate={required}>
               {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="type password here..." />}
             </Field>
-            <Field name="feedbackDate" validate={required}>
+            <Field name="feedbackDate" validate={required} value="2017-05-24">
               {({ name, value, error, onChange }) => (
                 <TextField
                   label="Feedback Date"
                   type="date"
-                  defaultValue="2017-05-24"
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -45,7 +44,7 @@ export class FieldLevelValidationForm extends React.Component {
               )}
             </Field>
             <Field name="mode" value={10}>
-              {({ onChange, error, ...others }) => (
+              {({ onChange, error, dirty, ...others }) => (
                 <Select {...others} onChange={(evt) => onChange(evt.target.value)} placeholder="Mode of Feedback">
                   <MenuItem value={10}>Ten</MenuItem>
                   <MenuItem value={20}>Twenty</MenuItem>

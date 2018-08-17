@@ -47,9 +47,9 @@ export class RxForm extends React.Component<IRxFormProps> {
     if (this.props.initialValues) {
       forEach(this.props.initialValues, (value, name) => {
         this.formState[name] = {
+          ...this.formState[name],
           value,
           name,
-          error: "",
         };
       });
 
@@ -88,7 +88,7 @@ export class RxForm extends React.Component<IRxFormProps> {
     const fieldState = {
       name: action.payload.name,
       value: "",
-      error: "",
+      error: undefined,
     } as IFieldState;
 
     if (!isUndefined(action.payload.value)) {

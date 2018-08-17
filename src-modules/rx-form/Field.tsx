@@ -1,4 +1,4 @@
-import { isArray } from "lodash";
+import { isArray, isEqual } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -15,7 +15,7 @@ export enum FieldActionTypes {
   destroy = "@@rx-form/DESTROY_FIELD",
 }
 
-type TError = string;
+type TError = string | undefined;
 type TValidator = (value: string | boolean) => TError | undefined;
 export type TFieldValue = any;
 
@@ -25,23 +25,25 @@ interface IFieldCommonProps {
   error?: TError;
 }
 
-interface IFieldInnerProps extends IFieldCommonProps {
+export interface IFieldState extends IFieldCommonProps {
+  dirty: boolean;
+}
+
+interface IFieldInnerProps extends IFieldState {
   onChange: (value: TFieldValue) => void;
 }
 
-export interface IField extends IFieldCommonProps {
+export interface IFieldProps extends IFieldCommonProps {
   validate?: TValidator | TValidator[];
   children: TChildrenRender<IFieldInnerProps>;
 }
-
-export interface IFieldState extends IFieldCommonProps {}
 
 export interface IFieldAction {
   type: FieldActionTypes;
   payload: IFieldState;
 }
 
-interface IFieldCoreProps extends IField {
+interface IFieldCoreProps extends IFieldProps {
   formContextValue: IFormContextValue;
 }
 
@@ -57,8 +59,9 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     fieldState: {
       name: this.props.name,
       value: isExist(this.props.value) ? this.props.value : "",
-      error: isExist(this.props.error) ? this.props.error : "",
-    } as IFieldState,
+      error: this.props.error,
+      dirty: false,
+    },
   };
 
   componentDidMount() {
@@ -85,8 +88,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
             this.props.formContextValue.dispatch({
               type: FieldActionTypes.change,
               payload: {
-                name: this.props.name,
-                value: fieldState.value,
+                ...fieldState,
                 error,
               },
             });
@@ -109,14 +111,12 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     }
   }
 
-  registerField = ({ name, value, error }: IFieldState) => {
+  registerField = (fieldState: IFieldState) => {
     // register field
     this.props.formContextValue.dispatch({
       type: FieldActionTypes.register,
       payload: {
-        name,
-        value,
-        error,
+        ...fieldState,
       },
     });
   };
@@ -130,7 +130,6 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
-          console.log("-------------on change-----------");
           this.setState({
             fieldState,
           });
@@ -153,13 +152,18 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     return;
   };
 
-  onChange = (value: string | boolean) => {
+  isDirty = (value: TFieldValue) => {
+    return !isEqual(value, this.state.fieldState.value);
+  };
+
+  onChange = (value: TFieldValue) => {
     this.props.formContextValue.dispatch({
       type: FieldActionTypes.change,
       payload: {
         name: this.props.name,
         value,
         error: this.props.validate ? this.validate(value) : undefined,
+        dirty: this.isDirty(value),
       },
     });
   };
@@ -172,7 +176,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
   }
 }
 
-export class Field extends React.Component<IField> {
+export class Field extends React.Component<IFieldProps> {
   render() {
     return (
       <FormContext.Consumer>
