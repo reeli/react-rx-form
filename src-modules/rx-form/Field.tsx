@@ -115,9 +115,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     // register field
     this.props.formContextValue.dispatch({
       type: FieldActionTypes.register,
-      payload: {
-        ...fieldState,
-      },
+      payload: fieldState,
     });
   };
 

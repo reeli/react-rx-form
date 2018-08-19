@@ -4,3 +4,4 @@ node_modules/
 *.jsx
 public/
 .tmp/
+.DS_Store

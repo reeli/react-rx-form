@@ -1,4 +1,4 @@
-import { Dictionary, forEach, isUndefined, mapValues, reduce } from "lodash";
+import { Dictionary, forEach, mapValues, reduce } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -53,14 +53,13 @@ export class RxForm extends React.Component<IRxFormProps> {
           name,
         };
       });
-
-      this.dispatch({
-        type: FormActionTypes.initialize,
-        payload: {
-          formState: this.formState,
-        },
-      });
     }
+    this.dispatch({
+      type: FormActionTypes.initialize,
+      payload: {
+        formState: this.formState,
+      },
+    });
   }
 
   componentWillUnmount() {
@@ -70,39 +69,8 @@ export class RxForm extends React.Component<IRxFormProps> {
     }
   }
 
-  registerField = (action: IFieldAction) => {
-    this.formState = {
-      ...this.formState,
-      [action.payload.name]: {
-        ...action.payload,
-      } as IFieldState,
-    };
-    console.log(action.type, {
-      [action.payload.name]: {
-        ...action.payload,
-      } as IFieldState,
-    });
-    this.formStateSubject$.next(this.formState);
-  };
-
   updateField = (action: IFieldAction) => {
-    const fieldState = {
-      name: action.payload.name,
-      value: "",
-      error: undefined,
-    } as IFieldState;
-
-    if (!isUndefined(action.payload.value)) {
-      fieldState.value = action.payload.value;
-    }
-    if (!isUndefined(action.payload.error)) {
-      fieldState.error = action.payload.error;
-    }
-    this.formState = {
-      ...this.formState,
-      [action.payload.name]: fieldState,
-    };
-    console.log(action.type, { formState: this.formState });
+    this.formState[action.payload.name] = action.payload;
     this.formStateSubject$.next(this.formState);
   };
 
@@ -116,25 +84,28 @@ export class RxForm extends React.Component<IRxFormProps> {
     this.formStateSubject$.next(this.formState);
   };
 
-  updateFormState = (action: IFormAction) => {
-    this.formState = action.payload.formState;
-    this.formStateSubject$.next(this.formState);
-    console.log(action.type, { formState: this.formState });
+  initializeForm = (action: IFormAction) => {
+    this.formStateSubject$.next(action.payload.formState);
+    this.formActionSubject$.next(action);
+  };
+
+  startSubmitForm = (action: IFormAction) => {
+    this.formActionSubject$.next(action);
   };
 
   dispatch = (action: IFieldAction | IFormAction) => {
     switch (action.type) {
       case FieldActionTypes.register: {
-        return this.registerField(action as IFieldAction);
+        return this.updateField(action as IFieldAction);
       }
       case FieldActionTypes.change: {
         return this.updateField(action as IFieldAction);
       }
       case FormActionTypes.initialize: {
-        return this.updateFormState(action as IFormAction);
+        return this.initializeForm(action as IFormAction);
       }
       case FormActionTypes.startSubmit: {
-        return this.updateFormState(action as IFormAction);
+        return this.startSubmitForm(action as IFormAction);
       }
     }
   };
@@ -169,23 +140,12 @@ export class RxForm extends React.Component<IRxFormProps> {
     return (evt: React.FormEvent) => {
       evt.preventDefault();
 
-      // this.dispatch({
-      //   type: FormActionTypes.startSubmit,
-      //   payload: {
-      //     formState: this.formState,
-      //   },
-      // });
-
-      console.log("before start submit");
-      this.formActionSubject$.next({
+      this.dispatch({
         type: FormActionTypes.startSubmit,
         payload: {
           formState: this.formState,
         },
       });
-
-      console.log(this.formState, "formState");
-      console.log("after start submit");
 
       const values = this.validateForm();
 
