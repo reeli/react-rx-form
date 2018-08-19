@@ -1,10 +1,7 @@
-import createBrowserHistory from "history/createBrowserHistory";
 import { map } from "lodash";
 import * as React from "react";
-import { Route, Router } from "react-router";
+import { Route } from "react-router";
 import { WithHighlight } from "../src-components/WithHighlight";
-
-const history = createBrowserHistory();
 
 export const req = (require as any).context("../src-examples", true, /\.tsx/);
 
@@ -34,12 +31,10 @@ req.keys().forEach((key: string) => {
 
 export const AppRoutes = () => {
   return (
-    <Router history={history}>
-      <div>
-        {routes.map((route, i) => (
-          <Route key={i} {...route} />
-        ))}
-      </div>
-    </Router>
+    <div>
+      {routes.map((route, i) => (
+        <Route key={i} {...route} />
+      ))}
+    </div>
   );
 };
