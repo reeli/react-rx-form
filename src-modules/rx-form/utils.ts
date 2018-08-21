@@ -1,4 +1,4 @@
-import { reduce } from "lodash";
+import { isNull, isUndefined, reduce } from "lodash";
 import { TFieldValue } from "./Field";
 
 export const combine = (validators: any) => {
@@ -11,4 +11,8 @@ export const combine = (validators: any) => {
       undefined,
     );
   };
+};
+
+export const isExist = (value: any) => {
+  return !isUndefined(value) && !isNull(value);
 };

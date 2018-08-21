@@ -3,11 +3,10 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
-import { TChildrenRender } from "../types/common";
-import { isExist } from "../utils/common";
 import { FormContext, IFormContextValue } from "./FormContext";
 import { FormActionTypes, IFormAction, IFormState } from "./RxForm";
-import { combine } from "./utils";
+import { TChildrenRender } from "./types";
+import { combine, isExist } from "./utils";
 
 export enum FieldActionTypes {
   register = "@@rx-form/REGISTER_FIELD",

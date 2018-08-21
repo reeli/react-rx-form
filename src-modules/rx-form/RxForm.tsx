@@ -3,9 +3,9 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { Observer } from "rxjs/internal/types";
-import { TChildrenRender } from "../types/common";
 import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
+import { TChildrenRender } from "./types";
 
 export interface IFormState {
   [fieldName: string]: IFieldState;
