@@ -1,9 +1,13 @@
 {
-  "name": "gov-tech",
-  "version": "1.0.0",
-  "description": "",
+  "name": "react-ts-rx-form",
+  "version": "0.1.2",
+  "description": "rx form for react, use typescript for development",
   "main": "index.js",
-  "private": "true",
+  "keywords": [
+    "react",
+    "form",
+    "typescript"
+  ],
   "scripts": {
     "start": "npm run dev",
     "dev": "webpack-dev-server --config=webpack.config.ts --port=3000 --compress --open --history-api-fallback",
@@ -93,12 +97,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HelloRuiLi/gov-tech.git"
+    "url": "git+https://github.com:HelloRuiLi/react-rx-form.git"
   },
-  "author": "",
+  "author": "HelloRuiLi",
   "license": "ISC",
   "bugs": {
-    "url": ""
+    "url": "git+https://github.com:HelloRuiLi/react-rx-form.git"
   },
-  "homepage": ""
+  "homepage": "git+https://github.com:HelloRuiLi/react-rx-form.git"
 }
