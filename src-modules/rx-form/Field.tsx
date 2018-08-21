@@ -6,7 +6,7 @@ import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
 import { FormContext, IFormContextValue } from "./FormContext";
 import { FormActionTypes, IFormAction, IFormState } from "./RxForm";
 import { TChildrenRender } from "./types";
-import { combine, isExist } from "./utils";
+import { combine } from "./utils";
 
 export enum FieldActionTypes {
   register = "@@rx-form/REGISTER_FIELD",
@@ -32,9 +32,11 @@ interface IFieldInnerProps extends IFieldState {
   onChange: (value: TFieldValue) => void;
 }
 
-export interface IFieldProps extends IFieldCommonProps {
-  validate?: TValidator | TValidator[];
+export interface IFieldProps {
+  name: string;
   children: TChildrenRender<IFieldInnerProps>;
+  defaultValue?: TFieldValue;
+  validate?: TValidator | TValidator[];
 }
 
 export interface IFieldAction {
@@ -57,8 +59,11 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
   state = {
     fieldState: {
       name: this.props.name,
-      value: isExist(this.props.value) ? this.props.value : "",
-      error: this.props.error,
+      // TODO: change defaultValue to defaultValue, toggle controlled component and uncontrolled component
+      // in component level, default value should not be empty string, because sometime it should be boolean,
+      // think about checkbox.
+      value: this.props.defaultValue,
+      error: undefined,
       dirty: false,
     },
   };
@@ -71,6 +76,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
 
   onStartSubmitForm = () => {
     const formActionObserver$ = new Subject();
+
     formActionObserver$
       .pipe(
         filter((formAction: IFormAction) => {

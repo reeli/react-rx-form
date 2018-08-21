@@ -26,7 +26,7 @@ export class SimpleForm extends React.Component {
               <Field name="email">
                 {(fieldProps) => <CustomInput {...fieldProps} type="email" placeholder="Email" />}
               </Field>
-              <Field name="checkbox" value={false}>
+              <Field name="checkbox" defaultValue={false}>
                 {(fieldProps) => <CustomCheckbox {...fieldProps} placeholder="Checkbox" />}
               </Field>
               <FormControl>

@@ -1,10 +1,12 @@
 import { isEmpty } from "lodash";
-import { TFieldValue } from "../rx-form/Field";
 
-export const required = (value: TFieldValue) => {
-  return isEmpty(value) ? "no empty value" : undefined;
+const createValidate = (isValid: (v: any) => boolean, defaultErrMsg: string) => {
+  return (msg: string = defaultErrMsg) => {
+    return (v: any) => {
+      return isValid(v) ? undefined : msg;
+    };
+  };
 };
 
-export const maxLength5 = (value: TFieldValue) => {
-  return (value as string).length > 5 ? "value length must less than 5" : undefined;
-};
+export const required = createValidate(isEmpty, "no empty defaultValue");
+export const maxLength5 = createValidate((value) => value.length > 5, "defaultValue length must less than 5");

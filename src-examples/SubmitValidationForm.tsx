@@ -51,10 +51,10 @@ export class SubmitValidationForm extends React.Component {
       <RxForm>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
-            <Field name="username" value="">
+            <Field name="username" defaultValue="">
               {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="Username" />}
             </Field>
-            <Field name="password" value="">
+            <Field name="password" defaultValue="">
               {(fieldProps) => <CustomInput {...fieldProps} type="password" placeholder="Password" />}
             </Field>
             <Button type="submit">Submit</Button>
