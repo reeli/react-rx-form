@@ -4,6 +4,7 @@ import { CustomInput } from "../src-components/CustomInput";
 import { Field } from "../src-modules/rx-form/Field";
 import { FieldArray } from "../src-modules/rx-form/FieldArray";
 import { RxForm } from "../src-modules/rx-form/RxForm";
+import { required } from "../src-modules/utils/validations";
 
 export class FieldArrayForm extends React.Component {
   onSubmit = (values: any) => {
@@ -26,10 +27,10 @@ export class FieldArrayForm extends React.Component {
                   {fields.map((member, idx) => (
                     <li key={idx}>
                       <h3>{`member${idx + 1}`}</h3>
-                      <Field name={`${member}.firstName`}>
+                      <Field name={`${member}.firstName`} validate={required()}>
                         {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder={`First Name${idx}`} />}
                       </Field>
-                      <Field name={`${member}.lastName`}>
+                      <Field name={`${member}.lastName`} validate={required()}>
                         {(fieldProps) => <CustomInput {...fieldProps} type="password" placeholder="Last Name" />}
                       </Field>
                       <button type="button" onClick={() => remove(idx)}>
