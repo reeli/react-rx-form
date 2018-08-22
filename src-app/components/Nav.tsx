@@ -12,8 +12,8 @@ export const Nav = () => {
         {req.keys().map((key: string) => {
           const path = key.split(".")[1];
           return (
-            <Link to={path} style={{ textDecoration: "none", color: "#000", display: "block" }}>
-              <ListItem key={key} button>
+            <Link to={path} style={{ textDecoration: "none", color: "#000", display: "block" }} key={key}>
+              <ListItem button>
                 <ListItemText>{path.split("/")[1]}</ListItemText>
               </ListItem>
             </Link>
