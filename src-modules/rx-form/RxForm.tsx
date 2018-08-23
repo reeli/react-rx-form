@@ -1,4 +1,4 @@
-import { Dictionary, forEach, mapValues, reduce, set } from "lodash";
+import { Dictionary, forEach, isArray, keys, map, mapValues, reduce, set } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -8,7 +8,7 @@ import { FormContext } from "./FormContext";
 import { TChildrenRender } from "./types";
 
 export interface IFormState {
-  [fieldName: string]: IFieldState;
+  [fieldName: string]: IFieldState | IFieldState[];
 }
 
 export interface IFormValues {
@@ -75,12 +75,8 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   onSubmitError = (error: Dictionary<string>) => {
-    this.formState = mapValues(this.formState, (field) => {
-      return {
-        ...field,
-        error: error[field.name],
-      };
-    });
+    const key = `${keys(error)[0]}.error`;
+    this.formState = set(this.formState, key, error[keys(error)[0]]);
     this.formStateSubject$.next(this.formState);
   };
 
@@ -119,24 +115,33 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   validateForm = () => {
-    console.log(this.formState, "--------");
     const hasError = reduce(
       this.formState,
-      (result: boolean, item: IFieldState) => {
+      (result: boolean, item: IFieldState | IFieldState[]) => {
+        if (isArray(item)) {
+          // TODO: just a placeholder here, will update this logic later
+          return false;
+        }
         return result || !!item.error;
       },
       false,
     );
 
-    console.log(hasError, "hasError");
-
     if (hasError) {
       return;
     }
 
-    return mapValues(this.formState, (field) => {
-      return field.value;
-    });
+    const getValues = (input: IFormState): IFormValues => {
+      return mapValues(input, (field) => {
+        if (isArray(field)) {
+          return map(field, (item: IFormState) => {
+            return getValues(item);
+          });
+        }
+        return field.value;
+      });
+    };
+    return getValues(this.formState);
   };
 
   handleSubmit = (onSubmit: TOnSubmit) => {

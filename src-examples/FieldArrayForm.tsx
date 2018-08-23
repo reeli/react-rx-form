@@ -1,4 +1,5 @@
 import Button from "@material-ui/core/Button/Button";
+import { isEmpty } from "lodash";
 import * as React from "react";
 import { CustomInput } from "../src-components/CustomInput";
 import { Field } from "../src-modules/rx-form/Field";
@@ -7,8 +8,16 @@ import { RxForm } from "../src-modules/rx-form/RxForm";
 import { required } from "../src-modules/utils/validations";
 
 export class FieldArrayForm extends React.Component {
-  onSubmit = (values: any) => {
-    alert(JSON.stringify(values, null, 2));
+  onSubmit = (values: any, onSubmitError: any) => {
+    const errors = {} as any;
+    if (values.members[0].firstName.length >= 5) {
+      errors[`members[0].firstName`] = "Username must less that 5 digits!";
+    }
+    if (!isEmpty(errors)) {
+      onSubmitError(errors);
+    } else {
+      alert(JSON.stringify(values, null, 2));
+    }
   };
 
   render() {

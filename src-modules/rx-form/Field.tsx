@@ -129,10 +129,13 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     formStateObserver$
       .pipe(
         map((formState: IFormState) => {
+          console.log(formState, "formState");
+          console.log(get(formState, this.props.name), "formState");
           return get(formState, this.props.name);
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
+          console.log("--------changed---------");
           this.setState({
             fieldState,
           });
