@@ -1,4 +1,4 @@
-import { Dictionary, forEach, mapValues, reduce } from "lodash";
+import { Dictionary, forEach, mapValues, reduce, set } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -70,7 +70,7 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   updateField = (action: IFieldAction) => {
-    this.formState[action.payload.name] = action.payload;
+    this.formState = set(this.formState, action.payload.name, action.payload);
     this.formStateSubject$.next(this.formState);
   };
 
@@ -119,6 +119,7 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   validateForm = () => {
+    console.log(this.formState, "--------");
     const hasError = reduce(
       this.formState,
       (result: boolean, item: IFieldState) => {
@@ -126,6 +127,8 @@ export class RxForm extends React.Component<IRxFormProps> {
       },
       false,
     );
+
+    console.log(hasError, "hasError");
 
     if (hasError) {
       return;
