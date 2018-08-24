@@ -15,7 +15,7 @@ export enum FieldActionTypes {
 }
 
 type TError = string | undefined;
-type TValidator = (value: string | boolean) => TError | undefined;
+export type TValidator = (value: string | boolean) => TError | undefined;
 export type TFieldValue = any;
 
 interface IFieldCommonProps {

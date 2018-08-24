@@ -9,4 +9,4 @@ const createValidate = (isValid: (v: any) => boolean, defaultErrMsg: string) => 
 };
 
 export const required = createValidate((value) => !isEmpty(value), "no empty defaultValue");
-export const maxLength5 = createValidate((value) => value.length > 5, "defaultValue length must less than 5");
+export const maxLength5 = createValidate((value) => value.length < 5, "defaultValue length must less than 5");
