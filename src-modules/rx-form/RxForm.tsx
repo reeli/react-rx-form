@@ -115,23 +115,15 @@ export class RxForm extends React.Component<IRxFormProps> {
     return this.formActionSubject$.subscribe(observer);
   };
 
-  validateForm = () => {
-    const hasError = isFormContainsError(this.formState);
-    if (hasError) {
-      return;
-    }
-
-    const getValues = (input: IFormState): IFormValues => {
-      return mapValues(input, (field) => {
-        if (isArray(field)) {
-          return map(field, (item: IFormState) => {
-            return getValues(item);
-          });
-        }
-        return field.value;
-      });
-    };
-    return getValues(this.formState);
+  getFormValues = (input: IFormState): IFormValues => {
+    return mapValues(input, (field) => {
+      if (isArray(field)) {
+        return map(field, (item: IFormState) => {
+          return this.getFormValues(item);
+        });
+      }
+      return field.value;
+    });
   };
 
   handleSubmit = (onSubmit: TOnSubmit) => {
@@ -145,8 +137,11 @@ export class RxForm extends React.Component<IRxFormProps> {
         },
       });
 
-      const values = this.validateForm();
+      if (isFormContainsError(this.formState)) {
+        return;
+      }
 
+      const values = this.getFormValues(this.formState);
       if (values) {
         onSubmit(values, this.onSubmitError);
       }
