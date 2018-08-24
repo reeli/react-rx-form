@@ -52,7 +52,7 @@ interface IFieldCoreState {
   fieldState: IFieldState;
 }
 
-class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
+export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
   private formStateSubscription: Subscription | null = null;
   private formActionSubscription: Subscription | null = null;
 
@@ -157,8 +157,8 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     return;
   };
 
-  isDirty = (value: TFieldValue) => {
-    return !isEqual(value, this.state.fieldState.value);
+  isDirty = (value: TFieldValue, defaultValue: string) => {
+    return !isEqual(value, defaultValue);
   };
 
   onChange = (value: TFieldValue) => {
@@ -168,7 +168,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
         name: this.props.name,
         value,
         error: this.props.validate ? this.validate(value) : undefined,
-        dirty: this.isDirty(value),
+        dirty: this.isDirty(value, this.props.defaultValue),
       },
     });
   };
