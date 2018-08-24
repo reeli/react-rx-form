@@ -6,7 +6,7 @@ import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
 import { FormContext, IFormContextValue } from "./FormContext";
 import { FormActionTypes, IFormAction, IFormState } from "./RxForm";
 import { TChildrenRender } from "./types";
-import { combine } from "./utils";
+import { combineValidators } from "./utils";
 
 export enum FieldActionTypes {
   register = "@@rx-form/REGISTER_FIELD",
@@ -135,7 +135,6 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
-          console.log("--------changed---------");
           this.setState({
             fieldState,
           });
@@ -153,7 +152,7 @@ class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
     }
 
     if (isArray(validate)) {
-      return combine(validate)(value);
+      return combineValidators(validate)(value);
     }
     return;
   };

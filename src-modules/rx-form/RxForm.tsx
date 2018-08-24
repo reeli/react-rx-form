@@ -1,4 +1,4 @@
-import { Dictionary, forEach, isArray, keys, map, mapValues, reduce, set } from "lodash";
+import { Dictionary, forEach, isArray, keys, map, mapValues, set } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -6,9 +6,10 @@ import { Observer } from "rxjs/internal/types";
 import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
 import { TChildrenRender } from "./types";
+import { isFormContainsError } from "./utils";
 
 export interface IFormState {
-  [fieldName: string]: IFieldState | IFieldState[];
+  [fieldName: string]: IFieldState | Array<{ [fieldName: string]: IFieldState }>;
 }
 
 export interface IFormValues {
@@ -115,18 +116,7 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   validateForm = () => {
-    const hasError = reduce(
-      this.formState,
-      (result: boolean, item: IFieldState | IFieldState[]) => {
-        if (isArray(item)) {
-          // TODO: just a placeholder here, will update this logic later
-          return false;
-        }
-        return result || !!item.error;
-      },
-      false,
-    );
-
+    const hasError = isFormContainsError(this.formState);
     if (hasError) {
       return;
     }
