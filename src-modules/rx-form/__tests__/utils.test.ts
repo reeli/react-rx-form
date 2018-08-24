@@ -1,5 +1,5 @@
 import { maxLength5, required } from "../../utils/validations";
-import { combineValidators, isFormContainsError } from "../utils";
+import { combineValidators, convertArrayToObjWithKeyPaths, isFormContainsError } from "../utils";
 
 describe("#combineValidators", () => {
   it("should get error message when combineValidators validators with error", () => {
@@ -43,3 +43,17 @@ const createFormState = ({ hasError }: { hasError: boolean }) => {
     ],
   };
 };
+
+describe("#getKeyPath", () => {
+  it("should get correct key path", () => {
+    const mockData = {
+      members: [{ firstName: "rui", lastName: "li" }, { firstName: "rui1", lastName: "li1" }],
+    };
+    expect(convertArrayToObjWithKeyPaths(mockData)).toEqual({
+      [`members[0].firstName`]: "rui",
+      [`members[0].lastName`]: "li",
+      [`members[1].firstName`]: "rui1",
+      [`members[1].lastName`]: "li1",
+    });
+  });
+});

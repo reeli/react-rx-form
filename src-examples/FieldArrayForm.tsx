@@ -22,7 +22,7 @@ export class FieldArrayForm extends React.Component {
 
   render() {
     return (
-      <RxForm>
+      <RxForm initialValues={{ members: [{ firstName: "rui", lastName: "li" }] }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <FieldArray name={"members"}>

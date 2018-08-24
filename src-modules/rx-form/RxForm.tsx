@@ -6,7 +6,7 @@ import { Observer } from "rxjs/internal/types";
 import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
 import { TChildrenRender } from "./types";
-import { isFormContainsError } from "./utils";
+import { convertArrayToObjWithKeyPaths, isFormContainsError } from "./utils";
 
 export interface IFormState {
   [fieldName: string]: IFieldState | Array<{ [fieldName: string]: IFieldState }>;
@@ -24,7 +24,7 @@ interface IRxFormInnerProps {
 
 interface IRxFormProps {
   children: TChildrenRender<IRxFormInnerProps>;
-  initialValues?: IFormValues;
+  initialValues?: IFormValues | IFormValues[];
 }
 
 export interface IFormAction {
@@ -48,11 +48,21 @@ export class RxForm extends React.Component<IRxFormProps> {
   componentDidMount() {
     if (this.props.initialValues) {
       forEach(this.props.initialValues, (value, name) => {
-        this.formState[name] = {
-          ...this.formState[name],
-          value,
-          name,
-        };
+        if (isArray(value)) {
+          const obj = convertArrayToObjWithKeyPaths(this.props.initialValues!);
+          keys(obj).forEach((key) => {
+            this.formState = set(this.formState, key, {
+              value: obj[key],
+              name: key,
+            });
+          });
+        } else {
+          this.formState[name] = {
+            ...this.formState[name],
+            value,
+            name,
+          };
+        }
       });
     }
     this.dispatch({
@@ -62,6 +72,20 @@ export class RxForm extends React.Component<IRxFormProps> {
       },
     });
   }
+
+  setInitialValues = (initialValues: IFormValues) => {
+    forEach(initialValues, (value, name) => {
+      if (isArray(value)) {
+        this.setInitialValues(value);
+      } else {
+        this.formState[name] = {
+          ...this.formState[name],
+          value,
+          name,
+        };
+      }
+    });
+  };
 
   componentWillUnmount() {
     if (this.formStateSubscription) {
