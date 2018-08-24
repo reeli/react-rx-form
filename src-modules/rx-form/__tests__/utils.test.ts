@@ -44,7 +44,7 @@ const createFormState = ({ hasError }: { hasError: boolean }) => {
   };
 };
 
-describe("#getKeyPath", () => {
+describe("#convertArrayToObjWithKeyPaths", () => {
   it("should get correct key path", () => {
     const mockData = {
       members: [{ firstName: "rui", lastName: "li" }, { firstName: "rui1", lastName: "li1" }],
