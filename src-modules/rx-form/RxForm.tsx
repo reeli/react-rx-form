@@ -1,4 +1,4 @@
-import { Dictionary, forEach, isArray, keys, mapValues, set } from "lodash";
+import { Dictionary, forEach, isArray, keys } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -6,7 +6,7 @@ import { Observer } from "rxjs/internal/types";
 import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
 import { TChildrenRender } from "./types";
-import { convertArrayToObjWithKeyPaths, isContainError } from "./utils";
+import { convertArrayToObjWithKeyPaths, isContainError, pickFormValues, setErrors } from "./utils";
 
 export interface IFormState {
   [fieldName: string]: IFieldState;
@@ -16,7 +16,7 @@ export interface IFormValues {
   [fieldName: string]: TFieldValue;
 }
 
-type TErrors = Dictionary<string | undefined>;
+export type TErrors = Dictionary<string | undefined>;
 type TOnSubmit = (values: IFormValues, onSubmitError: (errors: TErrors) => any) => any;
 
 interface IRxFormInnerProps {
@@ -48,24 +48,7 @@ export class RxForm extends React.Component<IRxFormProps> {
 
   componentDidMount() {
     if (this.props.initialValues) {
-      forEach(this.props.initialValues, (value, name) => {
-        if (isArray(value)) {
-          const initialValues = convertArrayToObjWithKeyPaths(this.props.initialValues!);
-          keys(initialValues).forEach((key) => {
-            this.formState[key] = {
-              ...this.formState[key],
-              value: initialValues[key],
-              name: key,
-            };
-          });
-        } else {
-          this.formState[name] = {
-            ...this.formState[name],
-            value,
-            name,
-          };
-        }
-      });
+      this.setInitialValues(this.props.initialValues);
     }
     this.dispatch({
       type: FormActionTypes.initialize,
@@ -74,6 +57,27 @@ export class RxForm extends React.Component<IRxFormProps> {
       },
     });
   }
+
+  setInitialValues = (initialValues: IRxFormProps["initialValues"]) => {
+    forEach(initialValues, (value, name) => {
+      if (isArray(value)) {
+        const values = convertArrayToObjWithKeyPaths(initialValues!);
+        keys(values).forEach((key) => {
+          this.formState[key] = {
+            ...this.formState[key],
+            value: values[key],
+            name: key,
+          };
+        });
+      } else {
+        this.formState[name] = {
+          ...this.formState[name],
+          value,
+          name,
+        };
+      }
+    });
+  };
 
   componentWillUnmount() {
     if (this.formStateSubscription) {
@@ -88,12 +92,7 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   onSubmitError = (errors: TErrors) => {
-    this.formState = mapValues(this.formState, (field) => {
-      return {
-        ...field,
-        error: errors[field.name],
-      };
-    });
+    this.formState = setErrors(this.formState, errors);
     this.formStateSubject$.next(this.formState);
   };
 
@@ -131,14 +130,6 @@ export class RxForm extends React.Component<IRxFormProps> {
     return this.formActionSubject$.subscribe(observer);
   };
 
-  pickFormValues = (formState: IFormState): IFormValues => {
-    const formValues = {};
-    forEach(formState, (field, key) => {
-      set(formValues, key, field.value);
-    });
-    return formValues;
-  };
-
   handleSubmit = (onSubmit: TOnSubmit) => {
     return (evt: React.FormEvent) => {
       evt.preventDefault();
@@ -150,11 +141,12 @@ export class RxForm extends React.Component<IRxFormProps> {
         },
       });
 
+      console.log(JSON.stringify(this.formState));
       if (isContainError(this.formState)) {
         return;
       }
 
-      const values = this.pickFormValues(this.formState);
+      const values = pickFormValues(this.formState);
       if (values) {
         onSubmit(values, this.onSubmitError);
       }

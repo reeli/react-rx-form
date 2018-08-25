@@ -1,5 +1,5 @@
 import { maxLength5, required } from "../../utils/validations";
-import { combineValidators, convertArrayToObjWithKeyPaths, isFormContainsError } from "../utils";
+import { combineValidators, convertArrayToObjWithKeyPaths, isContainError } from "../utils";
 
 describe("#combineValidators", () => {
   it("should get error message when combineValidators validators with error", () => {
@@ -13,43 +13,40 @@ describe("#combineValidators", () => {
 });
 
 describe("#validateFormState", () => {
+  const createFormState = ({ hasError }: { hasError: boolean }) => {
+    return {
+      "members[0].firstName": { name: "members[0].firstName", value: "rui", dirty: true },
+      "members[0].lastName": { name: "members[0].lastName", value: "li", dirty: true },
+      "members[0].hobbies[0]": {
+        name: "members[0].hobbies[0]",
+        value: "",
+        error: hasError ? "no empty defaultValue" : undefined,
+        dirty: true,
+      },
+    };
+  };
+
   it("should return true if field state has error", () => {
     const formState = createFormState({ hasError: true });
-    expect(isFormContainsError(formState)).toEqual(true);
+    expect(isContainError(formState)).toEqual(true);
   });
+
   it("should return false if field state has no error", () => {
     const formState = createFormState({ hasError: false });
-    expect(isFormContainsError(formState)).toEqual(false);
+    expect(isContainError(formState)).toEqual(false);
   });
 });
-
-const createFormState = ({ hasError }: { hasError: boolean }) => {
-  return {
-    age: { name: "age", value: "10", error: undefined, dirty: false },
-    members: [
-      {
-        firstName: {
-          name: "members[0].firstName",
-          value: "rui",
-          error: hasError ? "not empty error" : undefined,
-          dirty: false,
-        },
-        lastName: { name: "members[0].lastName", value: "li", error: undefined, dirty: false },
-      },
-      {
-        firstName: { name: "members[1].firstName", value: "rui1", error: undefined, dirty: false },
-        lastName: { name: "members[1].lastName", value: "li1", error: undefined, dirty: false },
-      },
-    ],
-  };
-};
 
 describe("#convertArrayToObjWithKeyPaths", () => {
   it("should get correct key path", () => {
     const mockData = {
+      firstName: "rui",
+      lastName: "li",
       members: [{ firstName: "rui", lastName: "li" }, { firstName: "rui1", lastName: "li1" }],
     };
     expect(convertArrayToObjWithKeyPaths(mockData)).toEqual({
+      firstName: "rui",
+      lastName: "li",
       [`members[0].firstName`]: "rui",
       [`members[0].lastName`]: "li",
       [`members[1].firstName`]: "rui1",

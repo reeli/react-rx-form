@@ -1,6 +1,6 @@
-import { forEach, isArray, keys, map, reduce } from "lodash";
+import { forEach, isArray, keys, map, mapValues, reduce, set } from "lodash";
 import { TFieldValue, TValidator } from "./Field";
-import { IFormState, IFormValues } from "./RxForm";
+import { IFormState, IFormValues, TErrors } from "./RxForm";
 
 export const combineValidators = (validators: TValidator[]) => {
   return (value: TFieldValue) => {
@@ -14,21 +14,25 @@ export const combineValidators = (validators: TValidator[]) => {
   };
 };
 
-export const isFormContainsError = (formState: IFormState) => {
-  let hasError = false;
-  const validate = (input: IFormState) => {
-    forEach(input, (fieldState) => {
-      if (isArray(fieldState)) {
-        forEach(fieldState, (item) => {
-          validate(item);
-        });
-      } else {
-        hasError = !!fieldState.error ? true : hasError;
-      }
-    });
-    return hasError;
-  };
-  return validate(formState);
+export const isContainError = (formState: IFormState) => {
+  return reduce(formState, (result, item) => result || !!item.error, false);
+};
+
+export const pickFormValues = (formState: IFormState): IFormValues => {
+  const formValues = {};
+  forEach(formState, (field, key) => {
+    set(formValues, key, field.value);
+  });
+  return formValues;
+};
+
+export const setErrors = (formState: IFormState, errors: TErrors) => {
+  return mapValues(formState, (field) => {
+    return {
+      ...field,
+      error: errors[field.name],
+    };
+  });
 };
 
 export const convertArrayToObjWithKeyPaths = (input: IFormValues | IFormValues[]) => {
