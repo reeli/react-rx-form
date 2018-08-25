@@ -18,7 +18,7 @@ interface IFieldArrayState {
 
 export class FieldArray extends React.Component<IFieldArrayProps, IFieldArrayState> {
   state = {
-    fields: [this.props.name],
+    fields: [],
   };
 
   remove = (idx: number) => {

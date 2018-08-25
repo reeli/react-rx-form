@@ -20,6 +20,25 @@ export class FieldArrayForm extends React.Component {
     }
   };
 
+  renderHobbies = (member: any) => {
+    return (
+      <FieldArray name={`${member}.hobbies`}>
+        {({ fields, add }) => (
+          <ul>
+            <li>
+              <button onClick={() => add()}>add hobbies</button>
+            </li>
+            {fields.map((hobby, idx) => (
+              <Field name={hobby} validate={required()} key={idx}>
+                {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder={`hobby${idx}`} />}
+              </Field>
+            ))}
+          </ul>
+        )}
+      </FieldArray>
+    );
+  };
+
   render() {
     return (
       <RxForm initialValues={{ members: [{ firstName: "rui", lastName: "li" }] }}>
@@ -45,6 +64,7 @@ export class FieldArrayForm extends React.Component {
                       <button type="button" onClick={() => remove(idx)}>
                         Remove Hobby
                       </button>
+                      {this.renderHobbies(member)}
                     </li>
                   ))}
                 </ul>
