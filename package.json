@@ -1,6 +1,6 @@
 {
-  "name": "react-ts-rx-form",
-  "version": "0.1.2",
+  "name": "@reeli/react-rx-form",
+  "version": "0.1.3",
   "description": "rx form for react, use typescript for development",
   "main": "index.js",
   "keywords": [
