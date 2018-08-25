@@ -26,7 +26,9 @@ export class FieldArrayForm extends React.Component {
         {({ fields, add }) => (
           <ul>
             <li>
-              <button onClick={() => add()}>add hobbies</button>
+              <button onClick={() => add()} type={"button"}>
+                add hobbies
+              </button>
             </li>
             {fields.map((hobby, idx) => (
               <Field name={hobby} validate={required()} key={idx}>
