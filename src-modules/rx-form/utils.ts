@@ -1,6 +1,6 @@
-import { forEach, isArray, keys, map, mapValues, reduce, set } from "lodash";
+import { forEach, isArray, isNaN, isObject, mapValues, reduce, set } from "lodash";
 import { TFieldValue, TValidator } from "./Field";
-import { IFormState, IFormValues, TErrors } from "./RxForm";
+import { IFormState, IFormValues, IRxFormProps, TErrors } from "./RxForm";
 
 export const combineValidators = (validators: TValidator[]) => {
   return (value: TFieldValue) => {
@@ -35,22 +35,23 @@ export const setErrors = (formState: IFormState, errors: TErrors) => {
   });
 };
 
-export const convertArrayToObjWithKeyPaths = (input: IFormValues | IFormValues[]) => {
-  const obj = {} as any;
-  map(input, (item, key) => {
-    if (isArray(item)) {
-      const toKeyPath = (arr: any[]) => {
-        map(arr, (val, idx) => {
-          keys(val).forEach((path) => {
-            obj[`${key}[${idx}].${path}`] = val[path];
-          });
-        });
-      };
+const formatKeyPath = (key: string) => {
+  return !isNaN(parseInt(key, 10)) ? `[${key}]` : key;
+};
 
-      toKeyPath(item);
-    } else {
-      obj[key] = item;
-    }
-  });
-  return obj;
+export const toObjWithKeyPath = (input: IRxFormProps["initialValues"]) => {
+  const res = {} as any;
+  const toKeyPath = (obj: any, prefix: string = "") => {
+    Object.keys(obj).map((key) => {
+      const value = obj[key];
+      if (typeof value !== "string") {
+        const suffix = !isArray(value) && isObject(value) ? "." : "";
+        toKeyPath(value, prefix + formatKeyPath(key) + suffix);
+      } else {
+        res[prefix + formatKeyPath(key)] = value;
+      }
+    });
+  };
+  toKeyPath(input);
+  return res;
 };

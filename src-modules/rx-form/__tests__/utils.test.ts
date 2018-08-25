@@ -1,5 +1,5 @@
 import { maxLength5, required } from "../../utils/validations";
-import { combineValidators, convertArrayToObjWithKeyPaths, isContainError } from "../utils";
+import { combineValidators, isContainError, toObjWithKeyPath } from "../utils";
 
 describe("#combineValidators", () => {
   it("should get error message when combineValidators validators with error", () => {
@@ -37,18 +37,24 @@ describe("#validateFormState", () => {
   });
 });
 
-describe("#convertArrayToObjWithKeyPaths", () => {
-  it("should get correct key path", () => {
+describe("#toObjWithKeyPath", () => {
+  it("should covert to object with correct key path", () => {
     const mockData = {
       firstName: "rui",
       lastName: "li",
-      members: [{ firstName: "rui", lastName: "li" }, { firstName: "rui1", lastName: "li1" }],
+      members: [
+        { firstName: "rui", lastName: "li", hobbies: ["running", "swimming"] },
+        { firstName: "rui1", lastName: "li1" },
+      ],
     };
-    expect(convertArrayToObjWithKeyPaths(mockData)).toEqual({
+
+    expect(toObjWithKeyPath(mockData)).toEqual({
       firstName: "rui",
       lastName: "li",
       [`members[0].firstName`]: "rui",
       [`members[0].lastName`]: "li",
+      [`members[0].hobbies[0]`]: "running",
+      [`members[0].hobbies[1]`]: "swimming",
       [`members[1].firstName`]: "rui1",
       [`members[1].lastName`]: "li1",
     });

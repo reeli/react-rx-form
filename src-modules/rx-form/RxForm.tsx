@@ -6,7 +6,7 @@ import { Observer } from "rxjs/internal/types";
 import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
 import { TChildrenRender } from "./types";
-import { convertArrayToObjWithKeyPaths, isContainError, pickFormValues, setErrors } from "./utils";
+import { isContainError, pickFormValues, setErrors, toObjWithKeyPath } from "./utils";
 
 export interface IFormState {
   [fieldName: string]: IFieldState;
@@ -23,7 +23,7 @@ interface IRxFormInnerProps {
   handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any;
 }
 
-interface IRxFormProps {
+export interface IRxFormProps {
   children: TChildrenRender<IRxFormInnerProps>;
   initialValues?: IFormValues | IFormValues[];
 }
@@ -61,7 +61,7 @@ export class RxForm extends React.Component<IRxFormProps> {
   setInitialValues = (initialValues: IRxFormProps["initialValues"]) => {
     forEach(initialValues, (value, name) => {
       if (isArray(value)) {
-        const values = convertArrayToObjWithKeyPaths(initialValues!);
+        const values = toObjWithKeyPath(initialValues!);
         keys(values).forEach((key) => {
           this.formState[key] = {
             ...this.formState[key],
