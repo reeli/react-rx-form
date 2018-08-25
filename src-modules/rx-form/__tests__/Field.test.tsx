@@ -1,10 +1,13 @@
 import { mount } from "enzyme";
 import * as React from "react";
 import { Field } from "../Field";
+import { pickInputPropsFromFieldProps } from "../utils";
 
 describe("<Field/>", () => {
   const wrapper = mount(
-    <Field name={"firstName"}>{({ dirty, ...fieldState }) => <input type="text" {...fieldState} />}</Field>,
+    <Field name={"firstName"}>
+      {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+    </Field>,
   );
 
   const instance = wrapper.children().instance() as any;

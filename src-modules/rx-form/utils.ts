@@ -1,5 +1,5 @@
 import { forEach, isArray, isNaN, isObject, mapValues, reduce, set } from "lodash";
-import { TFieldValue, TValidator } from "./Field";
+import { IFieldInnerProps, TFieldValue, TValidator } from "./Field";
 import { IFormState, IFormValues, IRxFormProps, TErrors } from "./RxForm";
 
 export const combineValidators = (validators: TValidator[]) => {
@@ -15,7 +15,7 @@ export const combineValidators = (validators: TValidator[]) => {
 };
 
 export const isContainError = (formState: IFormState) => {
-  return reduce(formState, (result, item) => result || !!item.error, false);
+  return reduce(formState, (result, item) => result || !!item.meta.error, false);
 };
 
 export const pickFormValues = (formState: IFormState): IFormValues => {
@@ -30,7 +30,10 @@ export const setErrors = (formState: IFormState, errors: TErrors) => {
   return mapValues(formState, (field) => {
     return {
       ...field,
-      error: errors[field.name],
+      meta: {
+        ...field.meta,
+        error: errors[field.name],
+      },
     };
   });
 };
@@ -54,4 +57,11 @@ export const toObjWithKeyPath = (input: IRxFormProps["initialValues"]) => {
   };
   toKeyPath(input);
   return res;
+};
+
+export const pickInputPropsFromFieldProps = ({ meta: { error }, ...others }: IFieldInnerProps) => {
+  return {
+    ...others,
+    error,
+  };
 };

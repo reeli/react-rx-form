@@ -21,14 +21,15 @@ export type TFieldValue = any;
 interface IFieldCommonProps {
   name: string;
   value?: TFieldValue;
-  error?: TError;
+  meta: {
+    dirty: boolean;
+    error?: TError;
+  };
 }
 
-export interface IFieldState extends IFieldCommonProps {
-  dirty: boolean;
-}
+export interface IFieldState extends IFieldCommonProps {}
 
-interface IFieldInnerProps extends IFieldState {
+export interface IFieldInnerProps extends IFieldState {
   onChange: (value: TFieldValue) => void;
 }
 
@@ -63,8 +64,10 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
       // in component level, default value should not be empty string, because sometime it should be boolean,
       // think about checkbox.
       value: this.props.defaultValue,
-      error: undefined,
-      dirty: false,
+      meta: {
+        error: undefined,
+        dirty: false,
+      },
     },
   };
 
@@ -94,7 +97,10 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
               type: FieldActionTypes.change,
               payload: {
                 ...fieldState,
-                error,
+                meta: {
+                  ...fieldState.meta,
+                  error,
+                },
               },
             });
           }
@@ -165,8 +171,10 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
       payload: {
         name: this.props.name,
         value,
-        error: this.props.validate ? this.validate(value) : undefined,
-        dirty: this.isDirty(value, this.props.defaultValue),
+        meta: {
+          error: this.props.validate ? this.validate(value) : undefined,
+          dirty: this.isDirty(value, this.props.defaultValue),
+        },
       },
     });
   };

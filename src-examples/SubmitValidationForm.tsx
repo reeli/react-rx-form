@@ -4,21 +4,9 @@ import * as React from "react";
 import { CustomInput } from "../src-components/CustomInput";
 import { Field } from "../src-modules/rx-form/Field";
 import { RxForm } from "../src-modules/rx-form/RxForm";
+import { pickInputPropsFromFieldProps } from "../src-modules/rx-form/utils";
 
 export class SubmitValidationForm extends React.Component {
-  button: any = null;
-
-  state = {
-    username: {
-      value: "",
-      error: [],
-    },
-    password: {
-      value: "",
-      error: [],
-    },
-  };
-
   onSubmit = (values: any, onSubmitError: any) => {
     console.log(values, "values on Submit");
     const errors = {} as any;
@@ -52,10 +40,14 @@ export class SubmitValidationForm extends React.Component {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <Field name="username" defaultValue="">
-              {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="Username" />}
+              {(fieldProps) => (
+                <CustomInput {...pickInputPropsFromFieldProps(fieldProps)} type="text" placeholder="Username" />
+              )}
             </Field>
             <Field name="password" defaultValue="">
-              {(fieldProps) => <CustomInput {...fieldProps} type="password" placeholder="Password" />}
+              {(fieldProps) => (
+                <CustomInput {...pickInputPropsFromFieldProps(fieldProps)} type="password" placeholder="Password" />
+              )}
             </Field>
             <Button type="submit">Submit</Button>
           </form>

@@ -15,13 +15,15 @@ describe("#combineValidators", () => {
 describe("#validateFormState", () => {
   const createFormState = ({ hasError }: { hasError: boolean }) => {
     return {
-      "members[0].firstName": { name: "members[0].firstName", value: "rui", dirty: true },
-      "members[0].lastName": { name: "members[0].lastName", value: "li", dirty: true },
+      "members[0].firstName": { name: "members[0].firstName", value: "rui", meta: { dirty: true } },
+      "members[0].lastName": { name: "members[0].lastName", value: "li", meta: { dirty: true } },
       "members[0].hobbies[0]": {
         name: "members[0].hobbies[0]",
         value: "",
-        error: hasError ? "no empty defaultValue" : undefined,
-        dirty: true,
+        meta: {
+          error: hasError ? "no empty defaultValue" : undefined,
+          dirty: true,
+        },
       },
     };
   };

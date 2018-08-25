@@ -6,6 +6,7 @@ import * as React from "react";
 import { CustomInput } from "../src-components/CustomInput";
 import { Field } from "../src-modules/rx-form/Field";
 import { RxForm } from "../src-modules/rx-form/RxForm";
+import { pickInputPropsFromFieldProps } from "../src-modules/rx-form/utils";
 import { maxLength5, required } from "../src-modules/utils/validations";
 
 export class FieldLevelValidationForm extends React.Component {
@@ -22,13 +23,25 @@ export class FieldLevelValidationForm extends React.Component {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <Field name="username" validate={[required(), maxLength5()]}>
-              {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="type username here..." />}
+              {(fieldProps) => (
+                <CustomInput
+                  {...pickInputPropsFromFieldProps(fieldProps)}
+                  type="text"
+                  placeholder="type username here..."
+                />
+              )}
             </Field>
             <Field name="password" validate={required()}>
-              {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="type password here..." />}
+              {(fieldProps) => (
+                <CustomInput
+                  {...pickInputPropsFromFieldProps(fieldProps)}
+                  type="text"
+                  placeholder="type password here..."
+                />
+              )}
             </Field>
             <Field name="feedbackDate" validate={required()} defaultValue="2017-05-24">
-              {({ name, value, error, onChange }) => (
+              {({ name, value, onChange, meta: { error } }) => (
                 <TextField
                   label="Feedback Date"
                   type="date"
@@ -43,8 +56,13 @@ export class FieldLevelValidationForm extends React.Component {
               )}
             </Field>
             <Field name="mode" defaultValue={10}>
-              {({ onChange, error, dirty, ...others }) => (
-                <Select {...others} onChange={(evt) => onChange(evt.target.value)} placeholder="Mode of Feedback">
+              {({ onChange, meta: { error }, ...others }) => (
+                <Select
+                  {...others}
+                  onChange={(evt) => onChange(evt.target.value)}
+                  placeholder="Mode of Feedback"
+                  error={!!error}
+                >
                   <MenuItem value={10}>Ten</MenuItem>
                   <MenuItem value={20}>Twenty</MenuItem>
                   <MenuItem value={30}>Thirty</MenuItem>

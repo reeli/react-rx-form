@@ -5,6 +5,7 @@ import { CustomInput } from "../src-components/CustomInput";
 import { Field } from "../src-modules/rx-form/Field";
 import { FieldArray } from "../src-modules/rx-form/FieldArray";
 import { RxForm } from "../src-modules/rx-form/RxForm";
+import { pickInputPropsFromFieldProps } from "../src-modules/rx-form/utils";
 import { required } from "../src-modules/utils/validations";
 
 export class FieldArrayForm extends React.Component {
@@ -32,7 +33,9 @@ export class FieldArrayForm extends React.Component {
             </li>
             {fields.map((hobby, idx) => (
               <Field name={hobby} validate={required()} key={idx}>
-                {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder={`hobby${idx}`} />}
+                {(fieldProps) => (
+                  <CustomInput {...pickInputPropsFromFieldProps(fieldProps)} type="text" placeholder={`hobby${idx}`} />
+                )}
               </Field>
             ))}
           </ul>
@@ -58,10 +61,22 @@ export class FieldArrayForm extends React.Component {
                     <li key={idx}>
                       <h3>{`member${idx + 1}`}</h3>
                       <Field name={`${member}.firstName`} validate={required()}>
-                        {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder={`First Name${idx}`} />}
+                        {(fieldProps) => (
+                          <CustomInput
+                            {...pickInputPropsFromFieldProps(fieldProps)}
+                            type="text"
+                            placeholder={`First Name${idx}`}
+                          />
+                        )}
                       </Field>
                       <Field name={`${member}.lastName`} validate={required()}>
-                        {(fieldProps) => <CustomInput {...fieldProps} type="password" placeholder="Last Name" />}
+                        {(fieldProps) => (
+                          <CustomInput
+                            {...pickInputPropsFromFieldProps(fieldProps)}
+                            type="password"
+                            placeholder="Last Name"
+                          />
+                        )}
                       </Field>
                       <button type="button" onClick={() => remove(idx)}>
                         Remove members
