@@ -1,4 +1,4 @@
-import { Dictionary, forEach, isArray, keys, map, mapValues, set } from "lodash";
+import { Dictionary, forEach, isArray, keys, mapValues, set } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -6,17 +6,18 @@ import { Observer } from "rxjs/internal/types";
 import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
 import { TChildrenRender } from "./types";
-import { convertArrayToObjWithKeyPaths, isFormContainsError } from "./utils";
+import { convertArrayToObjWithKeyPaths, isContainError } from "./utils";
 
 export interface IFormState {
-  [fieldName: string]: IFieldState | Array<{ [fieldName: string]: IFieldState }>;
+  [fieldName: string]: IFieldState;
 }
 
 export interface IFormValues {
   [fieldName: string]: TFieldValue;
 }
 
-type TOnSubmit = (values: IFormValues, onSubmitError: any) => any;
+type TErrors = Dictionary<string | undefined>;
+type TOnSubmit = (values: IFormValues, onSubmitError: (errors: TErrors) => any) => any;
 
 interface IRxFormInnerProps {
   handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any;
@@ -49,12 +50,13 @@ export class RxForm extends React.Component<IRxFormProps> {
     if (this.props.initialValues) {
       forEach(this.props.initialValues, (value, name) => {
         if (isArray(value)) {
-          const obj = convertArrayToObjWithKeyPaths(this.props.initialValues!);
-          keys(obj).forEach((key) => {
-            this.formState = set(this.formState, key, {
-              value: obj[key],
+          const initialValues = convertArrayToObjWithKeyPaths(this.props.initialValues!);
+          keys(initialValues).forEach((key) => {
+            this.formState[key] = {
+              ...this.formState[key],
+              value: initialValues[key],
               name: key,
-            });
+            };
           });
         } else {
           this.formState[name] = {
@@ -73,20 +75,6 @@ export class RxForm extends React.Component<IRxFormProps> {
     });
   }
 
-  setInitialValues = (initialValues: IFormValues) => {
-    forEach(initialValues, (value, name) => {
-      if (isArray(value)) {
-        this.setInitialValues(value);
-      } else {
-        this.formState[name] = {
-          ...this.formState[name],
-          value,
-          name,
-        };
-      }
-    });
-  };
-
   componentWillUnmount() {
     if (this.formStateSubscription) {
       this.formStateSubscription.unsubscribe();
@@ -95,13 +83,17 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   updateField = (action: IFieldAction) => {
-    this.formState = set(this.formState, action.payload.name, action.payload);
+    this.formState[action.payload.name] = action.payload;
     this.formStateSubject$.next(this.formState);
   };
 
-  onSubmitError = (error: Dictionary<string>) => {
-    const key = `${keys(error)[0]}.error`;
-    this.formState = set(this.formState, key, error[keys(error)[0]]);
+  onSubmitError = (errors: TErrors) => {
+    this.formState = mapValues(this.formState, (field) => {
+      return {
+        ...field,
+        error: errors[field.name],
+      };
+    });
     this.formStateSubject$.next(this.formState);
   };
 
@@ -139,15 +131,12 @@ export class RxForm extends React.Component<IRxFormProps> {
     return this.formActionSubject$.subscribe(observer);
   };
 
-  getFormValues = (input: IFormState): IFormValues => {
-    return mapValues(input, (field) => {
-      if (isArray(field)) {
-        return map(field, (item: IFormState) => {
-          return this.getFormValues(item);
-        });
-      }
-      return field.value;
+  pickFormValues = (formState: IFormState): IFormValues => {
+    const formValues = {};
+    forEach(formState, (field, key) => {
+      set(formValues, key, field.value);
     });
+    return formValues;
   };
 
   handleSubmit = (onSubmit: TOnSubmit) => {
@@ -161,11 +150,11 @@ export class RxForm extends React.Component<IRxFormProps> {
         },
       });
 
-      if (isFormContainsError(this.formState)) {
+      if (isContainError(this.formState)) {
         return;
       }
 
-      const values = this.getFormValues(this.formState);
+      const values = this.pickFormValues(this.formState);
       if (values) {
         onSubmit(values, this.onSubmitError);
       }

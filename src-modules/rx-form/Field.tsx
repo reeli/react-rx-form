@@ -1,4 +1,4 @@
-import { get, isArray, isEqual } from "lodash";
+import { isArray, isEqual } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -83,7 +83,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
           return formAction.type === FormActionTypes.startSubmit;
         }),
         map((formAction: IFormAction) => {
-          return get(formAction.payload.formState, this.props.name);
+          return formAction.payload.formState[this.props.name];
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
@@ -129,9 +129,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     formStateObserver$
       .pipe(
         map((formState: IFormState) => {
-          console.log(formState, "formState");
-          console.log(get(formState, this.props.name), "formState");
-          return get(formState, this.props.name);
+          return formState[this.props.name];
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
