@@ -64,7 +64,7 @@ export class FieldArrayForm extends React.Component {
                         {(fieldProps) => <CustomInput {...fieldProps} type="password" placeholder="Last Name" />}
                       </Field>
                       <button type="button" onClick={() => remove(idx)}>
-                        Remove Hobby
+                        Remove members
                       </button>
                       {this.renderHobbies(member)}
                     </li>
