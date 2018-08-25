@@ -10,6 +10,9 @@ import { required } from "../src-modules/utils/validations";
 
 export class FieldArrayForm extends React.Component {
   onSubmit = (values: any, onSubmitError: any) => {
+    if (isEmpty(values)) {
+      return;
+    }
     const errors = {} as any;
     if (values.members[0].firstName.length >= 5) {
       errors[`members[0].firstName`] = "Username must less that 5 digits!";

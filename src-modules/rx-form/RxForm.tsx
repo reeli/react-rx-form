@@ -1,4 +1,4 @@
-import { Dictionary, forEach, isArray, keys } from "lodash";
+import { Dictionary, keys } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -59,21 +59,13 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   setInitialValues = (initialValues: IRxFormProps["initialValues"]) => {
-    forEach(initialValues, (value, name) => {
-      if (isArray(value)) {
-        const values = toObjWithKeyPath(initialValues!);
-        keys(values).forEach((key) => {
-          this.formState[key] = {
-            ...this.formState[key],
-            value: values[key],
-            name: key,
-          };
-        });
-      } else {
-        this.formState[name] = {
-          ...this.formState[name],
-          value,
-          name,
+    const values = toObjWithKeyPath(initialValues!);
+    keys(values).forEach((key) => {
+      if (this.formState[key]) {
+        this.formState[key] = {
+          ...this.formState[key],
+          value: values[key],
+          name: key,
         };
       }
     });

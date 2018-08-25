@@ -15,7 +15,7 @@ export const combineValidators = (validators: TValidator[]) => {
 };
 
 export const isContainError = (formState: IFormState) => {
-  return reduce(formState, (result, item) => result || !!item.meta.error, false);
+  return reduce(formState, (result, item) => result || (item.meta && !!item.meta.error), false);
 };
 
 export const pickFormValues = (formState: IFormState): IFormValues => {
