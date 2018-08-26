@@ -47,7 +47,7 @@ export const toObjWithKeyPath = (input: IRxFormProps["initialValues"]) => {
   const toKeyPath = (obj: any, prefix: string = "") => {
     Object.keys(obj).map((key) => {
       const value = obj[key];
-      if (typeof value !== "string") {
+      if (isArray(value) || isObject(value)) {
         const suffix = !isArray(value) && isObject(value) ? "." : "";
         toKeyPath(value, prefix + formatKeyPath(key) + suffix);
       } else {

@@ -12,7 +12,7 @@ describe("#combineValidators", () => {
   });
 });
 
-describe("#validateFormState", () => {
+describe("#isContainError", () => {
   const createFormState = ({ hasError }: { hasError: boolean }) => {
     return {
       "members[0].firstName": { name: "members[0].firstName", value: "rui", meta: { dirty: true } },
@@ -40,7 +40,23 @@ describe("#validateFormState", () => {
 });
 
 describe("#toObjWithKeyPath", () => {
-  it("should covert to object with correct key path", () => {
+  it("should covert to simple object with correct key path", () => {
+    const mockData = {
+      firstName: "rui",
+      lastName: "li",
+      age: 10,
+      isSelected: true,
+    };
+
+    expect(toObjWithKeyPath(mockData)).toEqual({
+      firstName: "rui",
+      lastName: "li",
+      age: 10,
+      isSelected: true,
+    });
+  });
+
+  it("should covert to complicated object with correct key path", () => {
     const mockData = {
       firstName: "rui",
       lastName: "li",
