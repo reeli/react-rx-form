@@ -3,9 +3,11 @@ import {
   combineValidators,
   getFormValues,
   isContainError,
+  isDirty,
   pickInputPropsFromFieldProps,
   setErrors,
   toObjWithKeyPath,
+  validateField,
 } from "../utils";
 
 describe("#combineValidators", () => {
@@ -15,6 +17,10 @@ describe("#combineValidators", () => {
   });
   it("should get undefined when combineValidators validators without error", () => {
     const validators = [required(), maxLength5()];
+    expect(combineValidators(validators)("test")).toEqual(undefined);
+  });
+  it("should ignore invalid validators", () => {
+    const validators = ["invalid validators1", "invalidateValidators2", required()] as any;
     expect(combineValidators(validators)("test")).toEqual(undefined);
   });
 });
@@ -126,6 +132,32 @@ describe("#pickInputPropsFromFieldProps", () => {
       error: "no empty error",
       onChange: mockOnChange,
     });
+  });
+});
+
+describe("#isDirty", () => {
+  it("should return false if current value is equal original value", () => {
+    expect(isDirty("test", "test")).toBe(false);
+  });
+
+  it("should return true if current value is not equal original value", () => {
+    expect(isDirty("test", "test123")).toBe(true);
+  });
+});
+
+describe("#validateField", () => {
+  it("should return undefined when validate is not exist", () => {
+    expect(validateField("test data", [])).toEqual(undefined);
+  });
+  it("should return undefined when validate is neither a function nor an array ", () => {
+    expect(validateField("test data", [])).toEqual(undefined);
+  });
+  it("should handle the function validate", () => {
+    expect(validateField("", required())).toEqual("no empty defaultValue");
+  });
+  it("should handle validate array", () => {
+    const validators = [required(), maxLength5()];
+    expect(validateField("test data", validators)).toEqual("defaultValue length must less than 5");
   });
 });
 

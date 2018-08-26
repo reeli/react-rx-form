@@ -1,13 +1,13 @@
-import { forEach, isArray, isEmpty, isNaN, isObject, mapValues, reduce, set } from "lodash";
-import { IFieldInnerProps, TFieldValue, TValidator } from "./Field";
+import { forEach, isArray, isEmpty, isEqual, isNaN, isObject, isUndefined, mapValues, reduce, set } from "lodash";
+import { IFieldInnerProps, IFieldProps, TFieldValue, TValidator } from "./Field";
 import { IFormState, IFormValues, IRxFormProps, TErrors } from "./RxForm";
 
 export const combineValidators = (validators: TValidator[]) => {
-  return (value: TFieldValue) => {
+  return (value: TFieldValue): string | undefined => {
     return reduce(
       validators,
       (error: string | undefined, validator) => {
-        return !error ? validator(value) : error;
+        return error || validateField(value, validator);
       },
       undefined,
     );
@@ -67,4 +67,24 @@ export const pickInputPropsFromFieldProps = ({ meta: { error }, ...others }: IFi
     ...others,
     error,
   };
+};
+
+export const isDirty = (value: TFieldValue, defaultValue: string) => {
+  return !isEqual(value, defaultValue);
+};
+
+export const validateField = (value: string | boolean, validate?: IFieldProps["validate"]) => {
+  if (isUndefined(validate)) {
+    return;
+  }
+
+  if (isArray(validate)) {
+    return combineValidators(validate)(value);
+  }
+
+  if (typeof validate === "function") {
+    return validate(value);
+  }
+
+  return;
 };

@@ -1,4 +1,3 @@
-import { isArray, isEqual } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -6,7 +5,7 @@ import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
 import { FormContext, IFormContextValue } from "./FormContext";
 import { FormActionTypes, IFormAction, IFormState } from "./RxForm";
 import { TChildrenRender } from "./types";
-import { combineValidators } from "./utils";
+import { isDirty, validateField } from "./utils";
 
 export enum FieldActionTypes {
   register = "@@rx-form/REGISTER_FIELD",
@@ -90,7 +89,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
-          const error = this.validate(fieldState.value);
+          const error = validateField(fieldState.value, this.props.validate);
 
           if (error) {
             this.props.formContextValue.dispatch({
@@ -149,22 +148,6 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     this.formStateSubscription = this.props.formContextValue.subscribe(formStateObserver$);
   };
 
-  validate = (value: string | boolean) => {
-    const { validate } = this.props;
-    if (typeof validate === "function") {
-      return validate(value);
-    }
-
-    if (isArray(validate)) {
-      return combineValidators(validate)(value);
-    }
-    return;
-  };
-
-  isDirty = (value: TFieldValue, defaultValue: string) => {
-    return !isEqual(value, defaultValue);
-  };
-
   onChange = (value: TFieldValue) => {
     this.props.formContextValue.dispatch({
       type: FieldActionTypes.change,
@@ -172,8 +155,8 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         name: this.props.name,
         value,
         meta: {
-          error: this.props.validate ? this.validate(value) : undefined,
-          dirty: this.isDirty(value, this.props.defaultValue),
+          error: validateField(value, this.props.validate),
+          dirty: isDirty(value, this.props.defaultValue),
         },
       },
     });
