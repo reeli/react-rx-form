@@ -1,6 +1,6 @@
 import { forEach, isArray, isEmpty, isEqual, isNaN, isObject, isUndefined, mapValues, reduce, set } from "lodash";
-import { IFieldInnerProps, IFieldProps, TFieldValue, TValidator } from "./Field";
-import { IFormState, IFormValues, IRxFormProps, TErrors } from "./RxForm";
+import { IFieldAction, IFieldInnerProps, IFieldProps, TFieldValue, TValidator } from "./Field";
+import { IFormAction, IFormState, IFormValues, IRxFormProps, TErrors } from "./RxForm";
 
 export const combineValidators = (validators: TValidator[]) => {
   return (value: TFieldValue): string | undefined => {
@@ -87,4 +87,22 @@ export const validateField = (value: string | boolean, validate?: IFieldProps["v
   }
 
   return;
+};
+
+export const log = ({
+  action,
+  prevState,
+  nextState,
+}: {
+  action: IFieldAction | IFormAction;
+  prevState: IFormState;
+  nextState: IFormState;
+}) => {
+  if (process.env.NODE_ENV === "development") {
+    console.groupCollapsed(`${action.type} ${new Date()}`);
+    console.log("prevState", prevState);
+    console.log("action", action);
+    console.log("nextState", nextState);
+    console.groupEnd();
+  }
 };

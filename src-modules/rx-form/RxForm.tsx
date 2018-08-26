@@ -1,4 +1,4 @@
-import { Dictionary, keys } from "lodash";
+import { cloneDeep, Dictionary, keys } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -6,7 +6,7 @@ import { Observer } from "rxjs/internal/types";
 import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
 import { TChildrenRender } from "./types";
-import { isContainError, setErrors, toFormValues, toObjWithKeyPath } from "./utils";
+import { isContainError, log, setErrors, toFormValues, toObjWithKeyPath } from "./utils";
 
 export interface IFormState {
   [fieldName: string]: IFieldState;
@@ -38,6 +38,7 @@ export interface IFormAction {
 export enum FormActionTypes {
   initialize = "@@rx-form/INITIALIZE",
   startSubmit = "@@rx-form/START_SUBMIT",
+  startSubmitFailed = "@@rx-form/START_SUBMIT_FAILED",
 }
 
 export class RxForm extends React.Component<IRxFormProps> {
@@ -49,6 +50,7 @@ export class RxForm extends React.Component<IRxFormProps> {
   componentDidMount() {
     if (this.props.initialValues) {
       this.setInitialValues(this.props.initialValues);
+      this.formStateSubject$.next(this.formState);
     }
     this.dispatch({
       type: FormActionTypes.initialize,
@@ -86,32 +88,50 @@ export class RxForm extends React.Component<IRxFormProps> {
   onSubmitError = (errors: TErrors) => {
     this.formState = setErrors(this.formState, errors);
     this.formStateSubject$.next(this.formState);
+    this.dispatch({
+      type: FormActionTypes.startSubmitFailed,
+      payload: {
+        formState: this.formState,
+      },
+    });
   };
 
-  initializeForm = (action: IFormAction) => {
-    this.formStateSubject$.next(action.payload.formState);
-    this.formActionSubject$.next(action);
-  };
-
-  startSubmitForm = (action: IFormAction) => {
+  notifyFormActionChange = (action: IFormAction) => {
     this.formActionSubject$.next(action);
   };
 
   dispatch = (action: IFieldAction | IFormAction) => {
+    const prevState = cloneDeep(this.formState);
+
     switch (action.type) {
       case FieldActionTypes.register: {
-        return this.updateField(action as IFieldAction);
+        this.updateField(action as IFieldAction);
+        break;
       }
       case FieldActionTypes.change: {
-        return this.updateField(action as IFieldAction);
+        this.updateField(action as IFieldAction);
+        break;
       }
       case FormActionTypes.initialize: {
-        return this.initializeForm(action as IFormAction);
+        this.notifyFormActionChange(action as IFormAction);
+        break;
       }
       case FormActionTypes.startSubmit: {
-        return this.startSubmitForm(action as IFormAction);
+        this.notifyFormActionChange(action as IFormAction);
+        break;
+      }
+      case FormActionTypes.startSubmitFailed: {
+        this.notifyFormActionChange(action as IFormAction);
+        break;
       }
     }
+
+    const nextState = cloneDeep(this.formState);
+    log({
+      action,
+      prevState,
+      nextState,
+    });
   };
 
   subscribe = (observer: Observer<any>) => {
