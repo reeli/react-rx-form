@@ -45,6 +45,25 @@
     ],
     "setupFiles": [
       "./test/helpers/setup.ts"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/rx-form/**"
+    ],
+    "coverageReporters": [
+      "html"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
+      }
+    },
+    "coveragePathIgnorePatterns": [
+      ".*\\.d\\.ts",
+      "<rootDir>/node_modules/"
     ]
   },
   "dependencies": {
