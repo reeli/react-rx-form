@@ -6,7 +6,7 @@ import { Observer } from "rxjs/internal/types";
 import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
 import { TChildrenRender } from "./types";
-import { isContainError, pickFormValues, setErrors, toObjWithKeyPath } from "./utils";
+import { getFormValues, isContainError, setErrors, toObjWithKeyPath } from "./utils";
 
 export interface IFormState {
   [fieldName: string]: IFieldState;
@@ -138,7 +138,7 @@ export class RxForm extends React.Component<IRxFormProps> {
         return;
       }
 
-      const values = pickFormValues(this.formState);
+      const values = getFormValues(this.formState);
       if (values) {
         onSubmit(values, this.onSubmitError);
       }

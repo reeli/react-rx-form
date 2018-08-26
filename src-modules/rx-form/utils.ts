@@ -18,7 +18,7 @@ export const isContainError = (formState: IFormState) => {
   return reduce(formState, (result, item) => result || (item.meta && !!item.meta.error), false);
 };
 
-export const pickFormValues = (formState: IFormState): IFormValues => {
+export const getFormValues = (formState: IFormState): IFormValues => {
   const formValues = {};
   forEach(formState, (field, key) => {
     set(formValues, key, field.value);

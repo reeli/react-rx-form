@@ -1,5 +1,5 @@
 import { maxLength5, required } from "../../utils/validations";
-import { combineValidators, isContainError, toObjWithKeyPath } from "../utils";
+import { combineValidators, getFormValues, isContainError, toObjWithKeyPath } from "../utils";
 
 describe("#combineValidators", () => {
   it("should get error message when combineValidators validators with error", () => {
@@ -13,21 +13,6 @@ describe("#combineValidators", () => {
 });
 
 describe("#isContainError", () => {
-  const createFormState = ({ hasError }: { hasError: boolean }) => {
-    return {
-      "members[0].firstName": { name: "members[0].firstName", value: "rui", meta: { dirty: true } },
-      "members[0].lastName": { name: "members[0].lastName", value: "li", meta: { dirty: true } },
-      "members[0].hobbies[0]": {
-        name: "members[0].hobbies[0]",
-        value: "",
-        meta: {
-          error: hasError ? "no empty defaultValue" : undefined,
-          dirty: true,
-        },
-      },
-    };
-  };
-
   it("should return true if field state has error", () => {
     const formState = createFormState({ hasError: true });
     expect(isContainError(formState)).toEqual(true);
@@ -36,6 +21,15 @@ describe("#isContainError", () => {
   it("should return false if field state has no error", () => {
     const formState = createFormState({ hasError: false });
     expect(isContainError(formState)).toEqual(false);
+  });
+});
+
+describe("#getFormValues", () => {
+  it("should pick form values from form state", () => {
+    const formState = createFormState({ hasError: false });
+    expect(getFormValues(formState)).toEqual({
+      members: [{ firstName: "rui", lastName: "li", hobbies: ["swimming"] }],
+    });
   });
 });
 
@@ -78,3 +72,18 @@ describe("#toObjWithKeyPath", () => {
     });
   });
 });
+
+const createFormState = ({ hasError }: { hasError: boolean }) => {
+  return {
+    "members[0].firstName": { name: "members[0].firstName", value: "rui", meta: { dirty: true } },
+    "members[0].lastName": { name: "members[0].lastName", value: "li", meta: { dirty: true } },
+    "members[0].hobbies[0]": {
+      name: "members[0].hobbies[0]",
+      value: "swimming",
+      meta: {
+        error: hasError ? "no empty defaultValue" : undefined,
+        dirty: true,
+      },
+    },
+  };
+};
