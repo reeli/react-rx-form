@@ -1,5 +1,12 @@
 import { maxLength5, required } from "../../utils/validations";
-import { combineValidators, getFormValues, isContainError, toObjWithKeyPath } from "../utils";
+import {
+  combineValidators,
+  getFormValues,
+  isContainError,
+  pickInputPropsFromFieldProps,
+  setErrors,
+  toObjWithKeyPath,
+} from "../utils";
 
 describe("#combineValidators", () => {
   it("should get error message when combineValidators validators with error", () => {
@@ -30,6 +37,37 @@ describe("#getFormValues", () => {
     expect(getFormValues(formState)).toEqual({
       members: [{ firstName: "rui", lastName: "li", hobbies: ["swimming"] }],
     });
+  });
+});
+
+describe("#setErrors", () => {
+  it("should set errors to formState if errors exist", () => {
+    const formState = createFormState({ hasError: false });
+    const errors = {
+      "members[0].firstName": "field can not be empty",
+    };
+    const expectedResult = {
+      "members[0].firstName": {
+        name: "members[0].firstName",
+        value: "rui",
+        meta: { dirty: true, error: "field can not be empty" },
+      },
+      "members[0].lastName": { name: "members[0].lastName", value: "li", meta: { dirty: true } },
+      "members[0].hobbies[0]": {
+        name: "members[0].hobbies[0]",
+        value: "swimming",
+        meta: {
+          error: undefined,
+          dirty: true,
+        },
+      },
+    };
+    expect(setErrors(formState, errors)).toEqual(expectedResult);
+  });
+  it("should do nothing if errors not exist", () => {
+    const formState = createFormState({ hasError: false });
+    const errors = {};
+    expect(setErrors(formState, errors)).toEqual(formState);
   });
 });
 
@@ -69,6 +107,24 @@ describe("#toObjWithKeyPath", () => {
       [`members[0].hobbies[1]`]: "swimming",
       [`members[1].firstName`]: "rui1",
       [`members[1].lastName`]: "li1",
+    });
+  });
+});
+
+describe("#pickInputPropsFromFieldProps", () => {
+  it("should pick correct input props from field props", () => {
+    const mockOnChange = () => {};
+    const fieldProps = {
+      name: "members[0].firstName",
+      value: "rui",
+      meta: { dirty: true, error: "no empty error" },
+      onChange: mockOnChange,
+    };
+    expect(pickInputPropsFromFieldProps(fieldProps)).toEqual({
+      name: "members[0].firstName",
+      value: "rui",
+      error: "no empty error",
+      onChange: mockOnChange,
     });
   });
 });

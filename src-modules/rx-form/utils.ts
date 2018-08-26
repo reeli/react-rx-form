@@ -1,4 +1,4 @@
-import { forEach, isArray, isNaN, isObject, mapValues, reduce, set } from "lodash";
+import { forEach, isArray, isEmpty, isNaN, isObject, mapValues, reduce, set } from "lodash";
 import { IFieldInnerProps, TFieldValue, TValidator } from "./Field";
 import { IFormState, IFormValues, IRxFormProps, TErrors } from "./RxForm";
 
@@ -27,6 +27,9 @@ export const getFormValues = (formState: IFormState): IFormValues => {
 };
 
 export const setErrors = (formState: IFormState, errors: TErrors) => {
+  if (isEmpty(errors)) {
+    return formState;
+  }
   return mapValues(formState, (field) => {
     return {
       ...field,
