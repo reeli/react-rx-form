@@ -1,11 +1,11 @@
 import { maxLength5, required } from "../../utils/validations";
 import {
   combineValidators,
-  getFormValues,
   isContainError,
   isDirty,
   pickInputPropsFromFieldProps,
   setErrors,
+  toFormValues,
   toObjWithKeyPath,
   validateField,
 } from "../utils";
@@ -37,10 +37,10 @@ describe("#isContainError", () => {
   });
 });
 
-describe("#getFormValues", () => {
+describe("#toFormValues", () => {
   it("should pick form values from form state", () => {
     const formState = createFormState({ hasError: false });
-    expect(getFormValues(formState)).toEqual({
+    expect(toFormValues(formState)).toEqual({
       members: [{ firstName: "rui", lastName: "li", hobbies: ["swimming"] }],
     });
   });
