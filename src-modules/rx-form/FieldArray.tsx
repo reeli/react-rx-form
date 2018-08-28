@@ -1,4 +1,4 @@
-import { filter, map } from "lodash";
+import { filter, map, times } from "lodash";
 import * as React from "react";
 import { TChildrenRender } from "./types";
 
@@ -10,6 +10,7 @@ interface IFieldArrayInnerProps extends IFieldArrayState {
 interface IFieldArrayProps {
   name: string;
   children: TChildrenRender<IFieldArrayInnerProps>;
+  initLength?: number;
 }
 
 interface IFieldArrayState {
@@ -20,6 +21,12 @@ export class FieldArray extends React.Component<IFieldArrayProps, IFieldArraySta
   state = {
     fields: [],
   };
+
+  componentDidMount() {
+    if (this.props.initLength) {
+      times(this.props.initLength, this.add);
+    }
+  }
 
   remove = (idx: number) => {
     const nextFields = filter(this.state.fields, (_, n) => {
