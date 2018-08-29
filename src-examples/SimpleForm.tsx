@@ -8,13 +8,23 @@ import { FormValues } from "../src-modules/rx-form/FormValues";
 import { RxForm } from "../src-modules/rx-form/RxForm";
 
 export class SimpleForm extends React.Component {
+  form: any;
   onSubmit = (values: any) => {
     alert(JSON.stringify(values, null, 2));
   };
 
+  componentDidMount() {
+    console.log(this.form.getFormValues(), "this.form.formState");
+  }
+
   render() {
     return (
-      <RxForm initialValues={{ firstName: "rui", lastName: "li" }}>
+      <RxForm
+        initialValues={{ firstName: "rui", lastName: "li" }}
+        ref={(ref: any) => {
+          this.form = ref;
+        }}
+      >
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <div>

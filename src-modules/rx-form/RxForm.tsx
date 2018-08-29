@@ -100,6 +100,10 @@ export class RxForm extends React.Component<IRxFormProps> {
     this.formActionSubject$.next(action);
   };
 
+  getFormValues = () => {
+    return toFormValues(this.formState);
+  };
+
   dispatch = (action: IFieldAction | IFormAction) => {
     const prevState = cloneDeep(this.formState);
 
@@ -157,7 +161,7 @@ export class RxForm extends React.Component<IRxFormProps> {
         return;
       }
 
-      const values = toFormValues(this.formState);
+      const values = this.getFormValues();
       if (values) {
         onSubmit(values, this.onSubmitError);
       }
