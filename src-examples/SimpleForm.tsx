@@ -1,5 +1,6 @@
 import Button from "@material-ui/core/Button/Button";
 import FormControl from "@material-ui/core/FormControl/FormControl";
+import { get } from "lodash";
 import * as React from "react";
 import { CustomCheckbox } from "../src-components/CustomCheckbox";
 import { CustomInput } from "../src-components/CustomInput";
@@ -9,12 +10,15 @@ import { RxForm } from "../src-modules/rx-form/RxForm";
 
 export class SimpleForm extends React.Component {
   form: any;
+  formValues: any;
+  ref: any = React.createRef();
   onSubmit = (values: any) => {
     alert(JSON.stringify(values, null, 2));
   };
 
   componentDidMount() {
     console.log(this.form.getFormValues(), "this.form.formState");
+    console.log(this.ref.current.getFormValues(), "this.formValues");
   }
 
   render() {
@@ -37,10 +41,11 @@ export class SimpleForm extends React.Component {
               <Field name="email">
                 {(fieldProps) => <CustomInput {...fieldProps} type="email" placeholder="Email" />}
               </Field>
-              <FormValues>
-                {({ formValues }) => (
+              <FormValues ref={this.ref}>
+                {({ formValues }: any) => (
                   <>
                     <div>{JSON.stringify(formValues)}</div>
+                    <div>{JSON.stringify(get(this.ref, "current"))}</div>
                     <Field name="checkbox" defaultValue={false}>
                       {(fieldProps) => <CustomCheckbox {...fieldProps} placeholder="Checkbox" />}
                     </Field>

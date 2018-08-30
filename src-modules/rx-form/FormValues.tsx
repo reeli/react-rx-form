@@ -14,12 +14,15 @@ interface IFormValuesCoreState {
   formValues: IFormValues;
 }
 
-interface IFormValuesProps {
+interface IFormValuesCoreWrapperProps {
   children: TChildrenRender<IFormValuesInnerProps>;
+  forwardedRef?: React.Ref<any>;
 }
 
-interface IFormValuesCoreProps extends IFormValuesProps {
+interface IFormValuesCoreProps {
   formContextValue: IFormContextValue;
+  children: TChildrenRender<IFormValuesInnerProps>;
+  ref?: React.Ref<any>;
 }
 
 class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCoreState> {
@@ -45,6 +48,10 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
     this.props.formContextValue.subscribe(formStateObserver$);
   }
 
+  getFormValues = () => {
+    return toFormValues(this.state.formValues);
+  };
+
   render() {
     return this.props.children({
       formValues: this.state.formValues,
@@ -52,14 +59,21 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
   }
 }
 
-export class FormValues extends React.Component<IFormValuesProps> {
-  render() {
-    return (
-      <FormContext.Consumer>
-        {(formContextValue) => {
-          return <FormValuesCore formContextValue={formContextValue} {...this.props} />;
-        }}
-      </FormContext.Consumer>
-    );
+const FormValuesCoreWrapper = ({ forwardedRef, ...others }: IFormValuesCoreWrapperProps) => {
+  return (
+    <FormContext.Consumer>
+      {(formContextValue) => {
+        return <FormValuesCore formContextValue={formContextValue} {...others} ref={forwardedRef} />;
+      }}
+    </FormContext.Consumer>
+  );
+};
+
+export const FormValues = React.forwardRef<
+  React.Ref<any>,
+  {
+    children: TChildrenRender<IFormValuesInnerProps>;
   }
-}
+>((props, ref) => {
+  return <FormValuesCoreWrapper {...props} forwardedRef={ref} />;
+});
