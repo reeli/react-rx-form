@@ -22,7 +22,7 @@ describe("<RxForm/>", () => {
     );
 
     const instance = wrapper.instance() as any;
-    instance.setInitialValues({ firstName: "rui" });
+    instance.setFormValues({ firstName: "rui" });
     expect(instance.formState).toEqual({
       firstName: {
         name: "firstName",

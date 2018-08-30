@@ -49,8 +49,7 @@ export class RxForm extends React.Component<IRxFormProps> {
 
   componentDidMount() {
     if (this.props.initialValues) {
-      this.setInitialValues(this.props.initialValues);
-      this.formStateSubject$.next(this.formState);
+      this.setFormValues(this.props.initialValues);
     }
     this.dispatch({
       type: FormActionTypes.initialize,
@@ -60,8 +59,8 @@ export class RxForm extends React.Component<IRxFormProps> {
     });
   }
 
-  setInitialValues = (initialValues: IRxFormProps["initialValues"]) => {
-    const values = toObjWithKeyPath(initialValues!);
+  setFormValues = (formValues: IFormValues) => {
+    const values = toObjWithKeyPath(formValues!);
     keys(values).forEach((key) => {
       if (this.formState[key]) {
         this.formState[key] = {
@@ -71,6 +70,7 @@ export class RxForm extends React.Component<IRxFormProps> {
         };
       }
     });
+    this.formStateSubject$.next(this.formState);
   };
 
   componentWillUnmount() {
@@ -168,6 +168,10 @@ export class RxForm extends React.Component<IRxFormProps> {
     };
   };
 
+  updateFormValues = (formValues: IFormValues) => {
+    this.setFormValues(formValues);
+  };
+
   render() {
     return (
       <FormContext.Provider
@@ -175,6 +179,7 @@ export class RxForm extends React.Component<IRxFormProps> {
           subscribe: this.subscribe,
           dispatch: this.dispatch,
           subscribeFormAction: this.subscribeFormAction,
+          updateFormValues: this.updateFormValues,
         }}
       >
         {this.props.children({

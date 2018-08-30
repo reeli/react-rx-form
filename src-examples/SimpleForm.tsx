@@ -1,6 +1,5 @@
 import Button from "@material-ui/core/Button/Button";
 import FormControl from "@material-ui/core/FormControl/FormControl";
-import { get } from "lodash";
 import * as React from "react";
 import { CustomCheckbox } from "../src-components/CustomCheckbox";
 import { CustomInput } from "../src-components/CustomInput";
@@ -42,10 +41,18 @@ export class SimpleForm extends React.Component {
                 {(fieldProps) => <CustomInput {...fieldProps} type="email" placeholder="Email" />}
               </Field>
               <FormValues ref={this.ref}>
-                {({ formValues }: any) => (
+                {({ formValues, updateFormValues }) => (
                   <>
                     <div>{JSON.stringify(formValues)}</div>
-                    <div>{JSON.stringify(get(this.ref, "current"))}</div>
+                    <div
+                      onClick={() => {
+                        updateFormValues({
+                          checkbox: true,
+                        });
+                      }}
+                    >
+                      remove
+                    </div>
                     <Field name="checkbox" defaultValue={false}>
                       {(fieldProps) => <CustomCheckbox {...fieldProps} placeholder="Checkbox" />}
                     </Field>

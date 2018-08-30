@@ -8,20 +8,23 @@ import { toFormValues } from "./utils";
 
 interface IFormValuesInnerProps {
   formValues: IFormValues;
+  updateFormValues: IFormContextValue["updateFormValues"];
 }
 
 interface IFormValuesCoreState {
   formValues: IFormValues;
 }
 
-interface IFormValuesCoreWrapperProps {
+interface IFormValuesCommonProps {
   children: TChildrenRender<IFormValuesInnerProps>;
+}
+
+interface IFormValuesCoreWrapperProps extends IFormValuesCommonProps {
   forwardedRef?: React.Ref<any>;
 }
 
-interface IFormValuesCoreProps {
+interface IFormValuesCoreProps extends IFormValuesCommonProps {
   formContextValue: IFormContextValue;
-  children: TChildrenRender<IFormValuesInnerProps>;
   ref?: React.Ref<any>;
 }
 
@@ -55,6 +58,7 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
   render() {
     return this.props.children({
       formValues: this.state.formValues,
+      updateFormValues: this.props.formContextValue.updateFormValues,
     });
   }
 }
@@ -69,11 +73,6 @@ const FormValuesCoreWrapper = ({ forwardedRef, ...others }: IFormValuesCoreWrapp
   );
 };
 
-export const FormValues = React.forwardRef<
-  React.Ref<any>,
-  {
-    children: TChildrenRender<IFormValuesInnerProps>;
-  }
->((props, ref) => {
+export const FormValues = React.forwardRef<React.Ref<any>, IFormValuesCommonProps>((props, ref) => {
   return <FormValuesCoreWrapper {...props} forwardedRef={ref} />;
 });
