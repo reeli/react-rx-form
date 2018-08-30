@@ -77,7 +77,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   }
 
   onStartSubmitForm = () => {
-    const formActionObserver$ = new Subject();
+    const formActionObserver$ = new Subject<IFormAction>();
 
     formActionObserver$
       .pipe(
@@ -130,7 +130,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   };
 
   onFormStateChange = () => {
-    const formStateObserver$ = new Subject();
+    const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
         map((formState: IFormState) => {

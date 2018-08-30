@@ -34,7 +34,7 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
   };
 
   componentDidMount() {
-    const formStateObserver$ = new Subject();
+    const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
         map((formState: IFormState) => {
