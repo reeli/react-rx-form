@@ -1,4 +1,16 @@
-import { forEach, isArray, isEmpty, isEqual, isNaN, isObject, isUndefined, mapValues, reduce, set } from "lodash";
+import {
+  cloneDeep,
+  forEach,
+  isArray,
+  isEmpty,
+  isEqual,
+  isNaN,
+  isObject,
+  isUndefined,
+  mapValues,
+  reduce,
+  set,
+} from "lodash";
 import { IFieldAction, IFieldInnerProps, IFieldProps, TFieldValue, TValidator } from "./Field";
 import { IFormAction, IFormState, IFormValues, IRxFormProps, TErrors } from "./RxForm";
 
@@ -100,9 +112,10 @@ export const log = ({
 }) => {
   if (process.env.NODE_ENV === "development") {
     console.groupCollapsed(`${action.type} ${new Date()}`);
-    console.log("prevState", prevState);
-    console.log("action", action);
-    console.log("nextState", nextState);
+    // use cloneDeep here in case state is a reference type
+    console.log("prevState", cloneDeep(prevState));
+    console.log("action", cloneDeep(action));
+    console.log("nextState", cloneDeep(nextState));
     console.groupEnd();
   }
 };
