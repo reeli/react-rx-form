@@ -1,8 +1,9 @@
 import { filter, map, times } from "lodash";
 import * as React from "react";
+import { FormValues, IFormValuesInnerProps } from "./FormValues";
 import { TChildrenRender } from "./types";
 
-interface IFieldArrayInnerProps extends IFieldArrayState {
+interface IFieldArrayInnerProps extends IFieldArrayCoreState {
   add: () => any;
   remove: (idx: number) => any;
 }
@@ -13,11 +14,13 @@ interface IFieldArrayProps {
   initLength?: number;
 }
 
-interface IFieldArrayState {
+interface IFieldArrayCoreState {
   fields: string[];
 }
 
-export class FieldArray extends React.Component<IFieldArrayProps, IFieldArrayState> {
+interface IFieldArrayCoreProps extends IFieldArrayProps, IFormValuesInnerProps {}
+
+class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
   state = {
     fields: [],
   };
@@ -32,6 +35,19 @@ export class FieldArray extends React.Component<IFieldArrayProps, IFieldArraySta
     const nextFields = filter(this.state.fields, (_, n) => {
       return idx !== n;
     });
+
+    // console.log(this.props.formValues, this.props.name);
+    const nextItem = filter(this.props.formValues[this.props.name], (_, n: number) => {
+      return n !== idx;
+    });
+
+    // console.log(nextItem, "---------");
+
+    this.props.updateFormValues({
+      ...this.props.formValues,
+      [this.props.name]: nextItem,
+    });
+
     this.setState({ fields: nextFields });
   };
 
@@ -55,3 +71,11 @@ export class FieldArray extends React.Component<IFieldArrayProps, IFieldArraySta
     });
   }
 }
+
+export const FieldArray = (props: IFieldArrayProps) => (
+  <FormValues>
+    {({ updateFormValues, formValues }) => (
+      <FieldArrayCore {...props} formValues={formValues} updateFormValues={updateFormValues} />
+    )}
+  </FormValues>
+);

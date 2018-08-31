@@ -36,9 +36,10 @@ export interface IFormAction {
 }
 
 export enum FormActionTypes {
-  initialize = "@@rx-form/INITIALIZE",
-  startSubmit = "@@rx-form/START_SUBMIT",
-  startSubmitFailed = "@@rx-form/START_SUBMIT_FAILED",
+  initialize = "@@rx-form/form/INITIALIZE",
+  startSubmit = "@@rx-form/form/START_SUBMIT",
+  startSubmitFailed = "@@rx-form/form/START_SUBMIT_FAILED",
+  onChange = "@@rx-form/form/CHANGE",
 }
 
 export class RxForm extends React.Component<IRxFormProps> {
@@ -48,27 +49,39 @@ export class RxForm extends React.Component<IRxFormProps> {
   private formStateSubscription: Subscription | null = null;
 
   componentDidMount() {
-    if (this.props.initialValues) {
-      this.setFormValues(this.props.initialValues);
-    }
     this.dispatch({
       type: FormActionTypes.initialize,
       payload: {
         formState: this.formState,
       },
     });
+
+    if (this.props.initialValues) {
+      this.setFormValues(this.props.initialValues);
+    }
   }
 
   setFormValues = (formValues: IFormValues) => {
     const values = toObjWithKeyPath(formValues!);
+    // create a empty object, in case merge deleted field back
+    const nextFormState = {} as IFormState;
     keys(values).forEach((key) => {
       if (this.formState[key]) {
-        this.formState[key] = {
-          ...this.formState[key],
-          value: values[key],
-          name: key,
-        };
+        this.formState[key].value === values[key]
+          ? (nextFormState[key] = {
+              ...this.formState[key],
+              value: values[key],
+              name: key,
+            })
+          : (nextFormState[key] = this.formState[key]);
       }
+    });
+    this.formState = nextFormState;
+    this.dispatch({
+      type: FormActionTypes.onChange,
+      payload: {
+        formState: this.formState,
+      },
     });
     this.formStateSubject$.next(this.formState);
   };
@@ -125,6 +138,10 @@ export class RxForm extends React.Component<IRxFormProps> {
         break;
       }
       case FormActionTypes.startSubmitFailed: {
+        this.notifyFormActionChange(action as IFormAction);
+        break;
+      }
+      case FormActionTypes.onChange: {
         this.notifyFormActionChange(action as IFormAction);
         break;
       }

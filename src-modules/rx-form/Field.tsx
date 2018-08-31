@@ -8,9 +8,9 @@ import { TChildrenRender } from "./types";
 import { isDirty, validateField } from "./utils";
 
 export enum FieldActionTypes {
-  register = "@@rx-form/REGISTER_FIELD",
-  change = "@@rx-form/CHANGE",
-  destroy = "@@rx-form/DESTROY_FIELD",
+  register = "@@rx-form/field/REGISTER_FIELD",
+  change = "@@rx-form/field/CHANGE",
+  destroy = "@@rx-form/field/DESTROY_FIELD",
 }
 
 type TError = string | undefined;
@@ -138,6 +138,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         }),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
+          console.log(fieldState, "--------xxxx==============");
           this.setState({
             fieldState,
           });
