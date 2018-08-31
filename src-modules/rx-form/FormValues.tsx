@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
+import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
 import { FormContext, IFormContextValue } from "./FormContext";
 import { IFormState, IFormValues } from "./RxForm";
 import { TChildrenRender } from "./types";
 import { toFormValues } from "./utils";
 
-interface IFormValuesInnerProps {
+export interface IFormValuesInnerProps {
   formValues: IFormValues;
   updateFormValues: IFormContextValue["updateFormValues"];
 }
@@ -29,6 +30,7 @@ interface IFormValuesCoreProps extends IFormValuesCommonProps {
 }
 
 class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCoreState> {
+  subscription: Subscription | null = null;
   state = {
     formValues: {} as IFormValues,
   };
@@ -48,12 +50,19 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
         }),
       )
       .subscribe();
-    this.props.formContextValue.subscribe(formStateObserver$);
+    this.subscription = this.props.formContextValue.subscribe(formStateObserver$);
   }
 
   getFormValues = () => {
     return toFormValues(this.state.formValues);
   };
+
+  componentWillUnmount() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
+  }
 
   render() {
     return this.props.children({
