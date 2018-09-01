@@ -52,7 +52,7 @@ export class FieldArrayForm extends React.Component {
       <RxForm initialValues={{ members: [{ firstName: "rui", lastName: "li" }] }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
-            <FieldArray name={"members"}>
+            <FieldArray name={"members"} initLength={1}>
               {({ fields, add, remove }) => (
                 <ul>
                   <li>
@@ -61,7 +61,7 @@ export class FieldArrayForm extends React.Component {
                     </button>
                   </li>
                   {fields.map((member, idx) => (
-                    <li key={idx}>
+                    <li key={member}>
                       <h3>{`member${idx + 1}`}</h3>
                       <Field name={`${member}.firstName`} validate={required()}>
                         {(fieldProps) => (

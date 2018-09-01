@@ -33,7 +33,9 @@ export const isContainError = (formState: IFormState) => {
 export const toFormValues = (formState: IFormState): IFormValues => {
   const formValues = {};
   forEach(formState, (field, key) => {
-    set(formValues, key, field.value);
+    if (field) {
+      set(formValues, key, field.value);
+    }
   });
   return formValues;
 };
@@ -42,12 +44,12 @@ export const setErrors = (formState: IFormState, errors: TErrors) => {
   if (isEmpty(errors)) {
     return formState;
   }
-  return mapValues(formState, (field) => {
+  return mapValues(formState, (field, name) => {
     return {
       ...field,
       meta: {
         ...field.meta,
-        error: errors[field.name],
+        error: errors[name],
       },
     };
   });

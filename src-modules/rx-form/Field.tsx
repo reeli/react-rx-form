@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -18,7 +19,6 @@ export type TValidator = (value: string | boolean) => TError | undefined;
 export type TFieldValue = any;
 
 interface IFieldCommonProps {
-  name: string;
   value?: TFieldValue;
   meta: {
     dirty: boolean;
@@ -29,6 +29,7 @@ interface IFieldCommonProps {
 export interface IFieldState extends IFieldCommonProps {}
 
 export interface IFieldInnerProps extends IFieldState {
+  name: string;
   onChange: (value: TFieldValue) => void;
 }
 
@@ -40,8 +41,9 @@ export interface IFieldProps {
 }
 
 export interface IFieldAction {
+  name: string;
   type: FieldActionTypes;
-  payload: IFieldState;
+  payload?: IFieldState;
 }
 
 interface IFieldCoreProps extends IFieldProps {
@@ -51,6 +53,11 @@ interface IFieldCoreProps extends IFieldProps {
 interface IFieldCoreState {
   fieldState: IFieldState;
 }
+
+const getFieldValue = ({ defaultValue, formContextValue, name }: IFieldCoreProps) => {
+  const formValues = formContextValue.getFormValues();
+  return get(formValues, name) || defaultValue;
+};
 
 export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
   private formStateSubscription: Subscription | null = null;
@@ -62,7 +69,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
       // TODO: change defaultValue to defaultValue, toggle controlled component and uncontrolled component
       // in component level, default value should not be empty string, because sometime it should be boolean,
       // think about checkbox.
-      value: this.props.defaultValue,
+      value: getFieldValue(this.props),
       meta: {
         error: undefined,
         dirty: false,
@@ -75,6 +82,17 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     this.onFormStateChange();
     this.onStartSubmitForm();
   }
+
+  // 当 field name 发生变化时应该 unregister 上一个 field，register 另一个 field，或者使用 key，以保证 field unmount 而不是 did update
+  // componentDidUpdate(nextProps: IFieldProps) {
+  //   if (nextProps.name !== this.props.name) {
+  //     this.props.formContextValue.dispatch({
+  //       name: nextProps.name,
+  //       type: FieldActionTypes.change,
+  //       payload: this.state.fieldState,
+  //     });
+  //   }
+  // }
 
   onStartSubmitForm = () => {
     const formActionObserver$ = new Subject<IFormAction>();
@@ -93,6 +111,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
 
           if (error) {
             this.props.formContextValue.dispatch({
+              name: this.props.name,
               type: FieldActionTypes.change,
               payload: {
                 ...fieldState,
@@ -111,6 +130,11 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   };
 
   componentWillUnmount() {
+    this.props.formContextValue.dispatch({
+      name: this.props.name,
+      type: FieldActionTypes.destroy,
+    });
+
     if (this.formStateSubscription) {
       this.formStateSubscription.unsubscribe();
       this.formStateSubscription = null;
@@ -124,6 +148,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   registerField = (fieldState: IFieldState) => {
     // register field
     this.props.formContextValue.dispatch({
+      name: this.props.name,
       type: FieldActionTypes.register,
       payload: fieldState,
     });
@@ -133,12 +158,9 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
-        map((formState: IFormState) => {
-          return formState[this.props.name];
-        }),
+        map((formState: IFormState) => formState[this.props.name]),
         distinctUntilChanged(),
         tap((fieldState: IFieldState) => {
-          console.log(fieldState, "--------xxxx==============");
           this.setState({
             fieldState,
           });
@@ -151,9 +173,9 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
 
   onChange = (value: TFieldValue) => {
     this.props.formContextValue.dispatch({
+      name: this.props.name,
       type: FieldActionTypes.change,
       payload: {
-        name: this.props.name,
         value,
         meta: {
           error: validateField(value, this.props.validate),
@@ -166,6 +188,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   render() {
     return this.props.children({
       ...this.state.fieldState,
+      name: this.props.name,
       onChange: this.onChange,
     });
   }

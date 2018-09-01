@@ -65,17 +65,18 @@ export class RxForm extends React.Component<IRxFormProps> {
     const values = toObjWithKeyPath(formValues!);
     // create a empty object, in case merge deleted field back
     const nextFormState = {} as IFormState;
+
     keys(values).forEach((key) => {
-      if (this.formState[key]) {
-        this.formState[key].value === values[key]
-          ? (nextFormState[key] = {
-              ...this.formState[key],
-              value: values[key],
-              name: key,
-            })
-          : (nextFormState[key] = this.formState[key]);
+      if (!this.formState[key] || this.formState[key].value !== values[key]) {
+        nextFormState[key] = {
+          ...this.formState[key],
+          value: values[key],
+        };
+      } else {
+        nextFormState[key] = this.formState[key];
       }
     });
+
     this.formState = nextFormState;
     this.dispatch({
       type: FormActionTypes.onChange,
@@ -94,7 +95,7 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   updateField = (action: IFieldAction) => {
-    this.formState[action.payload.name] = action.payload;
+    this.formState[action.name] = action.payload!;
     this.formStateSubject$.next(this.formState);
   };
 
@@ -117,6 +118,11 @@ export class RxForm extends React.Component<IRxFormProps> {
     return toFormValues(this.formState);
   };
 
+  removeField = (action: IFieldAction) => {
+    delete this.formState[action.name];
+    this.formStateSubject$.next(this.formState);
+  };
+
   dispatch = (action: IFieldAction | IFormAction) => {
     const prevState = cloneDeep(this.formState);
 
@@ -127,6 +133,10 @@ export class RxForm extends React.Component<IRxFormProps> {
       }
       case FieldActionTypes.change: {
         this.updateField(action as IFieldAction);
+        break;
+      }
+      case FieldActionTypes.destroy: {
+        this.removeField(action as IFieldAction);
         break;
       }
       case FormActionTypes.initialize: {
@@ -197,6 +207,7 @@ export class RxForm extends React.Component<IRxFormProps> {
           dispatch: this.dispatch,
           subscribeFormAction: this.subscribeFormAction,
           updateFormValues: this.updateFormValues,
+          getFormValues: this.getFormValues,
         }}
       >
         {this.props.children({

@@ -18,6 +18,9 @@ export class SimpleForm extends React.Component {
   componentDidMount() {
     console.log(this.form.getFormValues(), "this.form.formState");
     console.log(this.ref.current.getFormValues(), "this.formValues");
+    setTimeout(() => {
+      alert("hehaha");
+    }, 2000);
   }
 
   render() {

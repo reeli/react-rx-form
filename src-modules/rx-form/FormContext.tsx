@@ -8,6 +8,7 @@ export interface IFormContextValue {
   subscribe: (observer: Observer<any>) => any;
   subscribeFormAction: (observer: Observer<any>) => any;
   updateFormValues: (formValues: IFormValues) => any;
+  getFormValues: () => IFormValues;
 }
 
 export const FormContext = createContext<IFormContextValue>({
@@ -15,4 +16,5 @@ export const FormContext = createContext<IFormContextValue>({
   dispatch: (_: any) => {},
   subscribeFormAction: (_: any) => {},
   updateFormValues: (_: any) => {},
+  getFormValues: () => ({}),
 });
