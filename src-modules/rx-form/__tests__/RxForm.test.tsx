@@ -25,7 +25,6 @@ describe("<RxForm/>", () => {
     instance.setFormValues({ firstName: "rui" });
     expect(instance.formState).toEqual({
       firstName: {
-        name: "firstName",
         value: "rui",
         meta: {
           error: undefined,

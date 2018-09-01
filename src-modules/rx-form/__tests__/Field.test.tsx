@@ -14,7 +14,6 @@ describe("<Field/>", () => {
     const instance = wrapper.children().instance() as any;
     expect(instance.state).toEqual({
       fieldState: {
-        name: "firstName",
         value: undefined,
         meta: {
           error: undefined,

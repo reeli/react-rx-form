@@ -54,19 +54,17 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     this.props.formContextValue.subscribe(formStateObserver$);
   }
 
-  remove = (idx: number) => {
+  remove = (idx: number, { formContextValue: { getFormValues, updateFormValues } }: IFieldArrayCoreProps) => {
     // const nextFields = filter(this.state.fields, (_, n) => {
     //   return idx !== n;
     // });
     // console.log(this.props.formValues, this.props.name);
-    const formValues = this.props.formContextValue.getFormValues();
+    const formValues = getFormValues();
     const newFieldArrayValues = filter(formValues[this.props.name], (_, n: number) => {
       return n !== idx;
     });
-    console.log(formValues, newFieldArrayValues, "0");
-    // console.log(nextItem, "---------");
-    //
-    this.props.formContextValue.updateFormValues({
+
+    updateFormValues({
       ...formValues,
       [this.props.name]: newFieldArrayValues,
     });
@@ -93,7 +91,7 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     return this.props.children({
       fields: this.formatFieldsByIdx(this.state.fields),
       add: this.add,
-      remove: this.remove,
+      remove: (idx) => this.remove(idx, this.props),
     });
   }
 }

@@ -6,17 +6,34 @@ import { pickInputPropsFromFieldProps } from "../utils";
 
 describe("<FieldArray/>", () => {
   it("add a field array item", () => {
-    const instance = createFieldArray().instance() as any;
+    const wrapper = createFieldArray();
+    const instance = wrapper.children().instance() as any;
     instance.add();
     expect(instance.state).toEqual({ fields: ["members"] });
+    wrapper.unmount();
   });
 
-  it("remove a field array item", () => {
-    const instance = createFieldArray().instance() as any;
+  xit("remove a field array item", () => {
+    const wrapper = createFieldArray();
+    const instance = wrapper.children().instance() as any;
+    console.log(createFieldArray(), "instance");
     instance.add();
     instance.add();
-    instance.remove(0);
-    expect(instance.state).toEqual({ fields: ["members"] });
+    const mocks = {
+      getFormValues: () => jest.fn(),
+      updateFormValues: jest.fn(),
+    };
+
+    mocks.getFormValues().mockReturnValueOnce({
+      members: [{ firstName: "rui" }, { firstName: "li" }],
+    });
+
+    instance.remove(0, {
+      formContextValue: { ...mocks },
+    });
+    expect(mocks.getFormValues).toBeCalled();
+    expect(mocks.updateFormValues).toBeCalled();
+    wrapper.unmount();
   });
 });
 
