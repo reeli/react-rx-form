@@ -65,7 +65,6 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
 
   state = {
     fieldState: {
-      name: this.props.name,
       // TODO: change defaultValue to defaultValue, toggle controlled component and uncontrolled component
       // in component level, default value should not be empty string, because sometime it should be boolean,
       // think about checkbox.

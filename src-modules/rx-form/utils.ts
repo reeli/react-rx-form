@@ -76,10 +76,10 @@ export const toObjWithKeyPath = (input: IRxFormProps["initialValues"]) => {
   return res;
 };
 
-export const pickInputPropsFromFieldProps = ({ meta: { error }, ...others }: IFieldInnerProps) => {
+export const pickInputPropsFromFieldProps = ({ meta, ...others }: IFieldInnerProps) => {
   return {
     ...others,
-    error,
+    error: meta ? meta.error : undefined,
   };
 };
 

@@ -1,4 +1,4 @@
-import { map, size, times } from "lodash";
+import { filter, map, size } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { distinctUntilChanged, tap } from "rxjs/operators";
@@ -18,7 +18,7 @@ interface IFieldArrayProps {
 }
 
 interface IFieldArrayCoreState {
-  fields: string[];
+  fields: any[];
 }
 
 interface IFieldArrayCoreProps extends IFieldArrayProps {
@@ -43,7 +43,9 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
           const formValues = this.props.formContextValue.getFormValues();
           const len = size(formValues[this.props.name]);
           if (len > 0) {
-            times(len, this.add);
+            this.setState({
+              fields: formValues[this.props.name],
+            });
           }
           console.log(formValues, "formValues");
         }),
@@ -52,21 +54,24 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     this.props.formContextValue.subscribe(formStateObserver$);
   }
 
-  remove = (_: number) => {
+  remove = (idx: number) => {
     // const nextFields = filter(this.state.fields, (_, n) => {
     //   return idx !== n;
     // });
     // console.log(this.props.formValues, this.props.name);
-    // const newFieldArrayValues = filter(this.props.formValues[this.props.name], (_, n: number) => {
-    //   return n !== idx;
-    // });
+    const formValues = this.props.formContextValue.getFormValues();
+    const newFieldArrayValues = filter(formValues[this.props.name], (_, n: number) => {
+      return n !== idx;
+    });
+    console.log(formValues, newFieldArrayValues, "0");
     // console.log(nextItem, "---------");
     //
-    // this.props.updateFormValues({
-    //   ...this.props.formValues,
-    //   [this.props.name]: newFieldArrayValues,
-    // });
-    // this.setState({ fields: nextFields });
+    this.props.formContextValue.updateFormValues({
+      ...formValues,
+      [this.props.name]: newFieldArrayValues,
+    });
+
+    // this.setState({ fields: newFieldArrayValues.length });
   };
 
   add = () => {
