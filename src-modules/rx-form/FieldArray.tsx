@@ -1,4 +1,4 @@
-import { filter, map, size } from "lodash";
+import { filter, map, size, times } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { distinctUntilChanged, tap } from "rxjs/operators";
@@ -32,9 +32,9 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
 
   componentDidMount() {
     // TODO: Will form initial values in FieldArray
-    // if (this.props.initLength) {
-    //   times(this.props.initLength, this.add);
-    // }
+    if (this.props.initLength) {
+      times(this.props.initLength, this.add);
+    }
     const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
