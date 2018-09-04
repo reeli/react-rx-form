@@ -3,12 +3,11 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import * as path from "path";
 import UglifyJsPlugin from "uglifyjs-webpack-plugin";
 import * as webpack from "webpack";
-import { NetworkEnvs } from "./src-modules/config/network";
 
 const BASE_DIRS = {
   app: "./src-app",
   modules: "./src-modules",
-  dist: `./public/${process.env.NETWORK_ENV || NetworkEnvs.internet}`,
+  dist: "./public",
 };
 
 const GLOBALS = {
@@ -16,7 +15,6 @@ const GLOBALS = {
     env: {
       NODE_ENV: JSON.stringify(process.env.NODE_ENV || "development"),
       NODE_CONFIG: JSON.stringify(config),
-      NETWORK_ENV: JSON.stringify(process.env.NETWORK_ENV || NetworkEnvs.internet),
     },
   },
 };
