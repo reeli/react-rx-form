@@ -12,6 +12,7 @@
     "start": "npm run dev",
     "dev": "webpack-dev-server --config=webpack.config.ts --port=3000 --compress --open --history-api-fallback",
     "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts",
+    "deploy": "./script/deploy.sh",
     "test": "jest",
     "precommit": "lint-staged",
     "prepush": "tsc --outDir .tmp && npm test"
