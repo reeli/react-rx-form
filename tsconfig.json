@@ -12,7 +12,10 @@
     "esModuleInterop": true,
     "outDir": ".tmp",
     "moduleResolution": "node",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@reeli/react-rx-form": ["src"]
+    }
   },
   "exclude": ["node_modules"]
 }

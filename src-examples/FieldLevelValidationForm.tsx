@@ -2,8 +2,8 @@ import Button from "@material-ui/core/Button/Button";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import Select from "@material-ui/core/Select/Select";
 import TextField from "@material-ui/core/TextField/TextField";
+import { Field, pickInputPropsFromFieldProps, RxForm } from "@reeli/react-rx-form";
 import * as React from "react";
-import { Field, pickInputPropsFromFieldProps, RxForm } from "src";
 import { CustomInput } from "src-components/CustomInput";
 import { maxLength5, required } from "../src-modules/utils/validations";
 

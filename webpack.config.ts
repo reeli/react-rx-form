@@ -112,6 +112,7 @@ const webpackConfig: webpack.Configuration = {
   },
   resolve: {
     alias: {
+      "@reeli/react-rx-form": "src",
       config: path.resolve(__dirname, BASE_DIRS.modules, "./config/index.ts"),
     },
     extensions: [".tsx", ".ts", ".jsx", ".js"],
