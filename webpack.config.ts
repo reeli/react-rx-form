@@ -115,6 +115,7 @@ const webpackConfig: webpack.Configuration = {
       config: path.resolve(__dirname, BASE_DIRS.modules, "./config/index.ts"),
     },
     extensions: [".tsx", ".ts", ".jsx", ".js"],
+    modules: [__dirname, "node_modules"],
   },
   mode: (process.env.NODE_ENV as any) || "development",
 };

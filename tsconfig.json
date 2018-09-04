@@ -10,7 +10,9 @@
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "outDir": ".tmp"
+    "outDir": ".tmp",
+    "moduleResolution": "node",
+    "baseUrl": "."
   },
   "exclude": ["node_modules"]
 }

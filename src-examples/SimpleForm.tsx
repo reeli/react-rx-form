@@ -1,9 +1,9 @@
 import Button from "@material-ui/core/Button/Button";
 import FormControl from "@material-ui/core/FormControl/FormControl";
 import * as React from "react";
-import { Field, FormValues, RxForm } from "../src-modules/rx-form";
-import { CustomCheckbox } from "./components/CustomCheckbox";
-import { CustomInput } from "./components/CustomInput";
+import { Field, FormValues, RxForm } from "src";
+import { CustomCheckbox } from "src-components/CustomCheckbox";
+import { CustomInput } from "src-components/CustomInput";
 
 export class SimpleForm extends React.Component {
   static tsc() {

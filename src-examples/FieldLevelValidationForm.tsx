@@ -3,9 +3,9 @@ import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import Select from "@material-ui/core/Select/Select";
 import TextField from "@material-ui/core/TextField/TextField";
 import * as React from "react";
-import { Field, pickInputPropsFromFieldProps, RxForm } from "../src-modules/rx-form";
+import { Field, pickInputPropsFromFieldProps, RxForm } from "src";
+import { CustomInput } from "src-components/CustomInput";
 import { maxLength5, required } from "../src-modules/utils/validations";
-import { CustomInput } from "./components/CustomInput";
 
 export class FieldLevelValidationForm extends React.Component {
   static tsc() {
