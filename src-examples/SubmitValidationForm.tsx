@@ -2,9 +2,7 @@ import Button from "@material-ui/core/Button/Button";
 import { isEmpty } from "lodash";
 import * as React from "react";
 import { CustomInput } from "../src-components/CustomInput";
-import { Field } from "../src-modules/rx-form/Field";
-import { RxForm } from "../src-modules/rx-form/RxForm";
-import { pickInputPropsFromFieldProps } from "../src-modules/rx-form/utils";
+import { Field, pickInputPropsFromFieldProps, RxForm } from "../src-modules/rx-form";
 
 export class SubmitValidationForm extends React.Component {
   onSubmit = (values: any, onSubmitError: any) => {

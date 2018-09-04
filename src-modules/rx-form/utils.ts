@@ -11,8 +11,18 @@ import {
   reduce,
   set,
 } from "lodash";
-import { IFieldAction, IFieldInnerProps, IFieldProps, TFieldValue, TValidator } from "./Field";
-import { IFormAction, IFormState, IFormValues, IRxFormProps, TErrors } from "./RxForm";
+import {
+  IFieldAction,
+  IFieldInnerProps,
+  IFieldProps,
+  IFormAction,
+  IFormState,
+  IFormValues,
+  IRxFormProps,
+  TErrors,
+  TFieldValue,
+  TValidator,
+} from "./interface";
 
 export const combineValidators = (validators: TValidator[]) => {
   return (value: TFieldValue): string | undefined => {

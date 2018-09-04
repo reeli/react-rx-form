@@ -4,9 +4,7 @@ import Select from "@material-ui/core/Select/Select";
 import TextField from "@material-ui/core/TextField/TextField";
 import * as React from "react";
 import { CustomInput } from "../src-components/CustomInput";
-import { Field } from "../src-modules/rx-form/Field";
-import { RxForm } from "../src-modules/rx-form/RxForm";
-import { pickInputPropsFromFieldProps } from "../src-modules/rx-form/utils";
+import { Field, pickInputPropsFromFieldProps, RxForm } from "../src-modules/rx-form";
 import { maxLength5, required } from "../src-modules/utils/validations";
 
 export class FieldLevelValidationForm extends React.Component {

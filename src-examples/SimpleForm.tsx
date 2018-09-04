@@ -3,9 +3,7 @@ import FormControl from "@material-ui/core/FormControl/FormControl";
 import * as React from "react";
 import { CustomCheckbox } from "../src-components/CustomCheckbox";
 import { CustomInput } from "../src-components/CustomInput";
-import { Field } from "../src-modules/rx-form/Field";
-import { FormValues } from "../src-modules/rx-form/FormValues";
-import { RxForm } from "../src-modules/rx-form/RxForm";
+import { Field, FormValues, RxForm } from "../src-modules/rx-form";
 
 export class SimpleForm extends React.Component {
   form: any;
