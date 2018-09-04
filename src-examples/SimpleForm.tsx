@@ -6,6 +6,10 @@ import { CustomInput } from "../src-components/CustomInput";
 import { Field, FormValues, RxForm } from "../src-modules/rx-form";
 
 export class SimpleForm extends React.Component {
+  static tsc() {
+    return require(`!!raw-loader!../src-examples/SimpleForm.tsx`);
+  }
+
   form: any;
   formValues: any;
   ref: any = React.createRef();

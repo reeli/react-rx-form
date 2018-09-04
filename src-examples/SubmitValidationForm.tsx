@@ -5,6 +5,10 @@ import { CustomInput } from "../src-components/CustomInput";
 import { Field, pickInputPropsFromFieldProps, RxForm } from "../src-modules/rx-form";
 
 export class SubmitValidationForm extends React.Component {
+  static tsc() {
+    return require(`!!raw-loader!../src-examples/SubmitValidationForm.tsx`);
+  }
+
   onSubmit = (values: any, onSubmitError: any) => {
     console.log(values, "values on Submit");
     const errors = {} as any;

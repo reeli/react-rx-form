@@ -6,6 +6,10 @@ import { Field, FieldArray, pickInputPropsFromFieldProps, RxForm } from "../src-
 import { required } from "../src-modules/utils/validations";
 
 export class FieldArrayForm extends React.Component {
+  static tsc() {
+    return require(`!!raw-loader!../src-examples/FieldArrayForm.tsx`);
+  }
+
   onSubmit = (values: any, onSubmitError: any) => {
     if (isEmpty(values)) {
       return;

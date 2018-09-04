@@ -8,6 +8,10 @@ import { Field, pickInputPropsFromFieldProps, RxForm } from "../src-modules/rx-f
 import { maxLength5, required } from "../src-modules/utils/validations";
 
 export class FieldLevelValidationForm extends React.Component {
+  static tsc() {
+    return require(`!!raw-loader!../src-examples/FieldLevelValidationForm.tsx`);
+  }
+
   onSubmit = () => {};
 
   render() {
