@@ -1,4 +1,4 @@
-import { filter, map, size, times } from "lodash";
+import { filter, get, map, set, size, times } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { distinctUntilChanged, tap } from "rxjs/operators";
@@ -21,13 +21,12 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
         distinctUntilChanged(),
         tap(() => {
           const formValues = this.props.formContextValue.getFormValues();
-          const len = size(formValues[this.props.name]);
+          const len = size(get(formValues, this.props.name));
           if (len > 0) {
             this.setState({
-              fields: formValues[this.props.name],
+              fields: get(formValues, this.props.name),
             });
           }
-          console.log(formValues, "formValues");
         }),
       )
       .subscribe();
@@ -40,14 +39,12 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     // });
     // console.log(this.props.formValues, this.props.name);
     const formValues = getFormValues();
-    const newFieldArrayValues = filter(formValues[this.props.name], (_, n: number) => {
+    const newFieldArrayValues = filter(get(formValues, this.props.name), (_, n: number) => {
       return n !== idx;
     });
 
-    updateFormValues({
-      ...formValues,
-      [this.props.name]: newFieldArrayValues,
-    });
+    const nextFormValues = set(formValues, this.props.name, newFieldArrayValues);
+    updateFormValues(nextFormValues);
 
     // this.setState({ fields: newFieldArrayValues.length });
   };

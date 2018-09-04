@@ -28,7 +28,7 @@ export class FieldArrayForm extends React.Component {
   renderHobbies = (member: any) => {
     return (
       <FieldArray name={`${member}.hobbies`}>
-        {({ fields, add }) => (
+        {({ fields, add, remove }) => (
           <ul>
             <li>
               <button onClick={() => add()} type={"button"}>
@@ -36,11 +36,18 @@ export class FieldArrayForm extends React.Component {
               </button>
             </li>
             {fields.map((hobby, idx) => (
-              <Field name={hobby} validate={required()} key={idx}>
-                {(fieldProps) => (
-                  <CustomInput {...pickInputPropsFromFieldProps(fieldProps)} type="text" placeholder={`hobby${idx}`} />
-                )}
-              </Field>
+              <div key={idx}>
+                <Field name={hobby} validate={required()}>
+                  {(fieldProps) => (
+                    <CustomInput
+                      {...pickInputPropsFromFieldProps(fieldProps)}
+                      type="text"
+                      placeholder={`hobby${idx}`}
+                    />
+                  )}
+                </Field>
+                <div onClick={() => remove(idx)}>remove</div>
+              </div>
             ))}
           </ul>
         )}
