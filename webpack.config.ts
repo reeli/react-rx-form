@@ -74,7 +74,7 @@ const webpackConfig: webpack.Configuration = {
   plugins: [
     new webpack.DefinePlugin(GLOBALS),
     new HtmlWebpackPlugin({
-      title: "GovTech",
+      title: "React Rx Form",
       template: "./index.html",
     }),
   ],
