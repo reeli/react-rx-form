@@ -1,6 +1,6 @@
 {
-  "name": "@reeli/react-rx-form",
-  "version": "0.1.3",
+  "name": "@reeli/react-rx-form-guide",
+  "version": "0.1.4",
   "description": "rx form for react, use typescript for development",
   "main": "index.js",
   "keywords": [
@@ -11,10 +11,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "webpack-dev-server --config=webpack.config.ts --port=3000 --compress --open --history-api-fallback",
-    "release": "NODE_ENV=production webpack --config=webpack.config.ts",
-    "release:all": "rm -rf public/ && npm run release:internet && npm run release:intranet",
-    "release:internet": "rm -rf public/internet && NETWORK_ENV=internet npm run release",
-    "release:intranet": "rm -rf public/intranet && NETWORK_ENV=intranet npm run release",
+    "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts",
     "test": "jest",
     "precommit": "lint-staged",
     "prepush": "tsc --outDir .tmp && npm test"
@@ -67,8 +64,8 @@
     ]
   },
   "dependencies": {
-    "@material-ui/core": "1.5.1",
-    "@material-ui/icons": "2.0.3",
+    "@material-ui/core": "3.0.2",
+    "@material-ui/icons": "3.0.1",
     "@types/config": "0.0.34",
     "@types/lodash": "4.14.116",
     "@types/react-dom": "16.0.7",
@@ -86,7 +83,7 @@
     "react-router-dom": "4.3.1",
     "redux": "4.0.0",
     "redux-actions": "2.6.1",
-    "rxjs": "6.2.2"
+    "rxjs": "6.3.1"
   },
   "devDependencies": {
     "@types/axios-mock-adapter": "1.10.0",
@@ -98,8 +95,8 @@
     "@types/uglifyjs-webpack-plugin": "1.1.0",
     "axios-mock-adapter": "1.15.0",
     "css-loader": "1.0.0",
-    "enzyme": "3.4.4",
-    "enzyme-adapter-react-16": "1.2.0",
+    "enzyme": "3.5.1",
+    "enzyme-adapter-react-16": "1.3.1",
     "file-loader": "2.0.0",
     "highlight.js": "9.12.0",
     "html-webpack-plugin": "4.0.0-alpha",
@@ -109,16 +106,16 @@
     "prettier": "1.14.2",
     "raw-loader": "0.5.1",
     "redux-logger": "3.0.6",
-    "style-loader": "0.22.1",
+    "style-loader": "0.23.0",
     "ts-jest": "23.1.4",
-    "ts-loader": "4.5.0",
+    "ts-loader": "5.0.0",
     "ts-node": "7.0.1",
     "tslint": "5.11.0",
-    "typescript": "3.0.1",
+    "typescript": "3.0.3",
     "uglifyjs-webpack-plugin": "1.3.0",
-    "webpack": "4.17.1",
+    "webpack": "4.17.2",
     "webpack-cli": "3.1.0",
-    "webpack-dev-server": "3.1.5"
+    "webpack-dev-server": "3.1.7"
   },
   "repository": {
     "type": "git",
