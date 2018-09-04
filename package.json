@@ -41,7 +41,10 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+    "modulePaths": [
+      "<rootDir>"
+    ],
+    "testRegex": "((\\.|/)(test|spec))\\.(tsx?)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -51,11 +54,12 @@
       "node"
     ],
     "setupFiles": [
-      "./test/setup.ts"
+      "./src/__tests__/helpers/setup.ts"
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/src/**/*.{ts,tsx}"
+      "**/src/**/*.{ts,tsx}",
+      "!**/src/__tests__/helpers/**"
     ],
     "coverageReporters": [
       "html"
