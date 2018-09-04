@@ -1,4 +1,4 @@
-import { maxLength5, required } from "../../utils/validations";
+import { maxLength5, required } from "../../src-modules/utils/validations";
 import {
   combineValidators,
   isContainError,

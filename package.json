@@ -1,21 +1,30 @@
 {
-  "name": "@reeli/react-rx-form-guide",
-  "version": "0.1.4",
+  "name": "@reeli/react-rx-form",
+  "version": "0.3.3",
   "description": "rx form for react, use typescript for development",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "module": "module/index.js",
+  "types": "module/index.d.ts",
+  "files": [
+    "lib",
+    "module",
+    "README.md"
+  ],
   "keywords": [
     "react",
     "form",
-    "typescript"
+    "typescript",
+    "rx.js"
   ],
   "scripts": {
     "start": "npm run dev",
-    "dev": "webpack-dev-server --config=webpack.config.ts --port=3000 --compress --open --history-api-fallback",
+    "dev": "webpack-dev-server --config=webpack.config.ts --port=9000 --compress --open --history-api-fallback",
     "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts",
     "deploy": "./script/deploy.sh",
     "test": "jest",
     "precommit": "lint-staged",
-    "prepush": "tsc --outDir .tmp && npm test"
+    "prepush": "tsc --noEmit && npm test",
+    "prepare": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf module && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -42,11 +51,11 @@
       "node"
     ],
     "setupFiles": [
-      "./test/helpers/setup.ts"
+      "./test/setup.ts"
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/rx-form/**"
+      "**/src/**/*.{ts,tsx}"
     ],
     "coverageReporters": [
       "html"
@@ -65,28 +74,28 @@
     ]
   },
   "dependencies": {
+    "@types/lodash": "4.14.116",
+    "@types/react-dom": "16.0.7",
+    "lodash": "4.17.10",
+    "react": "16.4.2",
+    "react-dom": "16.4.2",
+    "rxjs": "6.2.2"
+  },
+  "devDependencies": {
     "@material-ui/core": "3.0.2",
     "@material-ui/icons": "3.0.1",
     "@types/config": "0.0.34",
-    "@types/lodash": "4.14.116",
-    "@types/react-dom": "16.0.7",
     "@types/react-redux": "6.0.6",
     "@types/react-router": "4.0.30",
     "@types/react-router-dom": "4.3.0",
     "@types/redux-actions": "2.3.0",
     "axios": "0.18.0",
     "config": "2.0.1",
-    "lodash": "4.17.10",
-    "react": "16.4.2",
-    "react-dom": "16.4.2",
     "react-redux": "5.0.7",
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
     "redux": "4.0.0",
     "redux-actions": "2.6.1",
-    "rxjs": "6.3.1"
-  },
-  "devDependencies": {
     "@types/axios-mock-adapter": "1.10.0",
     "@types/enzyme": "3.1.13",
     "@types/highlight.js": "9.12.3",
@@ -120,12 +129,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com:HelloRuiLi/react-rx-form.git"
+    "url": "git+https://github.com:reeli/react-rx-form.git"
   },
-  "author": "HelloRuiLi",
+  "author": "reeli",
   "license": "ISC",
   "bugs": {
-    "url": "git+https://github.com:HelloRuiLi/react-rx-form.git"
+    "url": "git+https://github.com:reeli/react-rx-form.git"
   },
-  "homepage": "git+https://github.com:HelloRuiLi/react-rx-form.git"
+  "homepage": "git+https://github.com:reeli/react-rx-form.git"
 }

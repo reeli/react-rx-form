@@ -5,7 +5,7 @@ import UglifyJsPlugin from "uglifyjs-webpack-plugin";
 import * as webpack from "webpack";
 
 const BASE_DIRS = {
-  app: "./src-app",
+  app: "./src-guide",
   modules: "./src-modules",
   dist: "./public",
 };

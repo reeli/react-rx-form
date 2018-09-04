@@ -1,9 +1,9 @@
 import Button from "@material-ui/core/Button/Button";
 import { isEmpty } from "lodash";
 import * as React from "react";
-import { CustomInput } from "../src-components/CustomInput";
 import { Field, FieldArray, pickInputPropsFromFieldProps, RxForm } from "../src-modules/rx-form";
 import { required } from "../src-modules/utils/validations";
+import { CustomInput } from "./components/CustomInput";
 
 export class FieldArrayForm extends React.Component {
   static tsc() {

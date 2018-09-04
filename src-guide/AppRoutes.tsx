@@ -1,7 +1,7 @@
 import { map } from "lodash";
 import * as React from "react";
 import { Route } from "react-router";
-import { WithHighlight } from "../src-components/WithHighlight";
+import { WithHighlight } from "./components/WithHighlight";
 
 export const req = (require as any).context("../src-examples", true, /\.tsx/);
 let routes: any[] = [];
