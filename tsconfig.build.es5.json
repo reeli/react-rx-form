@@ -5,5 +5,14 @@
     "rootDir": "src",
     "outDir": "lib"
   },
-  "exclude": ["node_modules", "**/__tests__/**", "**/helpers/**"]
+  "exclude": [
+    "node_modules",
+    "**/__tests__/**",
+    "**/helpers/**",
+    "webpack.config.ts",
+    "src-components",
+    "src-examples",
+    "src-guide",
+    "src-modules"
+  ]
 }
