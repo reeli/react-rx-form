@@ -14,7 +14,7 @@ import {
   IRxFormProps,
   TErrors,
   TOnSubmit,
-} from "./interface";
+} from "./interfaces";
 import { isContainError, log, setErrors, toFormValues, toObjWithKeyPath } from "./utils";
 
 export class RxForm extends React.Component<IRxFormProps> {

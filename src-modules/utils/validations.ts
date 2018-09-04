@@ -1,5 +1,5 @@
 import { size } from "lodash";
-import { TFieldValue } from "../rx-form/interface";
+import { TFieldValue } from "../rx-form/interfaces";
 
 const createValidate = (isValid: (v: any) => boolean, defaultErrMsg: string) => {
   return (msg: string = defaultErrMsg) => {

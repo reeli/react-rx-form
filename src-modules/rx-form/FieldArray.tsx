@@ -3,7 +3,7 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { distinctUntilChanged, tap } from "rxjs/operators";
 import { FormContext } from "./FormContext";
-import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, IFormState } from "./interface";
+import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, IFormState } from "./interfaces";
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
   state = {

@@ -10,7 +10,7 @@ import {
   IFormValuesCoreProps,
   IFormValuesCoreState,
   IFormValuesCoreWrapperProps,
-} from "./interface";
+} from "./interfaces";
 import { toFormValues } from "./utils";
 
 class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCoreState> {

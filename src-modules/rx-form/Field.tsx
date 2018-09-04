@@ -14,7 +14,7 @@ import {
   IFormAction,
   IFormState,
   TFieldValue,
-} from "./interface";
+} from "./interfaces";
 import { isDirty, validateField } from "./utils";
 
 const getFieldValue = ({ defaultValue, formContextValue, name }: IFieldCoreProps) => {

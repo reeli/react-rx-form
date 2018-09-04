@@ -22,7 +22,7 @@ import {
   TErrors,
   TFieldValue,
   TValidator,
-} from "./interface";
+} from "./interfaces";
 
 export const combineValidators = (validators: TValidator[]) => {
   return (value: TFieldValue): string | undefined => {

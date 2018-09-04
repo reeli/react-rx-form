@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { IFormContextValue } from "./interface";
+import { IFormContextValue } from "./interfaces";
 
 export const FormContext = createContext<IFormContextValue>({
   subscribe: (_: any) => {},
