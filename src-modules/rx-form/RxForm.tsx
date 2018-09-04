@@ -1,46 +1,21 @@
-import { cloneDeep, Dictionary, keys } from "lodash";
+import { cloneDeep, keys } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { Observer } from "rxjs/internal/types";
-import { FieldActionTypes, IFieldAction, IFieldState, TFieldValue } from "./Field";
 import { FormContext } from "./FormContext";
-import { TChildrenRender } from "./types";
+import {
+  FieldActionTypes,
+  FormActionTypes,
+  IFieldAction,
+  IFormAction,
+  IFormState,
+  IFormValues,
+  IRxFormProps,
+  TErrors,
+  TOnSubmit,
+} from "./interface";
 import { isContainError, log, setErrors, toFormValues, toObjWithKeyPath } from "./utils";
-
-export interface IFormState {
-  [fieldName: string]: IFieldState;
-}
-
-export interface IFormValues {
-  [fieldName: string]: TFieldValue;
-}
-
-export type TErrors = Dictionary<string | undefined>;
-type TOnSubmit = (values: IFormValues, onSubmitError: (errors: TErrors) => any) => any;
-
-interface IRxFormInnerProps {
-  handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any;
-}
-
-export interface IRxFormProps {
-  children: TChildrenRender<IRxFormInnerProps>;
-  initialValues?: IFormValues | IFormValues[];
-}
-
-export interface IFormAction {
-  type: string;
-  payload: {
-    formState: IFormState;
-  };
-}
-
-export enum FormActionTypes {
-  initialize = "@@rx-form/form/INITIALIZE",
-  startSubmit = "@@rx-form/form/START_SUBMIT",
-  startSubmitFailed = "@@rx-form/form/START_SUBMIT_FAILED",
-  onChange = "@@rx-form/form/CHANGE",
-}
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {} as IFormState;

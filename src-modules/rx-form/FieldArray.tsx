@@ -2,28 +2,8 @@ import { filter, map, size, times } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { distinctUntilChanged, tap } from "rxjs/operators";
-import { FormContext, IFormContextValue } from "./FormContext";
-import { IFormState } from "./RxForm";
-import { TChildrenRender } from "./types";
-
-interface IFieldArrayInnerProps extends IFieldArrayCoreState {
-  add: () => any;
-  remove: (idx: number) => any;
-}
-
-interface IFieldArrayProps {
-  name: string;
-  children: TChildrenRender<IFieldArrayInnerProps>;
-  initLength?: number;
-}
-
-interface IFieldArrayCoreState {
-  fields: any[];
-}
-
-interface IFieldArrayCoreProps extends IFieldArrayProps {
-  formContextValue: IFormContextValue;
-}
+import { FormContext } from "./FormContext";
+import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, IFormState } from "./interface";
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
   state = {
@@ -91,7 +71,7 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     return this.props.children({
       fields: this.formatFieldsByIdx(this.state.fields),
       add: this.add,
-      remove: (idx) => this.remove(idx, this.props),
+      remove: (idx: number) => this.remove(idx, this.props),
     });
   }
 }

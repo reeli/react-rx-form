@@ -2,32 +2,16 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
-import { FormContext, IFormContextValue } from "./FormContext";
-import { IFormState, IFormValues } from "./RxForm";
-import { TChildrenRender } from "./types";
+import { FormContext } from "./FormContext";
+import {
+  IFormState,
+  IFormValues,
+  IFormValuesCommonProps,
+  IFormValuesCoreProps,
+  IFormValuesCoreState,
+  IFormValuesCoreWrapperProps,
+} from "./interface";
 import { toFormValues } from "./utils";
-
-export interface IFormValuesInnerProps {
-  formValues: IFormValues;
-  updateFormValues: IFormContextValue["updateFormValues"];
-}
-
-interface IFormValuesCoreState {
-  formValues: IFormValues;
-}
-
-interface IFormValuesCommonProps {
-  children: TChildrenRender<IFormValuesInnerProps>;
-}
-
-interface IFormValuesCoreWrapperProps extends IFormValuesCommonProps {
-  forwardedRef?: React.Ref<any>;
-}
-
-interface IFormValuesCoreProps extends IFormValuesCommonProps {
-  formContextValue: IFormContextValue;
-  ref?: React.Ref<any>;
-}
 
 class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCoreState> {
   subscription: Subscription | null = null;

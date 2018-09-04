@@ -3,56 +3,19 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
-import { FormContext, IFormContextValue } from "./FormContext";
-import { FormActionTypes, IFormAction, IFormState } from "./RxForm";
-import { TChildrenRender } from "./types";
+import { FormContext } from "./FormContext";
+import {
+  FieldActionTypes,
+  FormActionTypes,
+  IFieldCoreProps,
+  IFieldCoreState,
+  IFieldProps,
+  IFieldState,
+  IFormAction,
+  IFormState,
+  TFieldValue,
+} from "./interface";
 import { isDirty, validateField } from "./utils";
-
-export enum FieldActionTypes {
-  register = "@@rx-form/field/REGISTER_FIELD",
-  change = "@@rx-form/field/CHANGE",
-  destroy = "@@rx-form/field/DESTROY_FIELD",
-}
-
-type TError = string | undefined;
-export type TValidator = (value: string | boolean) => TError | undefined;
-export type TFieldValue = any;
-
-interface IFieldCommonProps {
-  value?: TFieldValue;
-  meta: {
-    dirty: boolean;
-    error?: TError;
-  };
-}
-
-export interface IFieldState extends IFieldCommonProps {}
-
-export interface IFieldInnerProps extends IFieldState {
-  name: string;
-  onChange: (value: TFieldValue) => void;
-}
-
-export interface IFieldProps {
-  name: string;
-  children: TChildrenRender<IFieldInnerProps>;
-  defaultValue?: TFieldValue;
-  validate?: TValidator | TValidator[];
-}
-
-export interface IFieldAction {
-  name: string;
-  type: FieldActionTypes;
-  payload?: IFieldState;
-}
-
-interface IFieldCoreProps extends IFieldProps {
-  formContextValue: IFormContextValue;
-}
-
-interface IFieldCoreState {
-  fieldState: IFieldState;
-}
 
 const getFieldValue = ({ defaultValue, formContextValue, name }: IFieldCoreProps) => {
   const formValues = formContextValue.getFormValues();
