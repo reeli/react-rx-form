@@ -15,6 +15,7 @@ import {
   IFieldAction,
   IFieldInnerProps,
   IFieldProps,
+  IForm,
   IFormAction,
   IFormState,
   IFormValues,
@@ -119,8 +120,8 @@ export const log = ({
   nextState,
 }: {
   action: IFieldAction | IFormAction;
-  prevState: IFormState;
-  nextState: IFormState;
+  prevState: IForm;
+  nextState: IForm;
 }) => {
   if (process.env.NODE_ENV === "development") {
     console.groupCollapsed(`${action.type} ${new Date()}`);

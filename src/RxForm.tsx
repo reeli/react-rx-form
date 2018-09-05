@@ -1,4 +1,4 @@
-import { cloneDeep, keys } from "lodash";
+import { cloneDeep, set } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -8,17 +8,20 @@ import {
   FieldActionTypes,
   FormActionTypes,
   IFieldAction,
+  IForm,
   IFormAction,
-  IFormState,
   IFormValues,
   IRxFormProps,
   TErrors,
   TOnSubmit,
 } from "./interfaces";
-import { isContainError, log, setErrors, toFormValues, toObjWithKeyPath } from "./utils";
+import { isContainError, log, setErrors } from "./utils";
 
 export class RxForm extends React.Component<IRxFormProps> {
-  private formState = {} as IFormState;
+  private form = {
+    formState: {},
+    values: {},
+  } as IForm;
   private formStateSubject$ = new Subject();
   private formActionSubject$ = new Subject();
   private formStateSubscription: Subscription | null = null;
@@ -27,7 +30,7 @@ export class RxForm extends React.Component<IRxFormProps> {
     this.dispatch({
       type: FormActionTypes.initialize,
       payload: {
-        formState: this.formState,
+        formState: this.form.formState,
       },
     });
 
@@ -37,29 +40,19 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   setFormValues = (formValues: IFormValues) => {
-    const values = toObjWithKeyPath(formValues!);
-    // create a empty object, in case merge deleted field back
-    const nextFormState = {} as IFormState;
+    this.form = {
+      // When initialize, formState has no value at this time，
+      // but will have data after field registered with values
+      formState: this.form.formState,
+      values: formValues,
+    };
 
-    keys(values).forEach((key) => {
-      if (!this.formState[key] || this.formState[key].value !== values[key]) {
-        nextFormState[key] = {
-          ...this.formState[key],
-          value: values[key],
-        };
-      } else {
-        nextFormState[key] = this.formState[key];
-      }
-    });
-
-    this.formState = nextFormState;
     this.dispatch({
       type: FormActionTypes.onChange,
       payload: {
-        formState: this.formState,
+        formState: this.form.formState,
       },
     });
-    this.formStateSubject$.next(this.formState);
   };
 
   componentWillUnmount() {
@@ -70,17 +63,30 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   updateField = (action: IFieldAction) => {
-    this.formState[action.name] = action.payload!;
-    this.formStateSubject$.next(this.formState);
+    this.form = {
+      formState: {
+        // set(this.form.formState, action.name, action.payload!) => will to array instead of a key value object
+        ...this.form.formState,
+        [action.name]: action.payload!,
+      },
+      values: set(this.form.values, action.name, action.payload!.value),
+    };
+    this.formStateSubject$.next(this.form.formState);
   };
 
   onSubmitError = (errors: TErrors) => {
-    this.formState = setErrors(this.formState, errors);
-    this.formStateSubject$.next(this.formState);
+    // TODO: Check if if values should be different if fields contains error
+
+    this.form = {
+      values: this.form.values,
+      formState: setErrors(this.form.formState, errors),
+    };
+
+    this.formStateSubject$.next(this.form.formState);
     this.dispatch({
       type: FormActionTypes.startSubmitFailed,
       payload: {
-        formState: this.formState,
+        formState: this.form.formState,
       },
     });
   };
@@ -90,16 +96,16 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   getFormValues = () => {
-    return toFormValues(this.formState);
+    return this.form.values;
   };
 
   removeField = (action: IFieldAction) => {
-    delete this.formState[action.name];
-    this.formStateSubject$.next(this.formState);
+    delete this.form.formState[action.name];
+    this.formStateSubject$.next(this.form.formState);
   };
 
   dispatch = (action: IFieldAction | IFormAction) => {
-    const prevState = cloneDeep(this.formState);
+    const prevState = cloneDeep(this.form);
 
     switch (action.type) {
       case FieldActionTypes.register: {
@@ -132,7 +138,7 @@ export class RxForm extends React.Component<IRxFormProps> {
       }
     }
 
-    const nextState = cloneDeep(this.formState);
+    const nextState = cloneDeep(this.form);
     log({
       action,
       prevState,
@@ -155,11 +161,11 @@ export class RxForm extends React.Component<IRxFormProps> {
       this.dispatch({
         type: FormActionTypes.startSubmit,
         payload: {
-          formState: this.formState,
+          formState: this.form.formState,
         },
       });
 
-      if (isContainError(this.formState)) {
+      if (isContainError(this.form.formState)) {
         return;
       }
 

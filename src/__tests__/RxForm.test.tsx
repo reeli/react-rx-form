@@ -22,15 +22,10 @@ describe("<RxForm/>", () => {
     );
 
     const instance = wrapper.instance() as any;
-    instance.setFormValues({ firstName: "rui" });
-    expect(instance.formState).toEqual({
-      firstName: {
-        value: "rui",
-        meta: {
-          error: undefined,
-          dirty: false,
-        },
-      },
+    instance.setFormValues({ firstName: "rui", address: [{ street1: "street1" }, { street2: "street2" }] });
+    expect(instance.form.values).toEqual({
+      firstName: "rui",
+      address: [{ street1: "street1" }, { street2: "street2" }],
     });
   });
 });

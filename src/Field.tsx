@@ -42,7 +42,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   componentDidMount() {
     this.registerField(this.state.fieldState);
     this.onFormStateChange();
-    this.onStartSubmitForm();
+    this.onFormActionChange();
   }
 
   // 当 field name 发生变化时应该 unregister 上一个 field，register 另一个 field，或者使用 key，以保证 field unmount 而不是 did update
@@ -56,10 +56,27 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   //   }
   // }
 
-  onStartSubmitForm = () => {
+  onFormActionChange = () => {
     const formActionObserver$ = new Subject<IFormAction>();
 
     formActionObserver$
+      // .pipe(
+      //   filter((formAction: IFormAction) => {
+      //     console.log(formAction, "init");
+      //     return formAction.type === FormActionTypes.initialize;
+      //   }),
+      //   map((formAction: IFormAction) => {
+      //     console.log(formAction.payload.initialValues, this.props.name);
+      //     console.log(get(formAction.payload.initialValues!, this.props.name));
+      //     return get(formAction.payload.initialValues!, this.props.name);
+      //   }),
+      //   // distinctUntilChanged(),
+      //   tap((fieldValue: any) => {
+      //     // if (fieldValue) {
+      //     //   this.onChange(fieldValue);
+      //     // }
+      //   }),
+      // )
       .pipe(
         filter((formAction: IFormAction) => {
           return formAction.type === FormActionTypes.startSubmit;

@@ -7,7 +7,7 @@ import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, IFormStat
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
   state = {
-    fields: [],
+    fields: this.props.formContextValue.getFormValues()[this.props.name] || [],
   };
 
   componentDidMount() {

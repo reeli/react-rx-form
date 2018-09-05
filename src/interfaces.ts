@@ -140,3 +140,8 @@ export enum FormActionTypes {
   startSubmitFailed = "@@rx-form/form/START_SUBMIT_FAILED",
   onChange = "@@rx-form/form/CHANGE",
 }
+
+export interface IForm {
+  formState: IFormState;
+  values: IFormValues;
+}
