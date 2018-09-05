@@ -81,9 +81,7 @@ export interface IFieldArrayCoreState {
   fields: any[];
 }
 
-export interface IFieldArrayCoreProps extends IFieldArrayProps {
-  formContextValue: IFormContextValue;
-}
+export interface IFieldArrayCoreProps extends IFieldArrayProps, IFormContextValue {}
 
 export interface IFormValuesInnerProps {
   formValues: IFormValues;

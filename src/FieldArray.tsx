@@ -7,7 +7,7 @@ import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, IFormStat
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
   state = {
-    fields: this.props.formContextValue.getFormValues()[this.props.name] || [],
+    fields: this.props.getFormValues()[this.props.name] || [],
   };
 
   componentDidMount() {
@@ -20,7 +20,7 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
       .pipe(
         distinctUntilChanged(),
         tap(() => {
-          const formValues = this.props.formContextValue.getFormValues();
+          const formValues = this.props.getFormValues();
           const len = size(get(formValues, this.props.name));
           if (len > 0) {
             this.setState({
@@ -30,10 +30,10 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
         }),
       )
       .subscribe();
-    this.props.formContextValue.subscribe(formStateObserver$);
+    this.props.subscribe(formStateObserver$);
   }
 
-  remove = (idx: number, { formContextValue: { getFormValues, updateFormValues } }: IFieldArrayCoreProps) => {
+  remove = (idx: number, { getFormValues, updateFormValues }: IFieldArrayCoreProps) => {
     // const nextFields = filter(this.state.fields, (_, n) => {
     //   return idx !== n;
     // });
@@ -51,10 +51,6 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
 
   add = () => {
     const nextFields = [...this.state.fields, this.props.name];
-    // this.props.updateFormValues({
-    //   ...this.props.formValues,
-    //   [this.props.name]: nextItem,
-    // });
     this.setState({
       fields: nextFields,
     });
@@ -75,6 +71,6 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
 
 export const FieldArray = (props: IFieldArrayProps) => (
   <FormContext.Consumer>
-    {(formContextValue) => <FieldArrayCore {...props} formContextValue={formContextValue} />}
+    {(formContextValue) => <FieldArrayCore {...props} {...formContextValue} />}
   </FormContext.Consumer>
 );
