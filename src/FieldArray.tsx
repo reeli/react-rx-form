@@ -1,4 +1,4 @@
-import { filter, get, map, set, times } from "lodash";
+import { filter, get, map, set, size, times } from "lodash";
 import * as React from "react";
 import { FormContext } from "./FormContext";
 import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps } from "./interfaces";
@@ -8,7 +8,7 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     // TODO: Will form initial values in FieldArray
     const fieldArrayValues = get(this.props.getFormValues(), this.props.name);
     if (this.props.initLength) {
-      times(this.props.initLength - fieldArrayValues.length, this.add);
+      times(this.props.initLength - size(fieldArrayValues), this.add);
     }
   }
 
