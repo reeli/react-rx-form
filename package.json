@@ -1,6 +1,6 @@
 {
   "name": "@reeli/react-rx-form",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "rx form for react, use typescript for development",
   "main": "lib/index.js",
   "module": "module/index.js",
@@ -83,7 +83,7 @@
     "lodash": "4.17.10",
     "react": "16.4.2",
     "react-dom": "16.4.2",
-    "rxjs": "6.2.2"
+    "rxjs": "6.3.1"
   },
   "devDependencies": {
     "@material-ui/core": "3.0.2",
