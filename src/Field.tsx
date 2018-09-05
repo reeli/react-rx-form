@@ -11,8 +11,8 @@ import {
   IFieldCoreState,
   IFieldProps,
   IFieldState,
+  IForm,
   IFormAction,
-  IFormState,
   TFieldValue,
 } from "./interfaces";
 import { isDirty, validateField } from "./utils";
@@ -82,11 +82,13 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
           return formAction.type === FormActionTypes.startSubmit;
         }),
         map((formAction: IFormAction) => {
-          return formAction.payload.formState[this.props.name];
+          return {
+            fieldState: formAction.payload.formState[this.props.name],
+            value: get(formAction.payload.values, this.props.name),
+          };
         }),
         distinctUntilChanged(),
-        tap((fieldState: IFieldState) => {
-          const value = get(fieldState, "value");
+        tap(({ fieldState, value }: { fieldState: IFieldState; value: any }) => {
           const error = validateField(value, this.props.validate);
 
           if (error) {
@@ -135,14 +137,22 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   };
 
   onFormStateChange = () => {
-    const formStateObserver$ = new Subject<IFormState>();
+    const formStateObserver$ = new Subject<IForm>();
     formStateObserver$
       .pipe(
-        map((formState: IFormState) => formState[this.props.name]),
+        map((form) => {
+          return {
+            fieldState: form.formState[this.props.name],
+            value: get(form.values, this.props.name),
+          };
+        }),
         distinctUntilChanged(),
-        tap((fieldState: IFieldState) => {
+        tap(({ fieldState, value }) => {
           this.setState({
-            fieldState,
+            fieldState: {
+              ...fieldState,
+              value,
+            },
           });
         }),
       )

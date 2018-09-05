@@ -1,59 +1,35 @@
-import { filter, get, map, set, size, times } from "lodash";
+import { filter, get, map, set, times } from "lodash";
 import * as React from "react";
-import { Subject } from "rxjs/internal/Subject";
-import { distinctUntilChanged, tap } from "rxjs/operators";
 import { FormContext } from "./FormContext";
-import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, IFormState } from "./interfaces";
+import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps } from "./interfaces";
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
-  state = {
-    fields: this.props.getFormValues()[this.props.name] || [],
-  };
-
   componentDidMount() {
     // TODO: Will form initial values in FieldArray
+    const fieldArrayValues = get(this.props.getFormValues(), this.props.name);
     if (this.props.initLength) {
-      times(this.props.initLength, this.add);
+      times(this.props.initLength - fieldArrayValues.length, this.add);
     }
-    const formStateObserver$ = new Subject<IFormState>();
-    formStateObserver$
-      .pipe(
-        distinctUntilChanged(),
-        tap(() => {
-          const formValues = this.props.getFormValues();
-          const len = size(get(formValues, this.props.name));
-          if (len > 0) {
-            this.setState({
-              fields: get(formValues, this.props.name),
-            });
-          }
-        }),
-      )
-      .subscribe();
-    this.props.subscribe(formStateObserver$);
   }
 
   remove = (idx: number, { getFormValues, updateFormValues }: IFieldArrayCoreProps) => {
-    // const nextFields = filter(this.state.fields, (_, n) => {
-    //   return idx !== n;
-    // });
-    // console.log(this.props.formValues, this.props.name);
     const formValues = getFormValues();
     const newFieldArrayValues = filter(get(formValues, this.props.name), (_, n: number) => {
       return n !== idx;
     });
 
     const nextFormValues = set(formValues, this.props.name, newFieldArrayValues);
+    // console.log(nextFormValues)
     updateFormValues(nextFormValues);
-
-    // this.setState({ fields: newFieldArrayValues.length });
+    this.forceUpdate();
   };
 
   add = () => {
-    const nextFields = [...this.state.fields, this.props.name];
-    this.setState({
-      fields: nextFields,
-    });
+    const formValues = this.props.getFormValues();
+    const nextFormValues = set(formValues, this.props.name, get(formValues, this.props.name, []).concat(undefined));
+
+    this.props.updateFormValues(nextFormValues);
+    this.forceUpdate();
   };
 
   formatFieldsByIdx = (fields: any[]): string[] => {
@@ -61,8 +37,9 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
   };
 
   render() {
+    // console.log(get(this.props.getFormValues(), this.props.name),'---xxx')
     return this.props.children({
-      fields: this.formatFieldsByIdx(this.state.fields),
+      fields: this.formatFieldsByIdx(get(this.props.getFormValues(), this.props.name)),
       add: this.add,
       remove: (idx: number) => this.remove(idx, this.props),
     });

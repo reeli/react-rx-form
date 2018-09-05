@@ -20,7 +20,7 @@ import { isContainError, log, setErrors } from "./utils";
 export class RxForm extends React.Component<IRxFormProps> {
   private form = {
     formState: {},
-    values: {},
+    values: this.props.initialValues || {},
   } as IForm;
   private formStateSubject$ = new Subject();
   private formActionSubject$ = new Subject();
@@ -31,12 +31,9 @@ export class RxForm extends React.Component<IRxFormProps> {
       type: FormActionTypes.initialize,
       payload: {
         formState: this.form.formState,
+        values: this.form.values,
       },
     });
-
-    if (this.props.initialValues) {
-      this.setFormValues(this.props.initialValues);
-    }
   }
 
   setFormValues = (formValues: IFormValues) => {
@@ -51,6 +48,7 @@ export class RxForm extends React.Component<IRxFormProps> {
       type: FormActionTypes.onChange,
       payload: {
         formState: this.form.formState,
+        values: this.form.values,
       },
     });
   };
@@ -71,7 +69,7 @@ export class RxForm extends React.Component<IRxFormProps> {
       },
       values: set(this.form.values, action.name, action.payload!.value),
     };
-    this.formStateSubject$.next(this.form.formState);
+    this.formStateSubject$.next(this.form);
   };
 
   onSubmitError = (errors: TErrors) => {
@@ -82,11 +80,12 @@ export class RxForm extends React.Component<IRxFormProps> {
       formState: setErrors(this.form.formState, errors),
     };
 
-    this.formStateSubject$.next(this.form.formState);
+    this.formStateSubject$.next(this.form);
     this.dispatch({
       type: FormActionTypes.startSubmitFailed,
       payload: {
         formState: this.form.formState,
+        values: this.form.values,
       },
     });
   };
@@ -101,7 +100,7 @@ export class RxForm extends React.Component<IRxFormProps> {
 
   removeField = (action: IFieldAction) => {
     delete this.form.formState[action.name];
-    this.formStateSubject$.next(this.form.formState);
+    this.formStateSubject$.next(this.form);
   };
 
   dispatch = (action: IFieldAction | IFormAction) => {
@@ -162,6 +161,7 @@ export class RxForm extends React.Component<IRxFormProps> {
         type: FormActionTypes.startSubmit,
         payload: {
           formState: this.form.formState,
+          values: this.form.values,
         },
       });
 

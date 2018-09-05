@@ -129,6 +129,7 @@ export interface IFormAction {
   type: string;
   payload: {
     formState: IFormState;
+    values: IFormValues;
   };
 }
 
