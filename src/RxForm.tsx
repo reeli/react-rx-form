@@ -61,13 +61,16 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   updateField = (action: IFieldAction) => {
+    const { value, ...others } = action.payload!;
     this.form = {
       formState: {
         // set(this.form.formState, action.name, action.payload!) => will to array instead of a key value object
         ...this.form.formState,
-        [action.name]: action.payload!,
+        [action.name]: {
+          ...others,
+        },
       },
-      values: set(this.form.values, action.name, action.payload!.value),
+      values: set(this.form.values, action.name, value),
     };
     this.formStateSubject$.next(this.form);
   };
