@@ -148,12 +148,14 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         }),
         distinctUntilChanged(),
         tap(({ fieldState, value }) => {
-          this.setState({
-            fieldState: {
-              ...fieldState,
-              value,
-            },
-          });
+          if (fieldState || value) {
+            this.setState({
+              fieldState: {
+                ...fieldState,
+                value,
+              },
+            });
+          }
         }),
       )
       .subscribe();
