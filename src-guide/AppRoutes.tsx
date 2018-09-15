@@ -1,3 +1,4 @@
+import Typography from "@material-ui/core/Typography/Typography";
 import { map } from "lodash";
 import * as React from "react";
 import { Route } from "react-router";
@@ -14,7 +15,13 @@ req.keys().forEach((key: string) => {
       map(module, (Comp, i) => {
         return (
           <React.Fragment key={i}>
+            <Typography>
+              <h2>Form</h2>
+            </Typography>
             <Comp />
+            <Typography>
+              <h2>Code</h2>
+            </Typography>
             <WithHighlight>
               <pre>
                 <code>{Comp.tsc()}</code>
