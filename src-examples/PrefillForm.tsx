@@ -4,6 +4,8 @@ import { Field, FormValues, RxForm } from "@reeli/react-rx-form";
 import * as React from "react";
 import { CustomCheckbox } from "src-components/CustomCheckbox";
 import { CustomInput } from "src-components/CustomInput";
+import { DebounceInput } from "../src-components/DebounceInput";
+import { required } from "../src-modules/utils/validations";
 
 export class PrefillForm extends React.Component {
   static tsc() {
@@ -20,9 +22,9 @@ export class PrefillForm extends React.Component {
   componentDidMount() {
     console.log(this.form.getFormValues(), "this.form.formState");
     console.log(this.ref.current.getFormValues(), "this.formValues");
-    setTimeout(() => {
-      alert("hehaha");
-    }, 2000);
+    // setTimeout(() => {
+    //   alert("hehaha");
+    // }, 2000);
   }
 
   render() {
@@ -36,8 +38,8 @@ export class PrefillForm extends React.Component {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <div>
-              <Field name="firstName">
-                {(fieldProps) => <CustomInput {...fieldProps} type="text" placeholder="First Name" />}
+              <Field name="firstName" validate={required()}>
+                {(fieldProps) => <DebounceInput {...fieldProps} type="text" placeholder="First Name" />}
               </Field>
               <Field name="lastName">
                 {(fieldProps) => <CustomInput {...fieldProps} type="password" placeholder="Last Name" />}

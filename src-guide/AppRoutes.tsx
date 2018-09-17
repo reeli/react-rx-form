@@ -15,13 +15,9 @@ req.keys().forEach((key: string) => {
       map(module, (Comp, i) => {
         return (
           <React.Fragment key={i}>
-            <Typography>
-              <h2>Form</h2>
-            </Typography>
+            <Typography variant="title">Form</Typography>
             <Comp />
-            <Typography>
-              <h2>Code</h2>
-            </Typography>
+            <Typography variant="title">Code</Typography>
             <WithHighlight>
               <pre>
                 <code>{Comp.tsc()}</code>
