@@ -28,9 +28,6 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
 
   state = {
     fieldState: {
-      // TODO: change defaultValue to defaultValue, toggle controlled component and uncontrolled component
-      // in component level, default value should not be empty string, because sometime it should be boolean,
-      // think about checkbox.
       value: getFieldValue(this.props),
       meta: {
         error: undefined,
@@ -45,38 +42,10 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     this.onFormActionChange();
   }
 
-  // 当 field name 发生变化时应该 unregister 上一个 field，register 另一个 field，或者使用 key，以保证 field unmount 而不是 did update
-  // componentDidUpdate(nextProps: IFieldProps) {
-  //   if (nextProps.name !== this.props.name) {
-  //     this.props.formContextValue.dispatch({
-  //       name: nextProps.name,
-  //       type: FieldActionTypes.change,
-  //       payload: this.state.fieldState,
-  //     });
-  //   }
-  // }
-
   onFormActionChange = () => {
     const formActionObserver$ = new Subject<IFormAction>();
 
     formActionObserver$
-      // .pipe(
-      //   filter((formAction: IFormAction) => {
-      //     console.log(formAction, "init");
-      //     return formAction.type === FormActionTypes.initialize;
-      //   }),
-      //   map((formAction: IFormAction) => {
-      //     console.log(formAction.payload.initialValues, this.props.name);
-      //     console.log(get(formAction.payload.initialValues!, this.props.name));
-      //     return get(formAction.payload.initialValues!, this.props.name);
-      //   }),
-      //   // distinctUntilChanged(),
-      //   tap((fieldValue: any) => {
-      //     // if (fieldValue) {
-      //     //   this.onChange(fieldValue);
-      //     // }
-      //   }),
-      // )
       .pipe(
         filter((formAction: IFormAction) => {
           return formAction.type === FormActionTypes.startSubmit;

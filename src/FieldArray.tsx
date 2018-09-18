@@ -5,7 +5,6 @@ import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps } from "./
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
   componentDidMount() {
-    // TODO: Will form initial values in FieldArray
     const fieldArrayValues = get(this.props.getFormValues(), this.props.name);
     if (this.props.initLength) {
       times(this.props.initLength - size(fieldArrayValues), this.add);
@@ -19,7 +18,6 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     });
 
     const nextFormValues = set(formValues, this.props.name, newFieldArrayValues);
-    // console.log(nextFormValues)
     updateFormValues(nextFormValues);
     this.forceUpdate();
   };
@@ -37,7 +35,6 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
   };
 
   render() {
-    // console.log(get(this.props.getFormValues(), this.props.name),'---xxx')
     return this.props.children({
       fields: this.formatFieldsByIdx(get(this.props.getFormValues(), this.props.name)),
       add: this.add,

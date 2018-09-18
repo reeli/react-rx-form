@@ -6,7 +6,6 @@ import {
   pickInputPropsFromFieldProps,
   setErrors,
   toFormValues,
-  toObjWithKeyPath,
   validateField,
 } from "../utils";
 
@@ -74,46 +73,6 @@ describe("#setErrors", () => {
     const formState = createFormState({ hasError: false });
     const errors = {};
     expect(setErrors(formState, errors)).toEqual(formState);
-  });
-});
-
-describe("#toObjWithKeyPath", () => {
-  it("should covert to simple object with correct key path", () => {
-    const mockData = {
-      firstName: "rui",
-      lastName: "li",
-      age: 10,
-      isSelected: true,
-    };
-
-    expect(toObjWithKeyPath(mockData)).toEqual({
-      firstName: "rui",
-      lastName: "li",
-      age: 10,
-      isSelected: true,
-    });
-  });
-
-  it("should covert to complicated object with correct key path", () => {
-    const mockData = {
-      firstName: "rui",
-      lastName: "li",
-      members: [
-        { firstName: "rui", lastName: "li", hobbies: ["running", "swimming"] },
-        { firstName: "rui1", lastName: "li1" },
-      ],
-    };
-
-    expect(toObjWithKeyPath(mockData)).toEqual({
-      firstName: "rui",
-      lastName: "li",
-      [`members[0].firstName`]: "rui",
-      [`members[0].lastName`]: "li",
-      [`members[0].hobbies[0]`]: "running",
-      [`members[0].hobbies[1]`]: "swimming",
-      [`members[1].firstName`]: "rui1",
-      [`members[1].lastName`]: "li1",
-    });
   });
 });
 

@@ -1,16 +1,4 @@
-import {
-  cloneDeep,
-  forEach,
-  isArray,
-  isEmpty,
-  isEqual,
-  isNaN,
-  isObject,
-  isUndefined,
-  mapValues,
-  reduce,
-  set,
-} from "lodash";
+import { cloneDeep, forEach, isArray, isEmpty, isEqual, isUndefined, mapValues, reduce, set } from "lodash";
 import {
   IFieldAction,
   IFieldInnerProps,
@@ -19,7 +7,6 @@ import {
   IFormAction,
   IFormState,
   IFormValues,
-  IRxFormProps,
   TErrors,
   TFieldValue,
   TValidator,
@@ -64,27 +51,6 @@ export const setErrors = (formState: IFormState, errors: TErrors) => {
       },
     };
   });
-};
-
-const formatKeyPath = (key: string) => {
-  return !isNaN(parseInt(key, 10)) ? `[${key}]` : key;
-};
-
-export const toObjWithKeyPath = (input: IRxFormProps["initialValues"]) => {
-  const res = {} as any;
-  const toKeyPath = (obj: any, prefix: string = "") => {
-    Object.keys(obj).map((key) => {
-      const value = obj[key];
-      if (isArray(value) || isObject(value)) {
-        const suffix = !isArray(value) && isObject(value) ? "." : "";
-        toKeyPath(value, prefix + formatKeyPath(key) + suffix);
-      } else {
-        res[prefix + formatKeyPath(key)] = value;
-      }
-    });
-  };
-  toKeyPath(input);
-  return res;
 };
 
 export const pickInputPropsFromFieldProps = ({ meta, ...others }: IFieldInnerProps) => {
