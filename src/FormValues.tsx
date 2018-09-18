@@ -9,7 +9,6 @@ import {
   IFormValuesCommonProps,
   IFormValuesCoreProps,
   IFormValuesCoreState,
-  IFormValuesCoreWrapperProps,
 } from "./interfaces";
 import { toFormValues } from "./utils";
 
@@ -56,16 +55,12 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
   }
 }
 
-const FormValuesCoreWrapper = ({ forwardedRef, ...others }: IFormValuesCoreWrapperProps) => {
+export const FormValues = React.forwardRef((props: IFormValuesCommonProps, ref?: React.Ref<any>) => {
   return (
     <FormContext.Consumer>
       {(formContextValue) => {
-        return <FormValuesCore formContextValue={formContextValue} {...others} ref={forwardedRef} />;
+        return <FormValuesCore formContextValue={formContextValue} {...props} ref={ref} />;
       }}
     </FormContext.Consumer>
   );
-};
-
-export const FormValues = React.forwardRef<React.Ref<any>, IFormValuesCommonProps>((props, ref) => {
-  return <FormValuesCoreWrapper {...props} forwardedRef={ref} />;
 });
