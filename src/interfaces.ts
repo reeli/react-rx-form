@@ -69,6 +69,7 @@ export interface IFormContextValue {
 export interface IFieldArrayInnerProps extends IFieldArrayCoreState {
   add: () => any;
   remove: (idx: number) => any;
+  each: (mapper: (fieldName: string, idx: number) => React.ReactNode) => React.ReactNode;
 }
 
 export interface IFieldArrayProps {

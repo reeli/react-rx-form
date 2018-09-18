@@ -1,7 +1,7 @@
 import { filter, get, map, set, size, times } from "lodash";
 import * as React from "react";
 import { FormContext } from "./FormContext";
-import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps } from "./interfaces";
+import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, TFieldValue } from "./interfaces";
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
   componentDidMount() {
@@ -34,17 +34,26 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     return map(fields, (_, idx: number) => `${this.props.name}[${idx}]`);
   };
 
+  each = (mapper: (fieldName: string, idx: number) => React.ReactNode) => {
+    const fieldValues = get(this.props.getFormValues(), this.props.name);
+    return map(fieldValues, (_: TFieldValue, idx: number) => {
+      const fieldName = `${this.props.name}[${idx}]`;
+      return mapper(fieldName, idx);
+    });
+  };
+
   render() {
     return this.props.children({
       fields: this.formatFieldsByIdx(get(this.props.getFormValues(), this.props.name)),
       add: this.add,
+      each: this.each,
       remove: (idx: number) => this.remove(idx, this.props),
     });
   }
 }
 
-export const FieldArray = (props: IFieldArrayProps) => (
+export const FieldArray = React.forwardRef((props: IFieldArrayProps, ref?: React.Ref<any>) => (
   <FormContext.Consumer>
-    {(formContextValue) => <FieldArrayCore {...props} {...formContextValue} />}
+    {(formContextValue) => <FieldArrayCore {...props} {...formContextValue} ref={ref} />}
   </FormContext.Consumer>
-);
+));
