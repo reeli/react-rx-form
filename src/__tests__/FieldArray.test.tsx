@@ -2,50 +2,58 @@ import { mount } from "enzyme";
 import * as React from "react";
 import { Field } from "../Field";
 import { FieldArray } from "../FieldArray";
+import { RxForm } from "../RxForm";
 import { pickInputPropsFromFieldProps } from "../utils";
 
 describe("<FieldArray/>", () => {
-  xit("add a field array item", () => {
-    const wrapper = createFieldArray();
-    const instance = wrapper.children().instance() as any;
+  it("add a field array item", () => {
+    const wrapper = createForm();
+    const instance = wrapper.ref("fieldArray") as any;
     instance.add();
-    expect(instance.state).toEqual({ fields: ["members"] });
+    const form = wrapper.instance() as RxForm;
+    expect(form.getFormValues().members.length).toEqual(2);
     wrapper.unmount();
   });
 
-  xit("remove a field array item", () => {
-    const wrapper = createFieldArray();
-    const instance = wrapper.children().instance() as any;
-    console.log(createFieldArray(), "instance");
+  it("remove a field array item", () => {
+    const wrapper = createForm();
+    const instance = wrapper.ref("fieldArray") as any;
     instance.add();
     instance.add();
     const mocks = {
       getFormValues: () => jest.fn(),
-      updateFormValues: jest.fn(),
+      updateFormValues: () => jest.fn(),
     };
 
     mocks.getFormValues().mockReturnValueOnce({
       members: [{ firstName: "rui" }, { firstName: "li" }],
     });
 
-    instance.remove(0, {
-      formContextValue: { ...mocks },
-    });
-    expect(mocks.getFormValues).toBeCalled();
-    expect(mocks.updateFormValues).toBeCalled();
+    instance.remove(0, instance.props);
+
+    const form = wrapper.instance() as RxForm;
+    expect(form.getFormValues().members.length).toEqual(2);
     wrapper.unmount();
   });
 });
 
-const createFieldArray = () =>
+const createForm = () =>
   mount(
-    <FieldArray name={"members"}>
-      {({ fields }) =>
-        fields.map((member, idx) => (
-          <Field name={`${member}.firstName`} key={idx}>
-            {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
-          </Field>
-        ))
-      }
-    </FieldArray>,
+    <RxForm
+      initialValues={{
+        members: [{ firstName: "rui" }],
+      }}
+    >
+      {() => (
+        <FieldArray name={"members"} initLength={1} ref={"fieldArray"}>
+          {({ fields }) =>
+            fields.map((member, idx) => (
+              <Field name={`${member}.firstName`} key={idx}>
+                {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+              </Field>
+            ))
+          }
+        </FieldArray>
+      )}
+    </RxForm>,
   );
