@@ -49,7 +49,9 @@ const createForm = () =>
           {({ fields }) =>
             fields.map((member, idx) => (
               <Field name={`${member}.firstName`} key={idx}>
-                {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+                {({ value = "", ...others }) => (
+                  <input type="text" value={value} {...pickInputPropsFromFieldProps(others)} />
+                )}
               </Field>
             ))
           }
