@@ -3,7 +3,7 @@ import {
   IFieldAction,
   IFieldInnerProps,
   IFieldProps,
-  IForm,
+  IFields,
   IFormAction,
   IFormState,
   IFormValues,
@@ -24,8 +24,8 @@ export const combineValidators = (validators: TValidator[]) => {
   };
 };
 
-export const isContainError = (formState: IFormState) => {
-  return reduce(formState, (result, item) => result || (item.meta && !!item.meta.error), false);
+export const isContainError = (fields: IFields) => {
+  return reduce(fields, (result, item) => result || (item.meta && !!item.meta.error), false);
 };
 
 export const toFormValues = (formState: IFormState): IFormValues => {
@@ -38,11 +38,11 @@ export const toFormValues = (formState: IFormState): IFormValues => {
   return formValues;
 };
 
-export const setErrors = (formState: IFormState, errors: TErrors) => {
+export const setErrors = (fields: IFields, errors: TErrors) => {
   if (isEmpty(errors)) {
-    return formState;
+    return fields;
   }
-  return mapValues(formState, (field, name) => {
+  return mapValues(fields, (field, name) => {
     return {
       ...field,
       meta: {
@@ -86,8 +86,8 @@ export const log = ({
   nextState,
 }: {
   action: IFieldAction | IFormAction;
-  prevState: IForm;
-  nextState: IForm;
+  prevState: IFormState;
+  nextState: IFormState;
 }) => {
   if (process.env.NODE_ENV === "development") {
     console.groupCollapsed(`${action.type} ${new Date()}`);

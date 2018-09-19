@@ -11,8 +11,8 @@ import {
   IFieldCoreState,
   IFieldProps,
   IFieldState,
-  IForm,
   IFormAction,
+  IFormState,
   TFieldValue,
 } from "./interfaces";
 import { isDirty, validateField } from "./utils";
@@ -52,7 +52,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         }),
         map((formAction: IFormAction) => {
           return {
-            fieldState: formAction.payload.formState[this.props.name],
+            fieldState: formAction.payload.fields[this.props.name],
             value: get(formAction.payload.values, this.props.name),
           };
         }),
@@ -106,21 +106,21 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   };
 
   onFormStateChange = () => {
-    const formStateObserver$ = new Subject<IForm>();
+    const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
-        map((form) => {
+        map((formState) => {
           return {
-            fieldState: form.formState[this.props.name],
-            value: get(form.values, this.props.name),
+            fields: formState.fields[this.props.name],
+            value: get(formState.values, this.props.name),
           };
         }),
         distinctUntilChanged(),
-        tap(({ fieldState, value }) => {
-          if (fieldState || value) {
+        tap(({ fields, value }) => {
+          if (fields || value) {
             this.setState({
               fieldState: {
-                ...fieldState,
+                ...fields,
                 value,
               },
             });

@@ -106,7 +106,7 @@ export interface IFormValuesCoreProps extends IFormValuesCommonProps {
   ref?: React.Ref<any>;
 }
 
-export interface IFormState {
+export interface IFields {
   [fieldName: string]: IFieldState;
 }
 
@@ -129,7 +129,7 @@ export interface IRxFormProps {
 export interface IFormAction {
   type: string;
   payload: {
-    formState: IFormState;
+    fields: IFields;
     values: IFormValues;
   };
 }
@@ -141,7 +141,7 @@ export enum FormActionTypes {
   onChange = "@@rx-form/form/CHANGE",
 }
 
-export interface IForm {
-  formState: IFormState;
+export interface IFormState {
+  fields: IFields;
   values: IFormValues;
 }

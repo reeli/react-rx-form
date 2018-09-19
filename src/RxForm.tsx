@@ -8,8 +8,8 @@ import {
   FieldActionTypes,
   FormActionTypes,
   IFieldAction,
-  IForm,
   IFormAction,
+  IFormState,
   IFormValues,
   IRxFormProps,
   TErrors,
@@ -18,10 +18,10 @@ import {
 import { isContainError, log, setErrors } from "./utils";
 
 export class RxForm extends React.Component<IRxFormProps> {
-  private form = {
-    formState: {},
+  private formState = {
+    fields: {},
     values: this.props.initialValues || {},
-  } as IForm;
+  } as IFormState;
   private formStateSubject$ = new Subject();
   private formActionSubject$ = new Subject();
   private formStateSubscription: Subscription | null = null;
@@ -30,25 +30,25 @@ export class RxForm extends React.Component<IRxFormProps> {
     this.dispatch({
       type: FormActionTypes.initialize,
       payload: {
-        formState: this.form.formState,
-        values: this.form.values,
+        fields: this.formState.fields,
+        values: this.formState.values,
       },
     });
   }
 
   setFormValues = (formValues: IFormValues) => {
-    this.form = {
+    this.formState = {
       // When initialize, formState has no value at this time，
       // but will have data after field registered with values
-      formState: this.form.formState,
+      fields: this.formState.fields,
       values: formValues,
     };
 
     this.dispatch({
       type: FormActionTypes.onChange,
       payload: {
-        formState: this.form.formState,
-        values: this.form.values,
+        fields: this.formState.fields,
+        values: this.formState.values,
       },
     });
   };
@@ -62,33 +62,33 @@ export class RxForm extends React.Component<IRxFormProps> {
 
   updateField = (action: IFieldAction) => {
     const { value, ...others } = action.payload!;
-    this.form = {
-      formState: {
+    this.formState = {
+      fields: {
         // set(this.form.formState, action.name, action.payload!) => will to array instead of a key value object
-        ...this.form.formState,
+        ...this.formState.fields,
         [action.name]: {
           ...others,
         },
       },
-      values: set(this.form.values, action.name, value),
+      values: set(this.formState.values, action.name, value),
     };
-    this.formStateSubject$.next(this.form);
+    this.formStateSubject$.next(this.formState);
   };
 
   onSubmitError = (errors: TErrors) => {
     // TODO: Check if if values should be different if fields contains error
 
-    this.form = {
-      values: this.form.values,
-      formState: setErrors(this.form.formState, errors),
+    this.formState = {
+      values: this.formState.values,
+      fields: setErrors(this.formState.fields, errors),
     };
 
-    this.formStateSubject$.next(this.form);
+    this.formStateSubject$.next(this.formState);
     this.dispatch({
       type: FormActionTypes.startSubmitFailed,
       payload: {
-        formState: this.form.formState,
-        values: this.form.values,
+        fields: this.formState.fields,
+        values: this.formState.values,
       },
     });
   };
@@ -98,16 +98,16 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   getFormValues = () => {
-    return this.form.values;
+    return this.formState.values;
   };
 
   removeField = (action: IFieldAction) => {
-    delete this.form.formState[action.name];
-    this.formStateSubject$.next(this.form);
+    delete this.formState.fields[action.name];
+    this.formStateSubject$.next(this.formState);
   };
 
   dispatch = (action: IFieldAction | IFormAction) => {
-    const prevState = cloneDeep(this.form);
+    const prevState = cloneDeep(this.formState);
 
     switch (action.type) {
       case FieldActionTypes.register: {
@@ -140,7 +140,7 @@ export class RxForm extends React.Component<IRxFormProps> {
       }
     }
 
-    const nextState = cloneDeep(this.form);
+    const nextState = cloneDeep(this.formState);
     log({
       action,
       prevState,
@@ -163,12 +163,12 @@ export class RxForm extends React.Component<IRxFormProps> {
       this.dispatch({
         type: FormActionTypes.startSubmit,
         payload: {
-          formState: this.form.formState,
-          values: this.form.values,
+          fields: this.formState.fields,
+          values: this.formState.values,
         },
       });
 
-      if (isContainError(this.form.formState)) {
+      if (isContainError(this.formState.fields)) {
         return;
       }
 
