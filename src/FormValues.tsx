@@ -10,7 +10,6 @@ import {
   IFormValuesCoreProps,
   IFormValuesCoreState,
 } from "./interfaces";
-import { toFormValues } from "./utils";
 
 class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCoreState> {
   subscription: Subscription | null = null;
@@ -23,7 +22,7 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
     formStateObserver$
       .pipe(
         map((formState: IFormState) => {
-          return toFormValues(formState);
+          return formState.values;
         }),
         distinctUntilChanged(),
         tap((formValues: IFormValues) => {
@@ -37,7 +36,7 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
   }
 
   getFormValues = () => {
-    return toFormValues(this.state.formValues);
+    return this.state.formValues;
   };
 
   componentWillUnmount() {

@@ -5,7 +5,6 @@ import {
   isDirty,
   pickInputPropsFromFieldProps,
   setErrors,
-  toFormValues,
   validateField,
 } from "../utils";
 
@@ -33,15 +32,6 @@ describe("#isContainError", () => {
   it("should return false if field state has no error", () => {
     const formState = createFormState({ hasError: false });
     expect(isContainError(formState)).toEqual(false);
-  });
-});
-
-describe("#toFormValues", () => {
-  it("should pick form values from form state", () => {
-    const formState = createFormState({ hasError: false });
-    expect(toFormValues(formState)).toEqual({
-      members: [{ firstName: "rui", lastName: "li", hobbies: ["swimming"] }],
-    });
   });
 });
 

@@ -1,4 +1,4 @@
-import { cloneDeep, forEach, isArray, isEmpty, isEqual, isUndefined, mapValues, reduce, set } from "lodash";
+import { cloneDeep, isArray, isEmpty, isEqual, isUndefined, mapValues, reduce } from "lodash";
 import {
   IFieldAction,
   IFieldInnerProps,
@@ -6,7 +6,6 @@ import {
   IFields,
   IFormAction,
   IFormState,
-  IFormValues,
   TErrors,
   TFieldValue,
   TValidator,
@@ -26,16 +25,6 @@ export const combineValidators = (validators: TValidator[]) => {
 
 export const isContainError = (fields: IFields) => {
   return reduce(fields, (result, item) => result || (item.meta && !!item.meta.error), false);
-};
-
-export const toFormValues = (formState: IFormState): IFormValues => {
-  const formValues = {};
-  forEach(formState, (field, key) => {
-    if (field) {
-      set(formValues, key, field.value);
-    }
-  });
-  return formValues;
 };
 
 export const setErrors = (fields: IFields, errors: TErrors) => {
