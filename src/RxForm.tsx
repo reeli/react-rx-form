@@ -141,6 +141,7 @@ export class RxForm extends React.Component<IRxFormProps> {
     }
 
     const nextState = cloneDeep(this.formState);
+
     log({
       action,
       prevState,

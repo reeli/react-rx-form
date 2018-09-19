@@ -1,5 +1,6 @@
 import { Field, RxForm } from "@reeli/react-rx-form";
 import * as React from "react";
+import { FormSection } from "../src/FormSection";
 
 export class SimpleForm extends React.Component {
   static tsc() {
@@ -16,28 +17,30 @@ export class SimpleForm extends React.Component {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <div>
-              <Field name="firstName">
-                {({ value = "", onChange, name }) => (
-                  <input
-                    name={name}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    type="text"
-                    placeholder="First Name"
-                  />
-                )}
-              </Field>
-              <Field name="lastName">
-                {({ value = "", onChange, name }) => (
-                  <input
-                    name={name}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    type="password"
-                    placeholder="Last Name"
-                  />
-                )}
-              </Field>
+              <FormSection name={"address"}>
+                <Field name="firstName">
+                  {({ value = "", onChange, name }) => (
+                    <input
+                      name={name}
+                      value={value}
+                      onChange={(e) => onChange(e.target.value)}
+                      type="text"
+                      placeholder="First Name"
+                    />
+                  )}
+                </Field>
+                <Field name="lastName">
+                  {({ value = "", onChange, name }) => (
+                    <input
+                      name={name}
+                      value={value}
+                      onChange={(e) => onChange(e.target.value)}
+                      type="password"
+                      placeholder="Last Name"
+                    />
+                  )}
+                </Field>
+              </FormSection>
               <Field name="email">
                 {({ value = "", onChange }) => (
                   <input

@@ -97,13 +97,8 @@ export interface IFormValuesCommonProps {
   children: TChildrenRender<IFormValuesInnerProps>;
 }
 
-export interface IFormValuesCoreWrapperProps extends IFormValuesCommonProps {
-  forwardedRef?: React.Ref<any>;
-}
-
 export interface IFormValuesCoreProps extends IFormValuesCommonProps {
   formContextValue: IFormContextValue;
-  ref?: React.Ref<any>;
 }
 
 export interface IFields {
@@ -144,4 +139,9 @@ export enum FormActionTypes {
 export interface IFormState {
   fields: IFields;
   values: IFormValues;
+}
+
+export interface IFormSectionProps {
+  name: string;
+  formContextValue: IFormContextValue;
 }
