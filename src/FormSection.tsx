@@ -1,5 +1,5 @@
 import React, { cloneElement, Component, isValidElement } from "react";
-import { FormContext } from "./FormContext";
+import { FormConsumer } from "./FormContext";
 import { IFieldProps, IFormSectionProps } from "./interfaces";
 
 class FormSectionCore extends Component<IFormSectionProps> {
@@ -18,10 +18,10 @@ class FormSectionCore extends Component<IFormSectionProps> {
 
 export const FormSection = React.forwardRef((props: { name: IFormSectionProps["name"] }, ref?: React.Ref<any>) => {
   return (
-    <FormContext.Consumer>
+    <FormConsumer>
       {(formContextValue) => {
         return <FormSectionCore formContextValue={formContextValue} {...props} ref={ref} />;
       }}
-    </FormContext.Consumer>
+    </FormConsumer>
   );
 });

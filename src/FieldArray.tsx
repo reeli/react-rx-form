@@ -1,6 +1,6 @@
 import { filter, get, map, set, size, times } from "lodash";
 import * as React from "react";
-import { FormContext } from "./FormContext";
+import { FormConsumer } from "./FormContext";
 import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, TFieldValue } from "./interfaces";
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
@@ -53,7 +53,5 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
 }
 
 export const FieldArray = React.forwardRef((props: IFieldArrayProps, ref?: React.Ref<any>) => (
-  <FormContext.Consumer>
-    {(formContextValue) => <FieldArrayCore {...props} {...formContextValue} ref={ref} />}
-  </FormContext.Consumer>
+  <FormConsumer>{(formContextValue) => <FieldArrayCore {...props} {...formContextValue} ref={ref} />}</FormConsumer>
 ));

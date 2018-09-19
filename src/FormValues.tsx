@@ -2,7 +2,7 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
-import { FormContext } from "./FormContext";
+import { FormConsumer } from "./FormContext";
 import {
   IFormState,
   IFormValues,
@@ -56,10 +56,10 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
 
 export const FormValues = React.forwardRef((props: IFormValuesCommonProps, ref?: React.Ref<any>) => {
   return (
-    <FormContext.Consumer>
+    <FormConsumer>
       {(formContextValue) => {
         return <FormValuesCore formContextValue={formContextValue} {...props} ref={ref} />;
       }}
-    </FormContext.Consumer>
+    </FormConsumer>
   );
 });

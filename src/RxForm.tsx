@@ -3,7 +3,7 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { Observer } from "rxjs/internal/types";
-import { FormContext } from "./FormContext";
+import { FormProvider } from "./FormContext";
 import {
   FieldActionTypes,
   FormActionTypes,
@@ -186,7 +186,7 @@ export class RxForm extends React.Component<IRxFormProps> {
 
   render() {
     return (
-      <FormContext.Provider
+      <FormProvider
         value={{
           subscribe: this.subscribe,
           dispatch: this.dispatch,
@@ -198,7 +198,7 @@ export class RxForm extends React.Component<IRxFormProps> {
         {this.props.children({
           handleSubmit: this.handleSubmit,
         })}
-      </FormContext.Provider>
+      </FormProvider>
     );
   }
 }

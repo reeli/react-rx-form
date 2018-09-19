@@ -3,7 +3,7 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
-import { FormContext } from "./FormContext";
+import { FormConsumer } from "./FormContext";
 import {
   FieldActionTypes,
   FormActionTypes,
@@ -158,11 +158,11 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
 export class Field extends React.Component<IFieldProps> {
   render() {
     return (
-      <FormContext.Consumer>
+      <FormConsumer>
         {(formContextValue) => {
           return <FieldCore formContextValue={formContextValue} {...this.props} />;
         }}
-      </FormContext.Consumer>
+      </FormConsumer>
     );
   }
 }
