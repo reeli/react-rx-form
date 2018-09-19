@@ -7,7 +7,11 @@ import { required } from "src-modules/utils/validations";
 
 export class FieldArrayForm extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/FieldArrayForm.tsx`);
+    return require(`!raw-loader!../src-examples/FieldArrayForm.tsx`);
+  }
+
+  static doc() {
+    return require(`!raw-loader!markdown-loader!../src-examples/FieldArrayForm.md`);
   }
 
   onSubmit = (values: any, onSubmitError: any) => {

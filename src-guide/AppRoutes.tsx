@@ -17,12 +17,20 @@ req.keys().forEach((key: string) => {
           <React.Fragment key={i}>
             <Typography variant="title">Form</Typography>
             <Comp />
+            <Typography variant="title">API</Typography>
+            {Comp.doc && (
+              <WithHighlight>
+                <div dangerouslySetInnerHTML={{ __html: Comp.doc() }} />
+              </WithHighlight>
+            )}
             <Typography variant="title">Code</Typography>
-            <WithHighlight>
-              <pre>
-                <code>{Comp.tsc()}</code>
-              </pre>
-            </WithHighlight>
+            {Comp.tsc && (
+              <WithHighlight>
+                <pre>
+                  <code>{Comp.tsc()}</code>
+                </pre>
+              </WithHighlight>
+            )}
           </React.Fragment>
         );
       }),

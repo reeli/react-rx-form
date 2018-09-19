@@ -9,7 +9,7 @@ export const Nav = () => {
     <>
       <MenuList>
         <MenuItem>
-          <h3>Examples</h3>
+          <h3>React Rx Form</h3>
         </MenuItem>
         {req.keys().map((key: string) => {
           const path = key.split(".")[1];
