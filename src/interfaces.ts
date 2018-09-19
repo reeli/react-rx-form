@@ -64,6 +64,7 @@ export interface IFormContextValue {
   subscribeFormAction: (observer: Observer<any>) => any;
   updateFormValues: (formValues: IFormValues) => any;
   getFormValues: () => IFormValues;
+  fieldPrefix?: string;
 }
 
 export interface IFieldArrayInnerProps extends IFieldArrayCoreState {

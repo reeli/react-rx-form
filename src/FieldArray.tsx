@@ -53,5 +53,14 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
 }
 
 export const FieldArray = React.forwardRef((props: IFieldArrayProps, ref?: React.Ref<any>) => (
-  <FormConsumer>{(formContextValue) => <FieldArrayCore {...props} {...formContextValue} ref={ref} />}</FormConsumer>
+  <FormConsumer>
+    {(formContextValue) => (
+      <FieldArrayCore
+        {...props}
+        {...formContextValue}
+        ref={ref}
+        name={`${formContextValue.fieldPrefix || ""}${props.name}`}
+      />
+    )}
+  </FormConsumer>
 ));

@@ -155,14 +155,17 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   }
 }
 
-export class Field extends React.Component<IFieldProps> {
-  render() {
-    return (
-      <FormConsumer>
-        {(formContextValue) => {
-          return <FieldCore formContextValue={formContextValue} {...this.props} />;
-        }}
-      </FormConsumer>
-    );
-  }
-}
+export const Field = React.forwardRef((props: IFieldProps, ref?: React.Ref<any>) => (
+  <FormConsumer>
+    {(formContextValue) => {
+      return (
+        <FieldCore
+          formContextValue={formContextValue}
+          {...props}
+          name={`${formContextValue.fieldPrefix || ""}${props.name}`}
+          ref={ref}
+        />
+      );
+    }}
+  </FormConsumer>
+));
