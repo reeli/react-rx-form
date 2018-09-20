@@ -7,7 +7,46 @@ import Typography from "@material-ui/core/Typography/Typography";
 import { map } from "lodash";
 import * as React from "react";
 import { Route } from "react-router";
+import { Home } from "../src-examples/Home";
 import { WithHighlight } from "./components/WithHighlight";
+
+const PageComp = ({ Comp, pageName }: { Comp: any; pageName: string }) => (
+  <React.Fragment>
+    <AppBar position="sticky">
+      <Toolbar>
+        <Typography variant="title" color="inherit">
+          {pageName}
+        </Typography>
+      </Toolbar>
+    </AppBar>
+    <Card elevation={0}>
+      <CardHeader title={<Typography variant="title">Form</Typography>} />
+      <CardContent>
+        <Comp />
+      </CardContent>
+      <CardHeader title={<Typography variant="title">API</Typography>} />
+      <CardContent>
+        {Comp.doc && (
+          <WithHighlight>
+            <Typography component={"div"}>
+              <div dangerouslySetInnerHTML={{ __html: Comp.doc() }} />
+            </Typography>
+          </WithHighlight>
+        )}
+      </CardContent>
+      <CardHeader title={<Typography variant="title">Code</Typography>} />
+      <CardContent>
+        {Comp.tsc && (
+          <WithHighlight>
+            <pre>
+              <code>{Comp.tsc()}</code>
+            </pre>
+          </WithHighlight>
+        )}
+      </CardContent>
+    </Card>
+  </React.Fragment>
+);
 
 export const req = (require as any).context("../src-examples", true, /\.tsx/);
 let routes: any[] = [];
@@ -19,52 +58,21 @@ req.keys().forEach((key: string) => {
     component: () =>
       map(module, (Comp, i) => {
         const pageName = key.split(".")[1].split("/")[1];
-        return (
-          <React.Fragment key={i}>
-            <AppBar position="sticky">
-              <Toolbar>
-                <Typography variant="title" color="inherit">
-                  {pageName}
-                </Typography>
-              </Toolbar>
-            </AppBar>
-            <Card elevation={0} style={{ padding: 20 }}>
-              <CardHeader title={<Typography variant="title">Form</Typography>} />
-              <CardContent>
-                <Comp />
-              </CardContent>
-              <CardHeader title={<Typography variant="title">API</Typography>} />
-              <CardContent>
-                {Comp.doc && (
-                  <WithHighlight>
-                    <Typography>
-                      <div dangerouslySetInnerHTML={{ __html: Comp.doc() }} />
-                    </Typography>
-                  </WithHighlight>
-                )}
-              </CardContent>
-              <CardHeader title={<Typography variant="title">Code</Typography>} />
-              <CardContent>
-                {Comp.tsc && (
-                  <WithHighlight>
-                    <pre>
-                      <code>{Comp.tsc()}</code>
-                    </pre>
-                  </WithHighlight>
-                )}
-              </CardContent>
-            </Card>
-          </React.Fragment>
-        );
+        return <PageComp Comp={Comp} pageName={pageName} key={i} />;
       }),
   };
 
   routes = routes.concat(route);
 });
 
+const HomePage = () => {
+  return <PageComp Comp={Home} pageName={"Home"} />;
+};
+
 export const AppRoutes = () => {
   return (
     <div>
+      <Route path={"/"} component={HomePage} i={"Home"} exact />
       {routes.map((route, i) => (
         <Route key={i} {...route} />
       ))}
