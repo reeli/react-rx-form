@@ -9,7 +9,7 @@ import { required } from "../src-modules/utils/validations";
 
 export class PrefillForm extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/SimpleForm.tsx`);
+    return require(`!!raw-loader!../src-examples/PrefillForm.tsx`);
   }
 
   form: any;

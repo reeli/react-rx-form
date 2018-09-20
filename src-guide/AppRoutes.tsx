@@ -37,7 +37,9 @@ req.keys().forEach((key: string) => {
               <CardContent>
                 {Comp.doc && (
                   <WithHighlight>
-                    <div dangerouslySetInnerHTML={{ __html: Comp.doc() }} />
+                    <Typography>
+                      <div dangerouslySetInnerHTML={{ __html: Comp.doc() }} />
+                    </Typography>
                   </WithHighlight>
                 )}
               </CardContent>

@@ -17,10 +17,10 @@ export class FieldLevelValidationForm extends React.Component {
   render() {
     return (
       <RxForm
-      // initialValues={{
-      //   username: "hello",
-      //   password: "123456",
-      // }}
+        initialValues={{
+          username: "hello",
+          password: "123456",
+        }}
       >
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
@@ -37,7 +37,7 @@ export class FieldLevelValidationForm extends React.Component {
               {(fieldProps) => (
                 <CustomInput
                   {...pickInputPropsFromFieldProps(fieldProps)}
-                  type="text"
+                  type="password"
                   placeholder="type password here..."
                 />
               )}
