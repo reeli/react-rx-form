@@ -1,3 +1,8 @@
+import AppBar from "@material-ui/core/AppBar/AppBar";
+import Card from "@material-ui/core/Card/Card";
+import CardContent from "@material-ui/core/CardContent/CardContent";
+import CardHeader from "@material-ui/core/CardHeader/CardHeader";
+import Toolbar from "@material-ui/core/Toolbar/Toolbar";
 import Typography from "@material-ui/core/Typography/Typography";
 import { map } from "lodash";
 import * as React from "react";
@@ -13,24 +18,40 @@ req.keys().forEach((key: string) => {
     path: key.split(".")[1],
     component: () =>
       map(module, (Comp, i) => {
+        const pageName = key.split(".")[1].split("/")[1];
         return (
           <React.Fragment key={i}>
-            <Typography variant="title">Form</Typography>
-            <Comp />
-            <Typography variant="title">API</Typography>
-            {Comp.doc && (
-              <WithHighlight>
-                <div dangerouslySetInnerHTML={{ __html: Comp.doc() }} />
-              </WithHighlight>
-            )}
-            <Typography variant="title">Code</Typography>
-            {Comp.tsc && (
-              <WithHighlight>
-                <pre>
-                  <code>{Comp.tsc()}</code>
-                </pre>
-              </WithHighlight>
-            )}
+            <AppBar position="sticky">
+              <Toolbar>
+                <Typography variant="title" color="inherit">
+                  {pageName}
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Card elevation={0} style={{ padding: 20 }}>
+              <CardHeader title={<Typography variant="title">Form</Typography>} />
+              <CardContent>
+                <Comp />
+              </CardContent>
+              <CardHeader title={<Typography variant="title">API</Typography>} />
+              <CardContent>
+                {Comp.doc && (
+                  <WithHighlight>
+                    <div dangerouslySetInnerHTML={{ __html: Comp.doc() }} />
+                  </WithHighlight>
+                )}
+              </CardContent>
+              <CardHeader title={<Typography variant="title">Code</Typography>} />
+              <CardContent>
+                {Comp.tsc && (
+                  <WithHighlight>
+                    <pre>
+                      <code>{Comp.tsc()}</code>
+                    </pre>
+                  </WithHighlight>
+                )}
+              </CardContent>
+            </Card>
           </React.Fragment>
         );
       }),

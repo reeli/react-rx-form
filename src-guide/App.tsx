@@ -17,7 +17,7 @@ export class App extends React.Component {
           <Router history={history}>
             <>
               <Nav />
-              <div style={{ flex: 1, padding: "20px 40px" }}>
+              <div style={{ flex: 1, padding: "0 1px" }}>
                 <AppRoutes />
               </div>
             </>
