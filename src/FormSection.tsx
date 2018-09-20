@@ -1,8 +1,8 @@
-import React, { ReactNode } from "react";
+import * as React from "react";
 import { FormConsumer, FormProvider } from "./FormContext";
 import { IFormSectionProps } from "./interfaces";
 
-export const FormSection = ({ name, children }: { name: IFormSectionProps["name"]; children: ReactNode }) => {
+export const FormSection = ({ name, children }: { name: IFormSectionProps["name"]; children: React.ReactNode }) => {
   return (
     <FormConsumer>
       {(formContextValue) => {
