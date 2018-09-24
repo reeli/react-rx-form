@@ -1,8 +1,7 @@
 import Button from "@material-ui/core/Button/Button";
-import { Field, FieldArray, pickInputPropsFromFieldProps, RxForm } from "@reeli/react-rx-form";
+import { Field, FieldArray, RxForm } from "@reeli/react-rx-form";
 import { isEmpty } from "lodash";
 import * as React from "react";
-import { CustomInput } from "src-components/CustomInput";
 import { required } from "src-modules/utils/validations";
 
 export class FieldArrayForm extends React.Component {
@@ -42,9 +41,11 @@ export class FieldArrayForm extends React.Component {
             {fields.map((hobby, idx) => (
               <div key={idx}>
                 <Field name={hobby} validate={required()}>
-                  {(fieldProps) => (
-                    <CustomInput
-                      {...pickInputPropsFromFieldProps(fieldProps)}
+                  {({ name, value, onChange }) => (
+                    <input
+                      name={name}
+                      value={value}
+                      onChange={(e) => onChange(e.target.value)}
                       type="text"
                       placeholder={`hobby${idx}`}
                     />
@@ -76,19 +77,23 @@ export class FieldArrayForm extends React.Component {
                     <li key={member}>
                       <h3>{`member${idx + 1}`}</h3>
                       <Field name={`${member}.firstName`} validate={required()}>
-                        {(fieldProps) => (
-                          <CustomInput
-                            {...pickInputPropsFromFieldProps(fieldProps)}
+                        {({ name, value, onChange }) => (
+                          <input
+                            name={name}
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
                             type="text"
                             placeholder={`First Name${idx}`}
                           />
                         )}
                       </Field>
                       <Field name={`${member}.lastName`} validate={required()}>
-                        {(fieldProps) => (
-                          <CustomInput
-                            {...pickInputPropsFromFieldProps(fieldProps)}
-                            type="password"
+                        {({ name, value, onChange }) => (
+                          <input
+                            name={name}
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
+                            type="text"
                             placeholder="Last Name"
                           />
                         )}
