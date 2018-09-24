@@ -66,6 +66,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
               type: FieldActionTypes.change,
               payload: {
                 ...fieldState,
+                value,
                 meta: {
                   ...fieldState.meta,
                   error,
