@@ -48,7 +48,9 @@ export class RxForm extends React.Component<IRxFormProps> {
       type: FormActionTypes.onChange,
       payload: {
         fields: this.formState.fields,
-        values: this.formState.values,
+        values: {
+          ...this.formState.values,
+        },
       },
     });
   };
@@ -70,7 +72,9 @@ export class RxForm extends React.Component<IRxFormProps> {
           ...others,
         },
       },
-      values: set(this.formState.values, action.name, value),
+      values: {
+        ...set(this.formState.values, action.name, value),
+      },
     };
     this.formStateSubject$.next(this.formState);
   };
