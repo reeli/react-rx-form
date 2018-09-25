@@ -58,7 +58,7 @@ export const FieldArray = React.forwardRef((props: IFieldArrayProps, ref?: React
       <FormProvider
         value={{
           ...formContextValue,
-          fieldPrefix: `${formContextValue.fieldPrefix || ""}${props.name}.`,
+          fieldPrefix: `${formContextValue.fieldPrefix || ""}${props.name}`,
         }}
       >
         <FieldArrayCore {...props} {...formContextValue} ref={ref} />
