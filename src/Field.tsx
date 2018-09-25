@@ -1,4 +1,4 @@
-import { get } from "lodash";
+import { get, isUndefined } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -19,7 +19,11 @@ import { isDirty, validateField } from "./utils";
 
 const getFieldValue = ({ defaultValue, formContextValue, name }: IFieldCoreProps) => {
   const formValues = formContextValue.getFormValues();
-  return get(formValues, name) || defaultValue;
+  const initialValue = get(formValues, name);
+  if (!isUndefined(initialValue)) {
+    return initialValue;
+  }
+  return defaultValue;
 };
 
 export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
