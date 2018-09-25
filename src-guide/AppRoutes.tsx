@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography/Typography";
 import { map } from "lodash";
 import * as React from "react";
 import { Route } from "react-router";
-import { Home } from "../src-examples/Home";
+import { GettingStart } from "../src-examples/GettingStart";
 import { WithHighlight } from "./components/WithHighlight";
 
 const PageComp = ({ Comp, pageName }: { Comp: any; pageName: string }) => (
@@ -66,13 +66,13 @@ req.keys().forEach((key: string) => {
 });
 
 const HomePage = () => {
-  return <PageComp Comp={Home} pageName={"Home"} />;
+  return <PageComp Comp={GettingStart} pageName={"GettingStart"} />;
 };
 
 export const AppRoutes = () => {
   return (
     <div>
-      <Route path={"/"} component={HomePage} i={"Home"} exact />
+      <Route path={"/"} component={HomePage} i={"GettingStart"} exact />
       {routes.map((route, i) => (
         <Route key={i} {...route} />
       ))}

@@ -1,8 +1,8 @@
 import * as React from "react";
 
-export class Home extends React.Component {
+export class GettingStart extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/Home.tsx`);
+    return require(`!!raw-loader!../src-examples/GettingStart.tsx`);
   }
 
   static doc() {
