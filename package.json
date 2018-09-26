@@ -8,6 +8,7 @@
   "files": [
     "lib",
     "module",
+    "src",
     "README.md"
   ],
   "keywords": [
