@@ -7,7 +7,9 @@ export class FieldLevelValidationForm extends React.Component {
     return require(`!!raw-loader!../src-examples/FieldLevelValidationForm.tsx`);
   }
 
-  onSubmit = () => {};
+  onSubmit = (values: any) => {
+    alert(JSON.stringify(values, null, 2));
+  };
 
   render() {
     return (

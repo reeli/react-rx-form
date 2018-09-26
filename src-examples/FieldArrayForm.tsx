@@ -41,14 +41,17 @@ export class FieldArrayForm extends React.Component {
             {fields.map((hobby, idx) => (
               <div key={idx}>
                 <Field name={hobby} validate={required()}>
-                  {({ name, value, onChange }) => (
-                    <input
-                      name={name}
-                      value={value}
-                      onChange={(e) => onChange(e.target.value)}
-                      type="text"
-                      placeholder={`hobby${idx}`}
-                    />
+                  {({ name, value = "", onChange, meta: { error } }) => (
+                    <div>
+                      <input
+                        name={name}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        type="text"
+                        placeholder={`hobby${idx}`}
+                      />
+                      {error && <div style={{ color: "red" }}>{error}</div>}
+                    </div>
                   )}
                 </Field>
                 <div onClick={() => remove(idx)}>remove</div>
@@ -77,25 +80,31 @@ export class FieldArrayForm extends React.Component {
                     <li key={member}>
                       <h3>{`member${idx + 1}`}</h3>
                       <Field name={`${member}.firstName`} validate={required()}>
-                        {({ name, value, onChange }) => (
-                          <input
-                            name={name}
-                            value={value}
-                            onChange={(e) => onChange(e.target.value)}
-                            type="text"
-                            placeholder={`First Name${idx}`}
-                          />
+                        {({ name, value = "", onChange, meta: { error } }) => (
+                          <div>
+                            <input
+                              name={name}
+                              value={value}
+                              onChange={(e) => onChange(e.target.value)}
+                              type="text"
+                              placeholder={`First Name${idx}`}
+                            />
+                            {error && <div style={{ color: "red" }}>{error}</div>}
+                          </div>
                         )}
                       </Field>
                       <Field name={`${member}.lastName`} validate={required()}>
-                        {({ name, value, onChange }) => (
-                          <input
-                            name={name}
-                            value={value}
-                            onChange={(e) => onChange(e.target.value)}
-                            type="text"
-                            placeholder="Last Name"
-                          />
+                        {({ name, value = "", onChange, meta: { error } }) => (
+                          <div>
+                            <input
+                              name={name}
+                              value={value}
+                              onChange={(e) => onChange(e.target.value)}
+                              type="text"
+                              placeholder="Last Name"
+                            />
+                            {error && <div style={{ color: "red" }}>{error}</div>}
+                          </div>
                         )}
                       </Field>
                       <button type="button" onClick={() => remove(idx)}>
