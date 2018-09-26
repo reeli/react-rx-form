@@ -1,1 +1,3 @@
-- **name** : FormSection 的名称
+## FormSection Props
+
+- **name**: FormSection 的名称
