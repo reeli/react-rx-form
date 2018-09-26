@@ -15,7 +15,7 @@ import {
   TErrors,
   TOnSubmit,
 } from "./interfaces";
-import { isContainError, log, setErrors } from "./utils";
+import { dropEmpty, isContainError, log, setErrors } from "./utils";
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {
@@ -68,13 +68,11 @@ export class RxForm extends React.Component<IRxFormProps> {
       fields: {
         // set(this.form.formState, action.name, action.payload!) => will to array instead of a key value object
         ...this.formState.fields,
-        [action.name]: {
-          ...others,
-        },
+        [action.name]: { ...others },
       },
-      values: {
+      values: dropEmpty({
         ...set(this.formState.values, action.name, value),
-      },
+      }),
     };
     this.formStateSubject$.next(this.formState);
   };

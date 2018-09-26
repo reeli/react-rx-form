@@ -1,4 +1,17 @@
-import { cloneDeep, isArray, isEmpty, isEqual, isUndefined, mapValues, reduce } from "lodash";
+import {
+  cloneDeep,
+  Dictionary,
+  isArray,
+  isBoolean,
+  isEmpty,
+  isEqual,
+  isFunction,
+  isNumber,
+  isUndefined,
+  mapValues,
+  omitBy,
+  reduce,
+} from "lodash";
 import {
   IFieldAction,
   IFieldInnerProps,
@@ -86,4 +99,18 @@ export const log = ({
     console.log("nextState", cloneDeep(nextState));
     console.groupEnd();
   }
+};
+
+export const dropEmpty = <T = Dictionary<any>>(values: T) => {
+  return omitBy(values, isEmptyValue);
+};
+
+export const isEmptyValue = (value: any) => {
+  if (isBoolean(value) || isFunction(value) || isNumber(value)) {
+    return false;
+  }
+  if (isArray(value) && value.length === 0) {
+    return true;
+  }
+  return isEmpty(value);
 };
