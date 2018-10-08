@@ -63,7 +63,6 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         distinctUntilChanged(),
         tap(({ fieldState, value }: { fieldState: IFieldState; value: any }) => {
           const error = validateField(value, this.props.validate);
-
           if (error) {
             this.props.formContextValue.dispatch({
               name: this.props.name,
