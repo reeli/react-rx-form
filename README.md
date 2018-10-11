@@ -16,21 +16,46 @@
 
 ## React Rx Form VS Redux Form
 
-在 Redux Form 中:
+### Redux Form
 
-- 安装之后还需要一些 redux 相关的配置才能使用。
-- Field 的 `component` 不能写成 inline 的形式 (匿名函数)，否则每一次 render 都重新创建新的组件，导致组件内部状态丢失，对性能也会有影响。
-- Field 中必须实现 `shouldComponentUpdate` 逻辑 (Redux Form 内部已经实现了)，否则每一个 Field 的状态更新都会导致 Form 中其他的 Field rerender。
-- 除了一些 state 和 value 之外，Input 需要的其他 props (如 placeholder，type 等) 必须从 Field props 传递下去。
-- 所有的 Form State 都保存在全局的 Redux Store 中，如果你有服务端渲染或者数据持久化的需求，选择 Redux Form 会更适合。
+1. **Form State 存储在 Redux Store 中**
 
-在 React Rx Form 中:
+   所有的 Form State 都保存在全局的 Redux Store 中，更方便做数据持久化和服务端渲染。
 
-- 使用更简单，安装即用。
-- Field 通过 Child Render 的方式来连接子组件，不用再担心 inline comopnent 的问题。
-- 通过 Rx，我们可以将 Feilds 更新的粒度控制到最小。当某个 Field 的状态发生变化时，不需要在 Feild 内部去实现 `shouldComponentUpdate`，也不会导致其他的 Field rerender。
-- Feild 只会把它托管的 State 传递给 Input，而 Input 需要的其他 props 交由 Input 自行决定。
-- 所有的 Form State 都保存在 Form 组件内部，没有全局的 State，如果你不期望将 Form 的 State 放到全局，React Rx Form 会是一个更好的选择。
+2. **通过 shouldComponentUpdate 方法来控制组件的更新。**
+
+   当某个 Field 的状态发生变化时，为了不让 form 及其子组件也 rerender，redux form 内部使用了 shouldComponentUpdate 方法。
+
+3. **Field 组件的 `component` 属性不支持 inline (匿名函数) 的形式。**
+
+   component 需要先定义好再使用。如果写成匿名函数，每一次 render 都会重新创建新的组件，导致组件内部状态丢失，对性能也会有影响。
+
+4. **Field 的子组件需要的全部状态都必须从 Field 透传下去。**
+
+   除了一些 state 和 value 之外，Input 需要的其他 props (如 placeholder，type 等) 必须从 Field props 传递下去。
+
+### React Rx Form
+
+1. **Form State 存储在 Form 组件内部。**
+
+   所有的 Form State 都保存在 Form 组件内部，没有全局的 State。
+
+2. **通过 Rx 来控制组件的更新。**
+
+   通过 Rx，我们能更好的去控制每个组件的更新，把组件更新的粒度控制到最小。比如，只让发生变化的组件更新，而不造成其他组件的更新。当某个 Field 的状态发生变化时，不需要 shouldComponentUpdate 方法，也不会导致其他组件 rerender。
+
+3. **Field 组件通过 Child Render 的方式来连接子组件。**
+
+   Field 通过 Child Render 的方式来连接子组件，不用再担心 inline comopnent 的问题，而且组件的层级也更加清晰了。
+
+4. **Field 只向子组件提供它托管的状态**
+
+   Feild 只会把它托管的 State 传递给它的子组件，子组件需要的一些自定义属性不需要通过 Field 透传。
+
+### 结论
+
+- 如果你不期望将 form 的 state 放入全局，React Rx Form 会是一个更好的选择。
+- 如果你有服务端渲染或者数据持久化的需求，选择 Redux Form 会更适合。
 
 ## 使用手册
 
