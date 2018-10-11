@@ -1,5 +1,43 @@
 # React Rx Form
 
+## 使用手册
+
+React Rx Form 的使用方法非常简单，不需要其他额外的配置，安装完成之后就能直接使用。
+
+### 安装
+
+`npm install @reeli/react-rx-form`
+
+### 开始使用
+
+```ts
+import React, { Component } from "react";
+import { Field, RxForm } from "@reeli/react-rx-form";
+
+export class ContactForm extends Component {
+  onSubmit = (formValues: any) => {
+    console.log(formValues);
+  };
+
+  render() {
+    return (
+      <RxForm>
+        {({ handleSubmit }) => (
+          <form onSubmit={handleSubmit(this.onSubmit)}>
+            <Field name="firstName">
+              {({ value, onChange }) => (
+                <input value={value} onChange={onChange} type="text" placeholder="First Name" />
+              )}
+            </Field>
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      </RxForm>
+    );
+  }
+}
+```
+
 ## 数据流
 
 ![rx-form-flow](./docs/rx-form-flow.svg)
@@ -56,41 +94,3 @@
 
 - 如果你不期望将 form 的 state 放入全局，React Rx Form 会是一个更好的选择。
 - 如果你有服务端渲染或者数据持久化的需求，选择 Redux Form 会更适合。
-
-## 使用手册
-
-React Rx Form 的使用方法非常简单，不需要其他额外的配置，安装完成之后就能直接使用。
-
-### 安装
-
-`npm install @reeli/react-rx-form`
-
-### 开始使用
-
-```ts
-import React, { Component } from "react";
-import { Field, RxForm } from "@reeli/react-rx-form";
-
-export class ContactForm extends Component {
-  onSubmit = (formValues: any) => {
-    console.log(formValues);
-  };
-
-  render() {
-    return (
-      <RxForm>
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit(this.onSubmit)}>
-            <Field name="firstName">
-              {({ value, onChange }) => (
-                <input value={value} onChange={onChange} type="text" placeholder="First Name" />
-              )}
-            </Field>
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </RxForm>
-    );
-  }
-}
-```
