@@ -18,11 +18,7 @@ describe("should have correct initial state", () => {
     const instance = wrapper.children().instance() as any;
     expect(instance.state).toEqual({
       fieldState: {
-        value: undefined,
-        meta: {
-          error: undefined,
-          dirty: false,
-        },
+        meta: {},
       },
     });
   });
@@ -41,10 +37,7 @@ describe("should have correct initial state", () => {
     expect(instance.state).toEqual({
       fieldState: {
         value: "Jay",
-        meta: {
-          error: undefined,
-          dirty: false,
-        },
+        meta: {},
       },
     });
   });
@@ -59,10 +52,7 @@ describe("should have correct initial state", () => {
     expect(instance.state).toEqual({
       fieldState: {
         value: "Tony",
-        meta: {
-          error: undefined,
-          dirty: false,
-        },
+        meta: {},
       },
     });
   });
@@ -70,10 +60,13 @@ describe("should have correct initial state", () => {
 
 describe("#onFormActionChange", () => {
   it("should dispatch field.change action if field contains error when start submit", () => {
-    const instance = createForm().ref("field") as any;
+    const instance = createForm().ref("field");
     const { mockSub$, mockSubscribeFormAction, mockDispatch } = createMocks();
-    instance.props.formContextValue.subscribeFormAction = mockSubscribeFormAction;
-    instance.props.formContextValue.dispatch = mockDispatch;
+    instance.props = {
+      ...instance.props,
+      subscribeFormAction: mockSubscribeFormAction,
+      dispatch: mockDispatch,
+    };
     instance.onFormActionChange();
 
     mockSub$.next({
@@ -82,10 +75,7 @@ describe("#onFormActionChange", () => {
         fields: {
           firstName: {
             name: "firstName",
-            meta: {
-              error: undefined,
-              dirty: undefined,
-            },
+            meta: {},
           },
         },
         values: {
@@ -98,22 +88,22 @@ describe("#onFormActionChange", () => {
     expect(mockDispatch).toBeCalledWith({
       name: "firstName",
       type: "@@rx-form/field/CHANGE",
-      payload: {
-        name: "firstName",
-        value: "",
-        meta: {
-          error: "no empty defaultValue",
-          dirty: undefined,
-        },
+      meta: {
+        dirty: true,
+        error: "no empty defaultValue",
       },
+      payload: "",
     });
   });
 
   it("should do nothing if field do not contains error when start submit", () => {
     const instance = createForm().ref("field") as any;
     const { mockSub$, mockSubscribeFormAction, mockDispatch } = createMocks();
-    instance.props.formContextValue.subscribeFormAction = mockSubscribeFormAction;
-    instance.props.formContextValue.dispatch = mockDispatch;
+    instance.props = {
+      ...instance.props,
+      subscribeFormAction: mockSubscribeFormAction,
+      dispatch: mockDispatch,
+    };
     instance.onFormActionChange();
 
     mockSub$.next({
@@ -122,10 +112,7 @@ describe("#onFormActionChange", () => {
         fields: {
           firstName: {
             name: "firstName",
-            meta: {
-              error: undefined,
-              dirty: undefined,
-            },
+            meta: {},
           },
         },
         values: {
@@ -142,26 +129,25 @@ describe("#registerField", () => {
   it("should call dispatch with correct params", () => {
     const instance = createForm().ref("field");
     const { mockDispatch } = createMocks();
-    instance.props.formContextValue.dispatch = mockDispatch;
+    instance.props = {
+      ...instance.props,
+      dispatch: mockDispatch,
+    };
 
     instance.registerField({
       value: "Rui",
       meta: {
         dirty: false,
-        error: undefined,
       },
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
       name: "firstName",
       type: "@@rx-form/field/REGISTER_FIELD",
-      payload: {
-        value: "Rui",
-        meta: {
-          dirty: false,
-          error: undefined,
-        },
+      meta: {
+        dirty: false,
       },
+      payload: "Rui",
     });
   });
 });

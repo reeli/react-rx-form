@@ -9,16 +9,17 @@ import {
   FormActionTypes,
   IFieldCoreProps,
   IFieldCoreState,
+  IFieldMeta,
   IFieldProps,
   IFieldState,
   IFormAction,
   IFormState,
   TFieldValue,
 } from "./interfaces";
-import { isDirty, validateField } from "./utils";
+import { dropEmpty, isDirty, validateField } from "./utils";
 
-const getFieldValue = ({ defaultValue, formContextValue, name }: IFieldCoreProps) => {
-  const formValues = formContextValue.getFormValues();
+const getFieldValue = ({ defaultValue, getFormValues, name }: IFieldCoreProps) => {
+  const formValues = getFormValues();
   const initialValue = get(formValues, name);
   if (!isUndefined(initialValue)) {
     return initialValue;
@@ -33,10 +34,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   state = {
     fieldState: {
       value: getFieldValue(this.props),
-      meta: {
-        error: undefined,
-        dirty: false,
-      },
+      meta: {},
     },
   };
 
@@ -46,46 +44,8 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     this.onFormActionChange();
   }
 
-  onFormActionChange = () => {
-    const formActionObserver$ = new Subject<IFormAction>();
-
-    formActionObserver$
-      .pipe(
-        filter((formAction: IFormAction) => {
-          return formAction.type === FormActionTypes.startSubmit;
-        }),
-        map((formAction: IFormAction) => {
-          return {
-            fieldState: formAction.payload.fields[this.props.name],
-            value: get(formAction.payload.values, this.props.name),
-          };
-        }),
-        distinctUntilChanged(isEqual),
-        tap(({ fieldState, value }: { fieldState: IFieldState; value: any }) => {
-          const error = validateField(value, this.props.validate);
-          if (error) {
-            this.props.formContextValue.dispatch({
-              name: this.props.name,
-              type: FieldActionTypes.change,
-              payload: {
-                ...fieldState,
-                value,
-                meta: {
-                  ...fieldState.meta,
-                  error,
-                },
-              },
-            });
-          }
-        }),
-      )
-      .subscribe();
-
-    this.formActionSubscription = this.props.formContextValue.subscribeFormAction(formActionObserver$);
-  };
-
   componentWillUnmount() {
-    this.props.formContextValue.dispatch({
+    this.props.dispatch({
       name: this.props.name,
       type: FieldActionTypes.destroy,
     });
@@ -100,15 +60,6 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     }
   }
 
-  registerField = (fieldState: IFieldState) => {
-    // register field
-    this.props.formContextValue.dispatch({
-      name: this.props.name,
-      type: FieldActionTypes.register,
-      payload: fieldState,
-    });
-  };
-
   onFormStateChange = () => {
     const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
@@ -122,31 +73,89 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         distinctUntilChanged(isEqual),
         tap(({ fields, value }) => {
           if (fields || value) {
-            this.setState({
+            console.log("=============", value);
+            this.setState(() => ({
               fieldState: {
-                ...fields,
+                meta: fields,
                 value,
               },
-            });
+            }));
           }
         }),
       )
       .subscribe();
 
-    this.formStateSubscription = this.props.formContextValue.subscribe(formStateObserver$);
+    this.formStateSubscription = this.props.subscribe(formStateObserver$);
+  };
+
+  onFormActionChange = () => {
+    const formActionObserver$ = new Subject<IFormAction>();
+
+    formActionObserver$
+      .pipe(
+        filter((formAction: IFormAction) => {
+          return formAction.type === FormActionTypes.startSubmit;
+        }),
+        map((formAction: IFormAction) => {
+          return {
+            meta: formAction.payload.fields[this.props.name],
+            value: get(formAction.payload.values, this.props.name),
+          };
+        }),
+        distinctUntilChanged(),
+        tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
+          const error = validateField(value, this.props.validate);
+          if (error) {
+            this.onChange(value);
+          }
+        }),
+      )
+      .subscribe();
+
+    this.formActionSubscription = this.props.subscribeFormAction(formActionObserver$);
+  };
+
+  registerField = ({ value, meta }: IFieldState) => {
+    // register field
+    this.props.dispatch({
+      name: this.props.name,
+      type: FieldActionTypes.register,
+      meta,
+      payload: value,
+    });
   };
 
   onChange = (value: TFieldValue) => {
-    this.props.formContextValue.dispatch({
+    const dirty = isDirty(value, this.props.defaultValue);
+    this.props.dispatch({
       name: this.props.name,
       type: FieldActionTypes.change,
-      payload: {
-        value,
-        meta: {
-          error: validateField(value, this.props.validate),
-          dirty: isDirty(value, this.props.defaultValue),
-        },
+      meta: dropEmpty({
+        error: validateField(value, this.props.validate),
+        dirty,
+      }),
+      payload: value,
+    });
+  };
+
+  onFocus = () => {
+    this.props.dispatch({
+      name: this.props.name,
+      type: FieldActionTypes.focus,
+      meta: {
+        visited: true,
       },
+    });
+  };
+
+  onBlur = (value: TFieldValue) => {
+    this.props.dispatch({
+      name: this.props.name,
+      type: FieldActionTypes.blur,
+      meta: {
+        touched: true,
+      },
+      payload: value,
     });
   };
 
@@ -155,6 +164,8 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
       ...this.state.fieldState,
       name: this.props.name,
       onChange: this.onChange,
+      onFocus: this.onFocus,
+      onBlur: this.onBlur,
     });
   }
 }
@@ -164,7 +175,7 @@ export const Field = React.forwardRef((props: IFieldProps, ref?: React.Ref<any>)
     {(formContextValue) => {
       return (
         <FieldCore
-          formContextValue={formContextValue}
+          {...formContextValue}
           {...props}
           name={`${formContextValue.fieldPrefix || ""}${props.name}`}
           ref={ref}

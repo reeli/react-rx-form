@@ -16,32 +16,38 @@ export class SimpleForm extends React.Component {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <Field name="firstName">
-              {({ value = "", onChange, name }) => (
+              {({ value = "", onChange, onFocus, onBlur, name }) => (
                 <input
                   name={name}
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
+                  onFocus={onFocus}
+                  onBlur={(e) => onBlur(e.target.value)}
                   type="text"
                   placeholder="First Name"
                 />
               )}
             </Field>
             <Field name="lastName">
-              {({ value = "", onChange, name }) => (
+              {({ value = "", onChange, onFocus, onBlur, name }) => (
                 <input
                   name={name}
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
+                  onFocus={onFocus}
+                  onBlur={(e) => onBlur(e.target.value)}
                   type="password"
                   placeholder="Last Name"
                 />
               )}
             </Field>
             <Field name="email">
-              {({ value = "", onChange }) => (
+              {({ value = "", onFocus, onBlur, onChange }) => (
                 <input
                   name={name}
                   value={value}
+                  onFocus={onFocus}
+                  onBlur={(e) => onBlur(e.target.value)}
                   onChange={(e) => onChange(e.target.value)}
                   type="email"
                   placeholder="Email"
@@ -49,11 +55,13 @@ export class SimpleForm extends React.Component {
               )}
             </Field>
             <Field name="checkbox" defaultValue={false}>
-              {({ value = false, onChange, name }) => (
+              {({ value = false, onBlur, onFocus, onChange, name }) => (
                 <input
                   name={name}
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
+                  onFocus={onFocus}
+                  onBlur={(e) => onBlur(e.target.value)}
                   type={"checkbox"}
                   placeholder="Checkbox"
                 />
@@ -62,16 +70,30 @@ export class SimpleForm extends React.Component {
             <div>
               <label>
                 <Field name="sex">
-                  {({ onChange, name }) => (
-                    <input name={name} onChange={(e) => onChange(e.target.value)} type="radio" value="male" />
+                  {({ onChange, name, onBlur, onFocus }) => (
+                    <input
+                      name={name}
+                      onFocus={onFocus}
+                      onChange={(e) => onChange(e.target.value)}
+                      onBlur={(e) => onBlur(e.target.value)}
+                      type="radio"
+                      value="male"
+                    />
                   )}
                 </Field>
                 male
               </label>
               <label>
                 <Field name="sex">
-                  {({ onChange, name }) => (
-                    <input name={name} onChange={(e) => onChange(e.target.value)} type="radio" value="female" />
+                  {({ onChange, name, onBlur, onFocus }) => (
+                    <input
+                      name={name}
+                      onFocus={onFocus}
+                      onBlur={(e) => onBlur(e.target.value)}
+                      onChange={(e) => onChange(e.target.value)}
+                      type="radio"
+                      value="female"
+                    />
                   )}
                 </Field>
                 female

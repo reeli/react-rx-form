@@ -37,7 +37,7 @@ export const combineValidators = (validators: TValidator[]) => {
 };
 
 export const isContainError = (fields: IFields) => {
-  return reduce(fields, (result, item) => result || (item.meta && !!item.meta.error), false);
+  return reduce(fields, (result, item) => result || (item && !!item.error), false);
 };
 
 export const setErrors = (fields: IFields, errors: TErrors) => {
@@ -47,10 +47,7 @@ export const setErrors = (fields: IFields, errors: TErrors) => {
   return mapValues(fields, (field, name) => {
     return {
       ...field,
-      meta: {
-        ...field.meta,
-        error: errors[name],
-      },
+      error: errors[name],
     };
   });
 };
