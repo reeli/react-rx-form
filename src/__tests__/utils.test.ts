@@ -43,18 +43,14 @@ describe("#setErrors", () => {
     };
     const expectedResult = {
       "members[0].firstName": {
-        name: "members[0].firstName",
-        value: "rui",
-        meta: { dirty: true, error: "field can not be empty" },
+        dirty: true,
+        error: "field can not be empty",
       },
-      "members[0].lastName": { name: "members[0].lastName", value: "li", meta: { dirty: true } },
+      "members[0].lastName": {
+        dirty: true,
+      },
       "members[0].hobbies[0]": {
-        name: "members[0].hobbies[0]",
-        value: "swimming",
-        meta: {
-          error: undefined,
-          dirty: true,
-        },
+        dirty: true,
       },
     };
     expect(setErrors(formState, errors)).toEqual(expectedResult);
@@ -69,17 +65,26 @@ describe("#setErrors", () => {
 describe("#pickInputPropsFromFieldProps", () => {
   it("should pick correct input props from field props", () => {
     const mockOnChange = () => {};
+    const mockOnBlur = () => {};
+    const mockOnFocus = () => {};
     const fieldProps = {
       name: "members[0].firstName",
       value: "rui",
-      meta: { dirty: true, error: "no empty error" },
+      meta: {
+        error: "no empty error",
+        dirty: true,
+      },
       onChange: mockOnChange,
+      onBlur: mockOnBlur,
+      onFocus: mockOnFocus,
     };
     expect(pickInputPropsFromFieldProps(fieldProps)).toEqual({
       name: "members[0].firstName",
       value: "rui",
       error: "no empty error",
       onChange: mockOnChange,
+      onBlur: mockOnBlur,
+      onFocus: mockOnFocus,
     });
   });
 });
@@ -112,15 +117,11 @@ describe("#validateField", () => {
 
 const createFormState = ({ hasError }: { hasError: boolean }) => {
   return {
-    "members[0].firstName": { name: "members[0].firstName", value: "rui", meta: { dirty: true } },
-    "members[0].lastName": { name: "members[0].lastName", value: "li", meta: { dirty: true } },
+    "members[0].firstName": { dirty: true },
+    "members[0].lastName": { dirty: true },
     "members[0].hobbies[0]": {
-      name: "members[0].hobbies[0]",
-      value: "swimming",
-      meta: {
-        error: hasError ? "no empty defaultValue" : undefined,
-        dirty: true,
-      },
+      error: hasError ? "no empty defaultValue" : undefined,
+      dirty: true,
     },
   };
 };

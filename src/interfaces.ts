@@ -8,6 +8,8 @@ export type TChildrenRender<TProps> = (props: TProps) => React.ReactNode;
 export enum FieldActionTypes {
   register = "@@rx-form/field/REGISTER_FIELD",
   change = "@@rx-form/field/CHANGE",
+  focus = "@@rx-form/field/FOCUS",
+  blur = "@@rx-form/field/BLUR",
   destroy = "@@rx-form/field/DESTROY_FIELD",
 }
 
@@ -15,26 +17,23 @@ type TError = string | undefined;
 export type TValidator = (value: string | boolean) => TError | undefined;
 export type TFieldValue = any;
 
-export interface IFieldCommonProps {
-  value?: TFieldValue;
-  meta: {
-    dirty: boolean;
-    error?: TError;
-  };
+export interface IFieldMeta {
+  dirty?: boolean;
+  touched?: boolean;
+  visited?: boolean;
+  error?: TError;
 }
 
-export interface IFieldInputProps {
-  name: string;
-  onChange: (value: TFieldValue) => void;
+export interface IFieldState {
   value?: TFieldValue;
-  error?: string;
+  meta: IFieldMeta;
 }
-
-export interface IFieldState extends IFieldCommonProps {}
 
 export interface IFieldInnerProps extends IFieldState {
   name: string;
   onChange: (value: TFieldValue) => void;
+  onBlur: (value: TFieldValue) => void;
+  onFocus: () => void;
 }
 
 export interface IFieldProps {
@@ -47,12 +46,11 @@ export interface IFieldProps {
 export interface IFieldAction {
   name: string;
   type: FieldActionTypes;
-  payload?: IFieldState;
+  meta?: IFieldMeta;
+  payload?: TFieldValue;
 }
 
-export interface IFieldCoreProps extends IFieldProps {
-  formContextValue: IFormContextValue;
-}
+export interface IFieldCoreProps extends IFieldProps, IFormContextValue {}
 
 export interface IFieldCoreState {
   fieldState: IFieldState;
@@ -103,7 +101,7 @@ export interface IFormValuesCoreProps extends IFormValuesCommonProps {
 }
 
 export interface IFields {
-  [fieldName: string]: IFieldState;
+  [fieldName: string]: IFieldMeta;
 }
 
 export interface IFormValues {

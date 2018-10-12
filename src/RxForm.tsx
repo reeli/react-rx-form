@@ -8,6 +8,7 @@ import {
   FieldActionTypes,
   FormActionTypes,
   IFieldAction,
+  IFieldMeta,
   IFormAction,
   IFormState,
   IFormValues,
@@ -63,15 +64,17 @@ export class RxForm extends React.Component<IRxFormProps> {
   }
 
   updateField = (action: IFieldAction) => {
-    const { value, ...others } = action.payload!;
+    const { payload, meta = {} as IFieldMeta, name } = action;
     this.formState = {
       fields: {
-        // set(this.form.formState, action.name, action.payload!) => will to array instead of a key value object
         ...this.formState.fields,
-        [action.name]: { ...others },
+        [name]: {
+          ...this.formState.fields[name],
+          ...meta,
+        },
       },
       values: dropEmpty({
-        ...set(this.formState.values, action.name, value),
+        ...set<IFormValues>(this.formState.values, name, payload),
       }),
     };
     this.formStateSubject$.next(this.formState);
@@ -108,35 +111,40 @@ export class RxForm extends React.Component<IRxFormProps> {
     this.formStateSubject$.next(this.formState);
   };
 
+  updateFieldState = (action: IFieldAction) => {
+    this.formState = {
+      values: this.formState.values,
+      fields: {
+        ...this.formState.fields,
+        [action.name]: {
+          ...action.meta,
+        },
+      },
+    };
+  };
+
   dispatch = (action: IFieldAction | IFormAction) => {
     const prevState = cloneDeep(this.formState);
 
     switch (action.type) {
-      case FieldActionTypes.register: {
+      case FieldActionTypes.register:
+      case FieldActionTypes.blur:
+      case FieldActionTypes.change: {
         this.updateField(action as IFieldAction);
         break;
       }
-      case FieldActionTypes.change: {
-        this.updateField(action as IFieldAction);
+      case FieldActionTypes.focus: {
+        this.updateFieldState(action as IFieldAction);
         break;
       }
       case FieldActionTypes.destroy: {
         this.removeField(action as IFieldAction);
         break;
       }
-      case FormActionTypes.initialize: {
-        this.notifyFormActionChange(action as IFormAction);
-        break;
-      }
-      case FormActionTypes.startSubmit: {
-        this.notifyFormActionChange(action as IFormAction);
-        break;
-      }
+      case FormActionTypes.initialize:
+      case FormActionTypes.startSubmit:
+      case FormActionTypes.onChange:
       case FormActionTypes.startSubmitFailed: {
-        this.notifyFormActionChange(action as IFormAction);
-        break;
-      }
-      case FormActionTypes.onChange: {
         this.notifyFormActionChange(action as IFormAction);
         break;
       }
