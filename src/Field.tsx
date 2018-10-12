@@ -1,4 +1,4 @@
-import { get, isUndefined } from "lodash";
+import { get, isEqual, isUndefined } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -60,7 +60,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
             value: get(formAction.payload.values, this.props.name),
           };
         }),
-        distinctUntilChanged(),
+        distinctUntilChanged(isEqual),
         tap(({ fieldState, value }: { fieldState: IFieldState; value: any }) => {
           const error = validateField(value, this.props.validate);
           if (error) {
@@ -119,7 +119,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
             value: get(formState.values, this.props.name),
           };
         }),
-        distinctUntilChanged(),
+        distinctUntilChanged(isEqual),
         tap(({ fields, value }) => {
           if (fields || value) {
             this.setState({

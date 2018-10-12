@@ -1,3 +1,4 @@
+import { isEqual } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -24,7 +25,7 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
         map((formState: IFormState) => {
           return formState.values;
         }),
-        distinctUntilChanged(),
+        distinctUntilChanged(isEqual),
         tap((formValues: IFormValues) => {
           this.setState({
             formValues,
