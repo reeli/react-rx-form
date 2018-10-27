@@ -14,7 +14,7 @@ export enum FieldActionTypes {
 }
 
 type TError = string | undefined;
-export type TValidator = (value: string | boolean) => TError | undefined;
+export type TValidator = (value: string | boolean) => TError;
 export type TFieldValue = any;
 
 export interface IFieldMeta {
@@ -117,7 +117,7 @@ interface IRxFormInnerProps {
 
 export interface IRxFormProps {
   children: TChildrenRender<IRxFormInnerProps>;
-  initialValues?: IFormValues | IFormValues[];
+  initialValues?: IFormValues;
 }
 
 export interface IFormAction {
