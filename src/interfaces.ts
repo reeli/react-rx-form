@@ -41,6 +41,8 @@ export interface IFieldProps {
   children: TChildrenRender<IFieldInnerProps>;
   defaultValue?: TFieldValue;
   validate?: TValidator | TValidator[];
+  format?: (value: TFieldValue) => TFieldValue;
+  parse?: (value: TFieldValue) => TFieldValue;
 }
 
 export interface IFieldAction {
