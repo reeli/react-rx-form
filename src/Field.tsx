@@ -73,7 +73,6 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         distinctUntilChanged(isEqual),
         tap(({ fields, value }) => {
           if (fields || value) {
-            console.log("=============", value);
             this.setState(() => ({
               fieldState: {
                 meta: fields,
@@ -121,7 +120,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
       name: this.props.name,
       type: FieldActionTypes.register,
       meta,
-      payload: value,
+      payload: this.parseValue(value),
     });
   };
 
@@ -134,7 +133,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         error: validateField(value, this.props.validate),
         dirty,
       }),
-      payload: value,
+      payload: this.parseValue(value),
     });
   };
 
@@ -155,13 +154,29 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
       meta: {
         touched: true,
       },
-      payload: value,
+      payload: this.parseValue(value),
     });
   };
 
+  parseValue = (value: TFieldValue) => {
+    if (typeof this.props.parse === "function") {
+      return this.props.parse(value);
+    }
+    return value;
+  };
+
+  formatValue = (value: TFieldValue) => {
+    if (typeof this.props.format === "function") {
+      return this.props.format(value);
+    }
+    return value;
+  };
+
   render() {
+    const { value, meta } = this.state.fieldState;
     return this.props.children({
-      ...this.state.fieldState,
+      value: this.formatValue(value),
+      meta,
       name: this.props.name,
       onChange: this.onChange,
       onFocus: this.onFocus,

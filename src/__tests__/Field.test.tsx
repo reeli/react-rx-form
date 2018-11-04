@@ -152,6 +152,63 @@ describe("#registerField", () => {
   });
 });
 
+describe("#format", () => {
+  it("should format value for field input", () => {
+    const wrapper = mount(
+      <Field
+        name={"firstName"}
+        defaultValue={"Tony"}
+        validate={required()}
+        format={(value) => (value ? `${value}.` : value)}
+      >
+        {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+      </Field>,
+    );
+    expect(wrapper.find("input").prop("value")).toEqual("Tony.");
+  });
+});
+
+describe("#parse", () => {
+  it("should parse value before store it to form", () => {
+    const wrapper = mount(
+      <RxForm initialValues={{}}>
+        {() => (
+          <Field
+            name={"firstName"}
+            defaultValue={"Tony"}
+            ref={"field"}
+            validate={required()}
+            format={(value) => (value ? `${value}.` : value)}
+            parse={(value) => (value ? value.replace(/\./g, "") : value)}
+          >
+            {(fieldState) => (
+              <input
+                type="text"
+                {...pickInputPropsFromFieldProps(fieldState)}
+                onChange={(evt) => {
+                  fieldState.onChange(evt.target.value);
+                }}
+              />
+            )}
+          </Field>
+        )}
+      </RxForm>,
+    );
+    const formInstance = wrapper.instance() as any;
+    wrapper.find("input").simulate("change", { target: { value: "TonyRui." } });
+    expect(formInstance.formState).toEqual({
+      fields: {
+        firstName: {
+          dirty: true,
+        },
+      },
+      values: {
+        firstName: "TonyRui",
+      },
+    });
+  });
+});
+
 const createForm: any = () =>
   mount(
     <RxForm initialValues={{}}>
