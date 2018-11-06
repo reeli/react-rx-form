@@ -126,13 +126,14 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
 
   onChange = (value: TFieldValue) => {
     const dirty = isDirty(value, this.props.defaultValue);
+    const meta = dropEmpty({
+      error: validateField(value, this.props.validate),
+      dirty,
+    }) as IFieldMeta;
     this.props.dispatch({
       name: this.props.name,
       type: FieldActionTypes.change,
-      meta: dropEmpty({
-        error: validateField(value, this.props.validate),
-        dirty,
-      }),
+      meta,
       payload: this.parseValue(value),
     });
   };
@@ -158,14 +159,14 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     });
   };
 
-  parseValue = (value: TFieldValue) => {
+  parseValue = (value: TFieldValue): TFieldValue => {
     if (typeof this.props.parse === "function") {
       return this.props.parse(value);
     }
     return value;
   };
 
-  formatValue = (value: TFieldValue) => {
+  formatValue = (value: TFieldValue): TFieldValue => {
     if (typeof this.props.format === "function") {
       return this.props.format(value);
     }
