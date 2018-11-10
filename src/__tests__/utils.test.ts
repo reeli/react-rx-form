@@ -3,6 +3,7 @@ import {
   combineValidators,
   isContainError,
   isDirty,
+  isEmptyValue,
   pickInputPropsFromFieldProps,
   setErrors,
   validateField,
@@ -100,6 +101,9 @@ describe("#isDirty", () => {
 });
 
 describe("#validateField", () => {
+  it("should return undefined if validate not exist", () => {
+    expect(validateField("test data", undefined)).toEqual(undefined);
+  });
   it("should return undefined when validate is not exist", () => {
     expect(validateField("test data", [])).toEqual(undefined);
   });
@@ -112,6 +116,21 @@ describe("#validateField", () => {
   it("should handle validate array", () => {
     const validators = [required(), maxLength5()];
     expect(validateField("test data", validators)).toEqual("defaultValue length must less than 5");
+  });
+});
+
+describe("#isEmptyValue", () => {
+  it("should return true if value is empty string/object/array/null/undefined ", () => {
+    expect(isEmptyValue(undefined)).toEqual(true);
+    expect(isEmptyValue(null)).toEqual(true);
+    expect(isEmptyValue([])).toEqual(true);
+    expect(isEmptyValue("")).toEqual(true);
+    expect(isEmptyValue({})).toEqual(true);
+  });
+  it("should return false if value is number or boolean", () => {
+    expect(isEmptyValue(0)).toEqual(false);
+    expect(isEmptyValue(false)).toEqual(false);
+    expect(isEmptyValue(() => {})).toEqual(false);
   });
 });
 

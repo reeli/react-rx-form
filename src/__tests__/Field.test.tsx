@@ -61,10 +61,10 @@ describe("should have correct initial state", () => {
 describe("#onFormActionChange", () => {
   it("should dispatch field.change action if field contains error when start submit", () => {
     const instance = createForm().ref("field");
-    const { mockSub$, mockSubscribeFormAction, mockDispatch } = createMocks();
+    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
     instance.props = {
       ...instance.props,
-      subscribeFormAction: mockSubscribeFormAction,
+      subscribeFormAction: mockSubscribe,
       dispatch: mockDispatch,
     };
     instance.onFormActionChange();
@@ -98,10 +98,10 @@ describe("#onFormActionChange", () => {
 
   it("should do nothing if field do not contains error when start submit", () => {
     const instance = createForm().ref("field") as any;
-    const { mockSub$, mockSubscribeFormAction, mockDispatch } = createMocks();
+    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
     instance.props = {
       ...instance.props,
-      subscribeFormAction: mockSubscribeFormAction,
+      subscribeFormAction: mockSubscribe,
       dispatch: mockDispatch,
     };
     instance.onFormActionChange();
@@ -122,6 +122,115 @@ describe("#onFormActionChange", () => {
     });
 
     expect(mockDispatch).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe("#onFormStateChange", () => {
+  it("should call setState when field state changed", () => {
+    const instance = createForm().ref("field");
+    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
+    instance.props = {
+      ...instance.props,
+      subscribe: mockSubscribe,
+      dispatch: mockDispatch,
+    };
+    const mockSetState = jest.fn();
+    instance.setState = mockSetState;
+    instance.onFormStateChange();
+
+    mockSub$.next({
+      fields: {
+        firstName: {
+          dirty: true,
+        },
+      },
+      values: {
+        firstName: "rui",
+      },
+    });
+
+    expect(instance.setState).lastCalledWith({
+      fieldState: {
+        meta: {
+          dirty: true,
+        },
+        value: "rui",
+      },
+    });
+  });
+
+  it("should not call setState when field state not change", () => {
+    const wrapper = mount(
+      <RxForm initialValues={{}}>
+        {() => (
+          <Field name={"firstName"} ref={"field"} validate={required()}>
+            {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+          </Field>
+        )}
+      </RxForm>,
+    ) as any;
+
+    const instance = wrapper.ref("field");
+    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
+    instance.props = {
+      ...instance.props,
+      subscribe: mockSubscribe,
+      dispatch: mockDispatch,
+    };
+    const mockSetState = jest.fn();
+    instance.setState = mockSetState;
+    instance.onFormStateChange();
+
+    mockSub$.next({
+      fields: {
+        lastName: {
+          dirty: true,
+        },
+      },
+      values: {
+        lastName: "rui",
+      },
+    });
+
+    expect(instance.setState).not.toHaveBeenCalled();
+  });
+});
+
+describe("#onFocus", () => {
+  it("should dispatch field focus action with correct params", () => {
+    const instance = createForm().ref("field");
+    const { mockDispatch } = createMocks();
+    instance.props = {
+      ...instance.props,
+      dispatch: mockDispatch,
+    };
+    instance.onFocus();
+    expect(mockDispatch).toHaveBeenCalledWith({
+      name: "firstName",
+      type: "@@rx-form/field/FOCUS",
+      meta: {
+        visited: true,
+      },
+    });
+  });
+});
+
+describe("#onBlur", () => {
+  it("should dispatch field blur action with correct params", () => {
+    const instance = createForm().ref("field");
+    const { mockDispatch } = createMocks();
+    instance.props = {
+      ...instance.props,
+      dispatch: mockDispatch,
+    };
+    instance.onBlur();
+    expect(mockDispatch).toHaveBeenCalledWith({
+      name: "firstName",
+      type: "@@rx-form/field/BLUR",
+      meta: {
+        touched: true,
+      },
+    });
   });
 });
 
@@ -222,7 +331,7 @@ const createForm: any = () =>
 
 const createMocks = () => {
   const mockSub$ = new Subject();
-  const mockSubscribeFormAction = (observer: any) => {
+  const mockSubscribe = (observer: any) => {
     mockSub$.subscribe(observer);
   };
 
@@ -230,7 +339,7 @@ const createMocks = () => {
 
   return {
     mockSub$,
-    mockSubscribeFormAction,
+    mockSubscribe,
     mockDispatch,
   };
 };

@@ -34,7 +34,7 @@ class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCo
     return map(fields, (_, idx: number) => `[${idx}]`);
   };
 
-  each = (mapper: (fieldName: string, idx: number) => React.ReactNode) => {
+  each = (mapper: (prefix: string, idx: number) => React.ReactNode) => {
     const fieldValues = get(this.props.getFormValues(), this.props.name);
     return map(fieldValues, (_: TFieldValue, idx: number) => {
       const name = `[${idx}]`;
