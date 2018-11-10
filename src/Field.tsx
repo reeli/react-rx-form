@@ -64,21 +64,19 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
     const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
-        map((formState) => {
-          return {
-            fields: formState.fields[this.props.name],
-            value: get(formState.values, this.props.name),
-          };
-        }),
+        map((formState) => ({
+          fields: formState.fields[this.props.name],
+          value: get(formState.values, this.props.name),
+        })),
         distinctUntilChanged(isEqual),
         tap(({ fields, value }) => {
           if (fields || value) {
-            this.setState(() => ({
+            this.setState({
               fieldState: {
                 meta: fields,
                 value,
               },
-            }));
+            });
           }
         }),
       )
@@ -92,15 +90,11 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
 
     formActionObserver$
       .pipe(
-        filter((formAction: IFormAction) => {
-          return formAction.type === FormActionTypes.startSubmit;
-        }),
-        map((formAction: IFormAction) => {
-          return {
-            meta: formAction.payload.fields[this.props.name],
-            value: get(formAction.payload.values, this.props.name),
-          };
-        }),
+        filter((formAction: IFormAction) => formAction.type === FormActionTypes.startSubmit),
+        map((formAction: IFormAction) => ({
+          meta: formAction.payload.fields[this.props.name],
+          value: get(formAction.payload.values, this.props.name),
+        })),
         distinctUntilChanged(),
         tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
           const error = validateField(value, this.props.validate);
