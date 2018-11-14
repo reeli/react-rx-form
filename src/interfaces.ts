@@ -54,10 +54,6 @@ export interface IFieldAction {
 
 export interface IFieldCoreProps extends IFieldProps, IFormContextValue {}
 
-export interface IFieldCoreState {
-  fieldState: IFieldState;
-}
-
 export interface IFormContextValue {
   dispatch: (fieldAction: IFieldAction) => any;
   subscribe: (observer: Observer<any>) => any;

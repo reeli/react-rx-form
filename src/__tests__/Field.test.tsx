@@ -17,9 +17,7 @@ describe("should have correct initial state", () => {
 
     const instance = wrapper.children().instance() as any;
     expect(instance.state).toEqual({
-      fieldState: {
-        meta: {},
-      },
+      meta: {},
     });
   });
 
@@ -35,10 +33,8 @@ describe("should have correct initial state", () => {
     );
     const instance = wrapper.ref("field") as any;
     expect(instance.state).toEqual({
-      fieldState: {
-        value: "Jay",
-        meta: {},
-      },
+      value: "Jay",
+      meta: {},
     });
   });
 
@@ -50,10 +46,8 @@ describe("should have correct initial state", () => {
     );
     const instance = wrapper.children().instance() as any;
     expect(instance.state).toEqual({
-      fieldState: {
-        value: "Tony",
-        meta: {},
-      },
+      value: "Tony",
+      meta: {},
     });
   });
 });
@@ -150,12 +144,10 @@ describe("#onFormStateChange", () => {
     });
 
     expect(instance.setState).lastCalledWith({
-      fieldState: {
-        meta: {
-          dirty: true,
-        },
-        value: "rui",
+      meta: {
+        dirty: true,
       },
+      value: "rui",
     });
   });
 
