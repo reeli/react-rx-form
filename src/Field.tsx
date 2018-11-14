@@ -8,7 +8,6 @@ import {
   FieldActionTypes,
   FormActionTypes,
   IFieldCoreProps,
-  IFieldCoreState,
   IFieldMeta,
   IFieldProps,
   IFieldState,
@@ -27,19 +26,21 @@ const getFieldValue = ({ defaultValue, getFormValues, name }: IFieldCoreProps) =
   return defaultValue;
 };
 
-export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState> {
+export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
   private formStateSubscription: Subscription | null = null;
   private formActionSubscription: Subscription | null = null;
 
   state = {
-    fieldState: {
-      value: getFieldValue(this.props),
-      meta: {},
-    },
+    value: getFieldValue(this.props),
+    meta: {},
   };
 
   componentDidMount() {
-    this.registerField(this.state.fieldState);
+    const { value, meta } = this.state;
+    this.registerField({
+      value,
+      meta,
+    });
     this.onFormStateChange();
     this.onFormActionChange();
   }
@@ -73,10 +74,8 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
         tap(({ meta, value }) => {
           if (meta || value) {
             this.setState({
-              fieldState: {
-                meta,
-                value,
-              },
+              meta,
+              value,
             });
           }
         }),
@@ -170,7 +169,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   };
 
   render() {
-    const { value, meta } = this.state.fieldState;
+    const { value, meta } = this.state;
     return this.props.children({
       value: this.formatValue(value),
       meta,
