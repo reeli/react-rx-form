@@ -1,4 +1,4 @@
-import { get, isEqual, isUndefined } from "lodash";
+import { get, isUndefined } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -61,19 +61,20 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
   }
 
   onFormStateChange = () => {
+    const { name } = this.props;
     const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
-        map((formState) => ({
-          fields: formState.fields[this.props.name],
-          value: get(formState.values, this.props.name),
+        map(({ fields, values }) => ({
+          meta: fields[name],
+          value: get(values, name),
         })),
-        distinctUntilChanged(isEqual),
-        tap(({ fields, value }) => {
-          if (fields || value) {
+        distinctUntilChanged((next, prev) => next.meta !== prev.meta || prev.value !== next.value),
+        tap(({ meta, value }) => {
+          if (meta || value) {
             this.setState({
               fieldState: {
-                meta: fields,
+                meta,
                 value,
               },
             });
@@ -87,17 +88,18 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldCoreState>
 
   onFormActionChange = () => {
     const formActionObserver$ = new Subject<IFormAction>();
+    const { name, validate } = this.props;
 
     formActionObserver$
       .pipe(
-        filter((formAction: IFormAction) => formAction.type === FormActionTypes.startSubmit),
-        map((formAction: IFormAction) => ({
-          meta: formAction.payload.fields[this.props.name],
-          value: get(formAction.payload.values, this.props.name),
+        filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
+        map(({ payload: { fields, values } }: IFormAction) => ({
+          meta: fields[name],
+          value: get(values, name),
         })),
         distinctUntilChanged(),
         tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
-          const error = validateField(value, this.props.validate);
+          const error = validateField(value, validate);
           if (error) {
             this.onChange(value);
           }
