@@ -128,7 +128,7 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   dispatch = (action: IFieldAction | IFormAction) => {
-    const prevState = cloneDeep(this.formState);
+    const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(this.formState);
 
     switch (action.type) {
       case FieldActionTypes.register:
@@ -157,7 +157,7 @@ export class RxForm extends React.Component<IRxFormProps> {
       }
     }
 
-    const nextState = cloneDeep(this.formState);
+    const nextState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(this.formState);
 
     log({
       action,
