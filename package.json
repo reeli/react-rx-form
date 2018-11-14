@@ -23,8 +23,6 @@
     "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts",
     "deploy": "./script/deploy.sh",
     "test": "jest",
-    "precommit": "lint-staged",
-    "prepush": "tsc --noEmit && npm test",
     "prepare": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf module && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json"
   },
   "lint-staged": {
@@ -146,5 +144,11 @@
     "url": "git+https://github.com:reeli/react-rx-form.git"
   },
   "homepage": "git+https://github.com:reeli/react-rx-form.git",
-  "sideEffects": false
+  "sideEffects": false,
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "tsc --noEmit && npm test"
+    }
+  }
 }
