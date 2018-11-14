@@ -1,4 +1,4 @@
-import { cloneDeep, set } from "lodash";
+import { cloneDeep, omit, set } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
@@ -16,7 +16,7 @@ import {
   TErrors,
   TOnSubmit,
 } from "./interfaces";
-import { dropEmpty, isContainError, log, setErrors } from "./utils";
+import { isContainError, log, setErrors } from "./utils";
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {
@@ -37,7 +37,7 @@ export class RxForm extends React.Component<IRxFormProps> {
     });
   }
 
-  setFormValues = (formValues: IFormValues) => {
+  updateFormValues = (formValues: IFormValues) => {
     this.formState = {
       // When initialize, formState has no value at this time，
       // but will have data after field registered with values
@@ -63,21 +63,33 @@ export class RxForm extends React.Component<IRxFormProps> {
     }
   }
 
-  updateField = (action: IFieldAction) => {
+  updateField = (state: IFormState, action: IFieldAction) => {
+    const { fields, values } = state;
     const { payload, meta = {} as IFieldMeta, name } = action;
-    this.formState = {
+    return {
       fields: {
-        ...this.formState.fields,
+        ...fields,
         [name]: {
-          ...this.formState.fields[name],
+          ...fields[name],
           ...meta,
         },
       },
-      values: dropEmpty({
-        ...set<IFormValues>(this.formState.values, name, payload),
-      }),
+      values: set<IFormValues>(values, name, payload),
     };
-    this.formStateSubject$.next(this.formState);
+  };
+
+  updateFieldState = (state: IFormState, action: IFieldAction) => {
+    const { fields, values } = state;
+    const { name, meta } = action;
+    return {
+      values,
+      fields: {
+        ...fields,
+        [name]: {
+          ...meta,
+        },
+      },
+    };
   };
 
   onSubmitError = (errors: TErrors) => {
@@ -106,20 +118,12 @@ export class RxForm extends React.Component<IRxFormProps> {
     return this.formState.values;
   };
 
-  removeField = (action: IFieldAction) => {
-    delete this.formState.fields[action.name];
-    this.formStateSubject$.next(this.formState);
-  };
-
-  updateFieldState = (action: IFieldAction) => {
-    this.formState = {
-      values: this.formState.values,
-      fields: {
-        ...this.formState.fields,
-        [action.name]: {
-          ...action.meta,
-        },
-      },
+  removeField = (state: IFormState, action: IFieldAction) => {
+    // keep values when field destroy for cross page form
+    // eg: in PageA, switch to PageB, should keep PageA fields values.
+    return {
+      ...state,
+      ...omit(state.fields, action.name),
     };
   };
 
@@ -130,15 +134,18 @@ export class RxForm extends React.Component<IRxFormProps> {
       case FieldActionTypes.register:
       case FieldActionTypes.blur:
       case FieldActionTypes.change: {
-        this.updateField(action as IFieldAction);
+        this.formState = this.updateField(this.formState, action as IFieldAction);
+        this.formStateSubject$.next(this.formState);
         break;
       }
       case FieldActionTypes.focus: {
-        this.updateFieldState(action as IFieldAction);
+        this.formState = this.updateFieldState(this.formState, action as IFieldAction);
+        this.formStateSubject$.next(this.formState);
         break;
       }
       case FieldActionTypes.destroy: {
-        this.removeField(action as IFieldAction);
+        this.removeField(this.formState, action as IFieldAction);
+        this.formStateSubject$.next(this.formState);
         break;
       }
       case FormActionTypes.initialize:
@@ -188,10 +195,6 @@ export class RxForm extends React.Component<IRxFormProps> {
         onSubmit(values, this.onSubmitError);
       }
     };
-  };
-
-  updateFormValues = (formValues: IFormValues) => {
-    this.setFormValues(formValues);
   };
 
   render() {
