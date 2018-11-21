@@ -127,10 +127,7 @@ export interface IFormAction {
 }
 
 export enum FormActionTypes {
-  initialize = "@@rx-form/form/INITIALIZE",
   startSubmit = "@@rx-form/form/START_SUBMIT",
-  startSubmitFailed = "@@rx-form/form/START_SUBMIT_FAILED",
-  onChange = "@@rx-form/form/CHANGE",
 }
 
 export interface IFormState {
