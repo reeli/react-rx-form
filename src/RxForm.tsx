@@ -27,33 +27,11 @@ export class RxForm extends React.Component<IRxFormProps> {
   private formActionSubject$ = new Subject();
   private formStateSubscription: Subscription | null = null;
 
-  componentDidMount() {
-    this.dispatch({
-      type: FormActionTypes.initialize,
-      payload: {
-        fields: this.formState.fields,
-        values: this.formState.values,
-      },
-    });
-  }
-
   updateFormValues = (formValues: IFormValues) => {
     this.formState = {
-      // When initialize, formState has no value at this time，
-      // but will have data after field registered with values
       fields: this.formState.fields,
       values: formValues,
     };
-
-    this.dispatch({
-      type: FormActionTypes.onChange,
-      payload: {
-        fields: this.formState.fields,
-        values: {
-          ...this.formState.values,
-        },
-      },
-    });
   };
 
   componentWillUnmount() {
@@ -101,13 +79,6 @@ export class RxForm extends React.Component<IRxFormProps> {
     };
 
     this.formStateSubject$.next(this.formState);
-    this.dispatch({
-      type: FormActionTypes.startSubmitFailed,
-      payload: {
-        fields: this.formState.fields,
-        values: this.formState.values,
-      },
-    });
   };
 
   notifyFormActionChange = (action: IFormAction) => {
@@ -144,14 +115,11 @@ export class RxForm extends React.Component<IRxFormProps> {
         break;
       }
       case FieldActionTypes.destroy: {
-        this.removeField(this.formState, action as IFieldAction);
+        this.formState = this.removeField(this.formState, action as IFieldAction);
         this.formStateSubject$.next(this.formState);
         break;
       }
-      case FormActionTypes.initialize:
-      case FormActionTypes.startSubmit:
-      case FormActionTypes.onChange:
-      case FormActionTypes.startSubmitFailed: {
+      case FormActionTypes.startSubmit: {
         this.notifyFormActionChange(action as IFormAction);
         break;
       }

@@ -15,25 +15,6 @@ describe("#updateFormValues", () => {
   });
 });
 
-describe("#componentDidMount", () => {
-  it("should dispatch form initial action", () => {
-    const { instance } = createForm();
-    instance.dispatch = jest.fn();
-    instance.componentDidMount();
-    expect(instance.dispatch).toHaveBeenCalledWith({
-      type: "@@rx-form/form/INITIALIZE",
-      payload: {
-        fields: {
-          firstName: {},
-        },
-        values: {
-          firstName: undefined,
-        },
-      },
-    });
-  });
-});
-
 const createForm = () => {
   const submit = () => {};
 
