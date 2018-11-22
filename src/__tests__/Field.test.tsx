@@ -63,19 +63,21 @@ describe("#onFormActionChange", () => {
     };
     instance.onFormActionChange();
 
-    mockSub$.next({
-      type: FormActionTypes.startSubmit,
-      payload: {
-        fields: {
-          firstName: {
-            name: "firstName",
-            meta: {},
-          },
-        },
-        values: {
-          firstName: "",
+    const mockFormState = {
+      fields: {
+        firstName: {
+          name: "firstName",
+          meta: {},
         },
       },
+      values: {
+        firstName: "",
+      },
+    };
+
+    mockSub$.next({
+      type: FormActionTypes.startSubmit,
+      payload: mockFormState,
     });
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
@@ -131,6 +133,17 @@ describe("#onFormStateChange", () => {
     const mockSetState = jest.fn();
     instance.setState = mockSetState;
     instance.onFormStateChange();
+
+    mockSub$.next({
+      fields: {
+        firstName: {
+          dirty: true,
+        },
+      },
+      values: {
+        firstName: "ru",
+      },
+    });
 
     mockSub$.next({
       fields: {

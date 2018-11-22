@@ -15,7 +15,7 @@ import {
   IFormState,
   TFieldValue,
 } from "./interfaces";
-import { dropEmpty, isDirty, validateField } from "./utils";
+import { isDirty, validateField } from "./utils";
 
 const getFieldValue = ({ defaultValue, getFormValues, name }: IFieldCoreProps) => {
   const formValues = getFormValues();
@@ -70,7 +70,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
           meta: fields[name],
           value: get(values, name),
         })),
-        distinctUntilChanged((next, prev) => next.meta !== prev.meta || prev.value !== next.value),
+        distinctUntilChanged((next, prev) => next.meta === prev.meta && prev.value === next.value),
         tap(({ meta, value }) => {
           if (meta || value) {
             this.setState({
@@ -96,7 +96,6 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
           meta: fields[name],
           value: get(values, name),
         })),
-        distinctUntilChanged(),
         tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
           const error = validateField(value, validate);
           if (error) {
@@ -121,10 +120,10 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
 
   onChange = (value: TFieldValue) => {
     const dirty = isDirty(value, this.props.defaultValue);
-    const meta = dropEmpty({
+    const meta = {
       error: validateField(value, this.props.validate),
       dirty,
-    }) as IFieldMeta;
+    } as IFieldMeta;
     this.props.dispatch({
       name: this.props.name,
       type: FieldActionTypes.change,
