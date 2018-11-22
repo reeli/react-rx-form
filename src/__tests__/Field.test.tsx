@@ -1,7 +1,7 @@
 import { mount } from "enzyme";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
-import { required } from "../../src-modules/utils/validations";
+import { maxLength5, required } from "../../src-modules/utils/validations";
 import { Field } from "../Field";
 import { FormActionTypes } from "../interfaces";
 import { RxForm } from "../RxForm";
@@ -49,6 +49,60 @@ describe("should have correct initial state", () => {
       value: "Tony",
       meta: {},
     });
+  });
+});
+
+describe("when field change", () => {
+  it("should only update current field, not update other fields", () => {
+    const wrapper = mount(
+      <RxForm initialValues={{}}>
+        {() => (
+          <>
+            <Field name={"firstName"} defaultValue={"Tony"} ref={"field1"} validate={required()}>
+              {(fieldState) => (
+                <input className={"firstName"} type="text" {...pickInputPropsFromFieldProps(fieldState)} />
+              )}
+            </Field>
+            <Field name={"lastName"} ref={"field2"} validate={required()}>
+              {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+            </Field>
+          </>
+        )}
+      </RxForm>,
+    );
+
+    const field1 = wrapper.ref("field1") as any;
+    const field2 = wrapper.ref("field2") as any;
+    field1.render = jest.fn();
+    field2.render = jest.fn();
+
+    wrapper.find(".firstName").simulate("change", { target: { value: "haha" } });
+    expect(field1.render).toHaveBeenCalledTimes(1);
+    expect(field2.render).toHaveBeenCalledTimes(0);
+  });
+});
+
+xdescribe("field validation", () => {
+  it("should remove error when field from invalid to valid", () => {
+    const wrapper = mount(
+      <RxForm initialValues={{}}>
+        {() => (
+          <>
+            <Field name={"firstName"} defaultValue={"Tony"} ref={"field1"} validate={[required(), maxLength5()]}>
+              {(fieldState) => (
+                <div>
+                  <input className={"firstName"} type="text" {...pickInputPropsFromFieldProps(fieldState)} />
+                  {fieldState.meta.error && <span className={"error"}>error</span>}
+                </div>
+              )}
+            </Field>
+          </>
+        )}
+      </RxForm>,
+    );
+    wrapper.find(".firstName").simulate("change", { target: { value: "hahhaaha" } });
+    wrapper.find(".firstName").simulate("change", { target: { value: "ha" } });
+    expect(wrapper.find(".error").exists()).toBe(false);
   });
 });
 

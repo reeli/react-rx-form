@@ -37,12 +37,17 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
 
   componentDidMount() {
     const { value, meta } = this.state;
+
+    // should register observers before register field, otherwise the last field will lost field state
+    // this cause the last field render even if I only changed the first field
+
+    this.onFormStateChange();
+    this.onFormActionChange();
+
     this.registerField({
       value,
       meta,
     });
-    this.onFormStateChange();
-    this.onFormActionChange();
   }
 
   componentWillUnmount() {
