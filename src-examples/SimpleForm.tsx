@@ -22,7 +22,7 @@ export class SimpleForm extends React.Component {
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
                   onFocus={onFocus}
-                  onBlur={(e) => onBlur(e.target.value)}
+                  onBlur={onBlur}
                   type="text"
                   placeholder="First Name"
                 />
@@ -35,7 +35,7 @@ export class SimpleForm extends React.Component {
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
                   onFocus={onFocus}
-                  onBlur={(e) => onBlur(e.target.value)}
+                  onBlur={onBlur}
                   type="password"
                   placeholder="Last Name"
                 />
@@ -47,8 +47,8 @@ export class SimpleForm extends React.Component {
                   name={name}
                   value={value}
                   onFocus={onFocus}
-                  onBlur={(e) => onBlur(e.target.value)}
-                  onChange={(e) => onChange(e.target.value)}
+                  onBlur={onBlur}
+                  onChange={onChange}
                   type="email"
                   placeholder="Email"
                 />
@@ -59,9 +59,9 @@ export class SimpleForm extends React.Component {
                 <input
                   name={name}
                   value={value}
-                  onChange={(e) => onChange(e.target.value)}
+                  onChange={onChange}
                   onFocus={onFocus}
-                  onBlur={(e) => onBlur(e.target.value)}
+                  onBlur={onBlur}
                   type={"checkbox"}
                   placeholder="Checkbox"
                 />
@@ -74,8 +74,8 @@ export class SimpleForm extends React.Component {
                     <input
                       name={name}
                       onFocus={onFocus}
-                      onChange={(e) => onChange(e.target.value)}
-                      onBlur={(e) => onBlur(e.target.value)}
+                      onChange={onChange}
+                      onBlur={onBlur}
                       type="radio"
                       value="male"
                     />
@@ -89,8 +89,8 @@ export class SimpleForm extends React.Component {
                     <input
                       name={name}
                       onFocus={onFocus}
-                      onBlur={(e) => onBlur(e.target.value)}
-                      onChange={(e) => onChange(e.target.value)}
+                      onBlur={onBlur}
+                      onChange={onChange}
                       type="radio"
                       value="female"
                     />

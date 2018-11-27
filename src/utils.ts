@@ -7,11 +7,13 @@ import {
   isEqual,
   isFunction,
   isNumber,
+  isObject,
   isUndefined,
   mapValues,
   omitBy,
   reduce,
 } from "lodash";
+import * as React from "react";
 import {
   IFieldAction,
   IFieldInnerProps,
@@ -110,4 +112,9 @@ export const isEmptyValue = (value: any) => {
     return true;
   }
   return isEmpty(value);
+};
+
+export const pickValue = (evtOrValue: React.MouseEvent | TFieldValue) => {
+  const isEvent = isObject(evtOrValue) && evtOrValue.target;
+  return isEvent ? evtOrValue.target.value : evtOrValue;
 };

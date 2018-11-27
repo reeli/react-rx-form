@@ -5,6 +5,7 @@ import {
   isDirty,
   isEmptyValue,
   pickInputPropsFromFieldProps,
+  pickValue,
   setErrors,
   validateField,
 } from "../utils";
@@ -131,6 +132,21 @@ describe("#isEmptyValue", () => {
     expect(isEmptyValue(0)).toEqual(false);
     expect(isEmptyValue(false)).toEqual(false);
     expect(isEmptyValue(() => {})).toEqual(false);
+  });
+});
+
+describe("#pickValue", () => {
+  it("should pick value from event", () => {
+    const mockEvent = {
+      target: {
+        value: "xxx",
+      },
+    };
+    expect(pickValue(mockEvent)).toEqual("xxx");
+  });
+  it("should pick value itself", () => {
+    const mockData = { location: { address: "xxx stress" } };
+    expect(pickValue(mockData)).toEqual(mockData);
   });
 });
 
