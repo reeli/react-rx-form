@@ -16,7 +16,7 @@ import {
   TErrors,
   TOnSubmit,
 } from "./interfaces";
-import { isContainError, log, setErrors } from "./utils";
+import { isContainError, log, setErrors, setFieldsTouched } from "./utils";
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {
@@ -146,16 +146,24 @@ export class RxForm extends React.Component<IRxFormProps> {
     return this.formActionSubject$.subscribe(observer);
   };
 
+  updateFormState = (formState: IFormState) => {
+    this.formStateSubject$.next(formState);
+  };
+
   handleSubmit = (onSubmit: TOnSubmit) => {
     return (evt: React.FormEvent) => {
       evt.preventDefault();
 
+      this.formState = {
+        fields: setFieldsTouched(this.formState.fields),
+        values: this.formState.values,
+      };
+
+      this.updateFormState(this.formState);
+
       this.dispatch({
         type: FormActionTypes.startSubmit,
-        payload: {
-          fields: this.formState.fields,
-          values: this.formState.values,
-        },
+        payload: this.formState,
       });
 
       if (isContainError(this.formState.fields)) {

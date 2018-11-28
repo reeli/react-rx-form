@@ -118,3 +118,10 @@ export const pickValue = (evtOrValue: React.MouseEvent | TFieldValue) => {
   const isEvent = isObject(evtOrValue) && evtOrValue.target;
   return isEvent ? evtOrValue.target.value : evtOrValue;
 };
+
+export const setFieldsTouched = (fields: IFields) => {
+  return mapValues(fields, (field) => ({
+    ...field,
+    touched: true,
+  }));
+};

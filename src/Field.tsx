@@ -98,10 +98,7 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
       .pipe(
         filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
         map(({ payload: { fields, values } }: IFormAction) => ({
-          meta: {
-            ...fields[name],
-            touched: true,
-          },
+          meta: fields[name],
           value: get(values, name),
         })),
         tap(({ value, meta }: { meta: IFieldMeta; value: TFieldValue }) => {

@@ -140,7 +140,6 @@ describe("#onFormActionChange", () => {
       meta: {
         dirty: true,
         focused: true,
-        touched: true,
         error: "no empty defaultValue",
       },
       payload: "",
