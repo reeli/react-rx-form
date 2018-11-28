@@ -16,7 +16,7 @@ import {
   TErrors,
   TOnSubmit,
 } from "./interfaces";
-import { isContainError, log, setErrors, setFieldsTouched } from "./utils";
+import { isContainError, log, setErrors, setFieldsMeta } from "./utils";
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {
@@ -155,7 +155,7 @@ export class RxForm extends React.Component<IRxFormProps> {
       evt.preventDefault();
 
       this.formState = {
-        fields: setFieldsTouched(this.formState.fields),
+        fields: setFieldsMeta(this.formState.fields),
         values: this.formState.values,
       };
 
