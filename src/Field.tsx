@@ -101,10 +101,10 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
           meta: fields[name],
           value: get(values, name),
         })),
-        tap(({ value, meta }: { meta: IFieldMeta; value: TFieldValue }) => {
+        tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
           const error = validateField(value, validate);
           if (error) {
-            this.onFieldChange(value)(meta);
+            this.onChange(value);
           }
         }),
       )
@@ -123,26 +123,19 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
     });
   };
 
-  onFieldChange = (evtOrValue: React.MouseEvent | TFieldValue) => {
-    return (fieldMeta?: IFieldMeta) => {
-      const value = pickValue(evtOrValue);
-      const dirty = isDirty(value, this.props.defaultValue);
-      const meta = {
-        ...fieldMeta,
-        error: validateField(value, this.props.validate),
-        dirty,
-      } as IFieldMeta;
-      this.props.dispatch({
-        name: this.props.name,
-        type: FieldActionTypes.change,
-        meta,
-        payload: this.parseValue(value),
-      });
-    };
-  };
-
   onChange = (evtOrValue: React.MouseEvent | TFieldValue) => {
-    this.onFieldChange(evtOrValue)();
+    const value = pickValue(evtOrValue);
+    const dirty = isDirty(value, this.props.defaultValue);
+    const meta = {
+      error: validateField(value, this.props.validate),
+      dirty,
+    } as IFieldMeta;
+    this.props.dispatch({
+      name: this.props.name,
+      type: FieldActionTypes.change,
+      meta,
+      payload: this.parseValue(value),
+    });
   };
 
   onFocus = () => {

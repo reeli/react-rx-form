@@ -139,7 +139,6 @@ describe("#onFormActionChange", () => {
       type: "@@rx-form/field/CHANGE",
       meta: {
         dirty: true,
-        focused: true,
         error: "no empty defaultValue",
       },
       payload: "",
