@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { IFormContextValue } from "./interfaces";
+import { IFormContextValue, IFormState } from "./interfaces";
 
 const { Provider, Consumer } = createContext<IFormContextValue>({
   subscribe: (_: any) => {},
@@ -7,6 +7,7 @@ const { Provider, Consumer } = createContext<IFormContextValue>({
   subscribeFormAction: (_: any) => {},
   updateFormValues: (_: any) => {},
   getFormValues: () => ({}),
+  getFormState: () => ({} as IFormState),
 });
 
 export { Provider as FormProvider, Consumer as FormConsumer };

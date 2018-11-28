@@ -89,6 +89,10 @@ export class RxForm extends React.Component<IRxFormProps> {
     return this.formState.values;
   };
 
+  getFormState = () => {
+    return this.formState;
+  };
+
   removeField = (state: IFormState, action: IFieldAction) => {
     // keep values when field destroy for cross page form
     // eg: in PageA, switch to PageB, should keep PageA fields values.
@@ -174,6 +178,7 @@ export class RxForm extends React.Component<IRxFormProps> {
           subscribeFormAction: this.subscribeFormAction,
           updateFormValues: this.updateFormValues,
           getFormValues: this.getFormValues,
+          getFormState: this.getFormState,
         }}
       >
         {this.props.children({

@@ -60,6 +60,7 @@ export interface IFormContextValue {
   subscribeFormAction: (observer: Observer<any>) => any;
   updateFormValues: (formValues: IFormValues) => any;
   getFormValues: () => IFormValues;
+  getFormState: () => IFormState;
   fieldPrefix?: string;
 }
 
