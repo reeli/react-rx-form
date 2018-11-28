@@ -22,9 +22,9 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
     const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
-        map((formState: IFormState) => {
-          return formState.values;
-        }),
+        map((formState: IFormState) => ({
+          ...formState.values,
+        })),
         distinctUntilChanged(isEqual),
         tap((formValues: IFormValues) => {
           this.setState({
