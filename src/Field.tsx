@@ -98,13 +98,16 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
       .pipe(
         filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
         map(({ payload: { fields, values } }: IFormAction) => ({
-          meta: fields[name],
+          meta: {
+            ...fields[name],
+            touched: true,
+          },
           value: get(values, name),
         })),
-        tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
+        tap(({ value, meta }: { meta: IFieldMeta; value: TFieldValue }) => {
           const error = validateField(value, validate);
           if (error) {
-            this.onChange(value);
+            this.onFieldChange(value)(meta);
           }
         }),
       )
@@ -123,19 +126,26 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
     });
   };
 
+  onFieldChange = (evtOrValue: React.MouseEvent | TFieldValue) => {
+    return (fieldMeta?: IFieldMeta) => {
+      const value = pickValue(evtOrValue);
+      const dirty = isDirty(value, this.props.defaultValue);
+      const meta = {
+        ...fieldMeta,
+        error: validateField(value, this.props.validate),
+        dirty,
+      } as IFieldMeta;
+      this.props.dispatch({
+        name: this.props.name,
+        type: FieldActionTypes.change,
+        meta,
+        payload: this.parseValue(value),
+      });
+    };
+  };
+
   onChange = (evtOrValue: React.MouseEvent | TFieldValue) => {
-    const value = pickValue(evtOrValue);
-    const dirty = isDirty(value, this.props.defaultValue);
-    const meta = {
-      error: validateField(value, this.props.validate),
-      dirty,
-    } as IFieldMeta;
-    this.props.dispatch({
-      name: this.props.name,
-      type: FieldActionTypes.change,
-      meta,
-      payload: this.parseValue(value),
-    });
+    this.onFieldChange(evtOrValue)();
   };
 
   onFocus = () => {

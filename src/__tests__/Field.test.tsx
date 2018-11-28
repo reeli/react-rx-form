@@ -120,8 +120,7 @@ describe("#onFormActionChange", () => {
     const mockFormState = {
       fields: {
         firstName: {
-          name: "firstName",
-          meta: {},
+          focused: true,
         },
       },
       values: {
@@ -140,6 +139,8 @@ describe("#onFormActionChange", () => {
       type: "@@rx-form/field/CHANGE",
       meta: {
         dirty: true,
+        focused: true,
+        touched: true,
         error: "no empty defaultValue",
       },
       payload: "",
