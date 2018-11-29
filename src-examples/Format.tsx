@@ -1,4 +1,4 @@
-import { Field, RxForm } from "@reeli/react-rx-form";
+import { Field, RxForm } from "@react-rx/form";
 import * as React from "react";
 
 export class Format extends React.Component {

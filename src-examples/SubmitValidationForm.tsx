@@ -1,5 +1,5 @@
 import Button from "@material-ui/core/Button/Button";
-import { Field, pickInputPropsFromFieldProps, RxForm } from "@reeli/react-rx-form";
+import { Field, pickInputPropsFromFieldProps, RxForm } from "@react-rx/form";
 import { isEmpty } from "lodash";
 import * as React from "react";
 import { CustomInput } from "src-components/CustomInput";

@@ -1,4 +1,4 @@
-import { Field, FieldArray, RxForm } from "@reeli/react-rx-form";
+import { Field, FieldArray, RxForm } from "@react-rx/form";
 import * as React from "react";
 import { FormSection } from "../src/FormSection";
 

@@ -1,4 +1,4 @@
-import { Field, IFormState, RxForm, WithForm } from "@reeli/react-rx-form";
+import { Field, IFormState, RxForm, WithForm } from "@react-rx/form";
 import { get } from "lodash";
 import * as React from "react";
 

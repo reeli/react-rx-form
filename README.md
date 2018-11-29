@@ -6,13 +6,13 @@ React Rx Form 的使用方法非常简单，不需要其他额外的配置，安
 
 ### 安装
 
-`npm install @reeli/react-rx-form`
+`npm install @react-rx/form`
 
 ### 开始使用
 
 ```ts
 import React, { Component } from "react";
-import { Field, RxForm } from "@reeli/react-rx-form";
+import { Field, RxForm } from "@react-rx/form";
 
 export class ContactForm extends Component {
   onSubmit = (formValues: any) => {

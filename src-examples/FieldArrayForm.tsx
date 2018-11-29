@@ -1,5 +1,5 @@
 import Button from "@material-ui/core/Button/Button";
-import { Field, FieldArray, RxForm } from "@reeli/react-rx-form";
+import { Field, FieldArray, RxForm } from "@react-rx/form";
 import { isEmpty } from "lodash";
 import * as React from "react";
 import { required } from "src-modules/utils/validations";
