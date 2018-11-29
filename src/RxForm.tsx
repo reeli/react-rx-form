@@ -16,7 +16,7 @@ import {
   TErrors,
   TOnSubmit,
 } from "./interfaces";
-import { isContainError, log, setErrors, setFieldsMeta } from "./utils";
+import { isContainError, log, setErrors, setFieldsError, setFieldsMeta } from "./utils";
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {
@@ -78,6 +78,14 @@ export class RxForm extends React.Component<IRxFormProps> {
       fields: setErrors(this.formState.fields, errors),
     };
 
+    this.formStateSubject$.next(this.formState);
+  };
+
+  setErrors = (errors: TErrors) => {
+    this.formState = {
+      values: this.formState.values,
+      fields: setFieldsError(errors, this.formState.fields),
+    };
     this.formStateSubject$.next(this.formState);
   };
 
@@ -187,6 +195,7 @@ export class RxForm extends React.Component<IRxFormProps> {
           updateFormValues: this.updateFormValues,
           getFormValues: this.getFormValues,
           getFormState: this.getFormState,
+          setErrors: this.setErrors,
         }}
       >
         {this.props.children({

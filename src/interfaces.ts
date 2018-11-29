@@ -62,6 +62,7 @@ export interface IFormContextValue {
   getFormValues: () => IFormValues;
   getFormState: () => IFormState;
   fieldPrefix?: string;
+  setErrors: (errors: TErrors) => any;
 }
 
 export interface IFieldArrayInnerProps extends IFieldArrayCoreState {

@@ -8,6 +8,7 @@ const { Provider, Consumer } = createContext<IFormContextValue>({
   updateFormValues: (_: any) => {},
   getFormValues: () => ({}),
   getFormState: () => ({} as IFormState),
+  setErrors: (_: any) => {},
 });
 
 export { Provider as FormProvider, Consumer as FormConsumer };

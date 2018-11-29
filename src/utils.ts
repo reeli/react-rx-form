@@ -9,6 +9,7 @@ import {
   isNumber,
   isObject,
   isUndefined,
+  keys,
   mapValues,
   omitBy,
   reduce,
@@ -125,4 +126,20 @@ export const setFieldsMeta = (fields: IFields) => {
     touched: true,
     visited: true,
   }));
+};
+
+export const setFieldsError = (errors: TErrors, fields: IFields) => {
+  const temp = {} as IFields;
+  keys(errors).forEach((name: string) => {
+    if (fields[name]) {
+      temp[name] = {
+        ...fields[name],
+        error: errors[name],
+      };
+    }
+  });
+  return {
+    ...fields,
+    ...temp,
+  };
 };
