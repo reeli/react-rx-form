@@ -7,6 +7,7 @@ import {
   pickInputPropsFromFieldProps,
   pickValue,
   setErrors,
+  setFieldsError,
   validateField,
 } from "../utils";
 
@@ -160,3 +161,74 @@ const createFormState = ({ hasError }: { hasError: boolean }) => {
     },
   };
 };
+
+describe("#setFieldsError", () => {
+  it("should set partial fields errors", () => {
+    const mockFields = {
+      username: {
+        dirty: true,
+        touched: true,
+        error: undefined,
+      },
+      password: {
+        dirty: true,
+        touched: false,
+        error: "xx error",
+      },
+    };
+
+    const expected = {
+      username: {
+        dirty: true,
+        touched: true,
+        error: "no empty error",
+      },
+      password: {
+        dirty: true,
+        touched: false,
+        error: "not empty error",
+      },
+    };
+
+    expect(
+      setFieldsError(
+        {
+          username: "no empty error",
+          password: "not empty error",
+          age: "",
+        },
+        mockFields,
+      ),
+    ).toEqual(expected);
+  });
+
+  it("should clear fields errors when pass empty object as errors", () => {
+    const mockFields = {
+      username: {
+        dirty: true,
+        touched: true,
+        error: "not empty error",
+      },
+      password: {
+        dirty: true,
+        touched: false,
+        error: "xx error",
+      },
+    };
+
+    const expected = {
+      username: {
+        dirty: true,
+        touched: true,
+        error: undefined,
+      },
+      password: {
+        dirty: true,
+        touched: false,
+        error: undefined,
+      },
+    };
+
+    expect(setFieldsError({}, mockFields)).toEqual(expected);
+  });
+});

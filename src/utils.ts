@@ -128,7 +128,16 @@ export const setFieldsMeta = (fields: IFields) => {
   }));
 };
 
-export const setFieldsError = (errors: TErrors, fields: IFields) => {
+export const setFieldsError = (errors: TErrors, fields: IFields): IFields => {
+  if (isEmpty(errors)) {
+    return mapValues(fields, (field) => {
+      return {
+        ...field,
+        error: undefined,
+      };
+    });
+  }
+
   const temp = {} as IFields;
   keys(errors).forEach((name: string) => {
     if (fields[name]) {
