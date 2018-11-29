@@ -1,6 +1,6 @@
 {
-  "name": "@reeli/react-rx-form",
-  "version": "0.6.3",
+  "name": "@react-rx/form",
+  "version": "0.1.0",
   "description": "rx form for react, use typescript for development",
   "main": "lib/index.js",
   "module": "module/index.js",
