@@ -102,11 +102,18 @@ export class RxForm extends React.Component<IRxFormProps> {
   };
 
   removeField = (state: IFormState, action: IFieldAction) => {
+    if (action.meta && action.meta.destroyValueOnUnmount) {
+      return {
+        fields: omit(state.fields, action.name),
+        values: omit(state.values, action.name),
+      };
+    }
+
     // keep values when field destroy for cross page form
     // eg: in PageA, switch to PageB, should keep PageA fields values.
     return {
       ...state,
-      ...omit(state.fields, action.name),
+      fields: omit(state.fields, action.name),
     };
   };
 

@@ -54,6 +54,9 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
     this.props.dispatch({
       name: this.props.name,
       type: FieldActionTypes.destroy,
+      meta: {
+        destroyValueOnUnmount: !!this.props.destroyValueOnUnmount,
+      },
     });
 
     if (this.formStateSubscription) {

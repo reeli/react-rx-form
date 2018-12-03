@@ -43,12 +43,13 @@ export interface IFieldProps {
   validate?: TValidator | TValidator[];
   format?: (value: TFieldValue) => TFieldValue;
   parse?: (value: TFieldValue) => TFieldValue;
+  destroyValueOnUnmount?: boolean;
 }
 
 export interface IFieldAction {
   name: string;
   type: FieldActionTypes;
-  meta?: IFieldMeta;
+  meta?: IFieldMeta & { destroyValueOnUnmount?: boolean };
   payload?: TFieldValue;
 }
 
