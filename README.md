@@ -1,14 +1,10 @@
 # React Rx Form
 
-## 使用手册
-
-React Rx Form 的使用方法非常简单，不需要其他额外的配置，安装完成之后就能直接使用。
-
-### 安装
+### Install
 
 `npm install @react-rx/form`
 
-### 开始使用
+### Usage
 
 ```ts
 import React, { Component } from "react";
@@ -37,6 +33,51 @@ export class ContactForm extends Component {
   }
 }
 ```
+
+## API
+
+### RxForm
+
+- `initialValues: { [fieldName: string]: TFieldValue }`
+
+      	Form initial values
+
+- `children: (props) => ReactNode`
+
+      	A render prop, which provide the following props to it's children:
+
+  - `handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any`
+
+  - When `handleSubmit` function fired, `onSubmit` will be called with the following parameters: - `values: { [fieldName: string]: TFieldValue }` - `onSubmitError: (errors: { [fieldName: string]: TErrorMsg }) => any`
+
+### Field
+
+The Field Component is connect each individual input to RxForm.
+
+- `name: string`
+  Field name
+- `children: (props) => ReactNode`
+
+  A render prop, which provide the flowing props to it's children:
+
+- `name: string`
+- `onChange: (value: React.MouseEvent | TFieldValue) => void`
+- `onBlur: (value: React.MouseEvent | TFieldValue) => void`
+- `onFocus: () => void`
+- `value?: TFieldValue`
+- `meta`
+  - `dirty?: boolean`
+  - `touched?: boolean`
+  - `visited?: boolean`
+  - `error?: TErrorMsg`
+
+* `defaultValue?: TFieldValue` - Field default value
+* `validate?: TValidator | TValidator[]` - TValidator is a function which returns error message by field value. `(value: TFieldValue) => string | undefined` - Default called when field `onChange` and form `startSubmit`
+* `format?: (value: TFieldValue) => TFieldValue`
+  - Format field value to be displayed in field input. For example, we can format number to currency. Should be used with `parse` in pairs.
+* `parse?: (value: TFieldValue) => TFieldValue`
+  - Parse field input display value to be stored in RxForm. Should be used with `format` in pairs
+* `destroyValueOnUnmount?: boolean` - When field unmount, determine whether to destroy the field value or not
 
 ## 数据流
 

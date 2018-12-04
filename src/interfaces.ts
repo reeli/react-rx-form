@@ -13,15 +13,15 @@ export enum FieldActionTypes {
   destroy = "@@rx-form/field/DESTROY_FIELD",
 }
 
-type TError = string | undefined;
-export type TValidator = (value: string | boolean) => TError;
+type TErrorMsg = string | undefined;
 export type TFieldValue = any;
+export type TValidator = (value: TFieldValue) => TErrorMsg;
 
 export interface IFieldMeta {
   dirty?: boolean;
   touched?: boolean;
   visited?: boolean;
-  error?: TError;
+  error?: TErrorMsg;
 }
 
 export interface IFieldState {
@@ -31,8 +31,8 @@ export interface IFieldState {
 
 export interface IFieldInnerProps extends IFieldState {
   name: string;
-  onChange: (value: TFieldValue) => void;
-  onBlur: (value: TFieldValue) => void;
+  onChange: (value: React.MouseEvent | TFieldValue) => void;
+  onBlur: (value: React.MouseEvent | TFieldValue) => void;
   onFocus: () => void;
 }
 
