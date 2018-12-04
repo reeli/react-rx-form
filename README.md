@@ -35,7 +35,7 @@ export class ContactForm extends Component {
 ```
 ## Examples
 
-Please check more examples [here](react-rx-form.surge.sh).
+Please check more examples [here](http://react-rx-form.surge.sh).
 
 ## API
 
