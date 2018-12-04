@@ -48,47 +48,52 @@ export class ContactForm extends Component {
 
   - `handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any`
 
-  - When `handleSubmit` function fired, `onSubmit` will be called with the following parameters: - `values: { [fieldName: string]: TFieldValue }` - `onSubmitError: (errors: { [fieldName: string]: TErrorMsg }) => any`
+  - When `handleSubmit` function fired, `onSubmit` will be called with the following parameters: 
+ 	 - `values: { [fieldName: string]: TFieldValue }`
+ 	 - `onSubmitError: (errors: { [fieldName: string]: TErrorMsg }) => any`
 
 ### Field
 
 The Field Component is connect each individual input to RxForm.
 
 - `name: string`
-
+  
   Field name
-
+  
 - `children: (props) => ReactNode`
 
   A render prop, which provide the flowing props to it's children:
 
-      	- `name: string`
-      	- `onChange: (value: React.MouseEvent | TFieldValue) => void`
-      	- `onBlur: (value: React.MouseEvent | TFieldValue) => void`
-      	- `onFocus: () => void`
-      	- `value?: TFieldValue`
-      	- `meta`
-      	  - `dirty?: boolean`
-      	  - `touched?: boolean`
-      	  - `visited?: boolean`
-      	  - `error?: TErrorMsg`
+	- `name: string`
+	- `onChange: (value: React.MouseEvent | TFieldValue) => void`
+	- `onBlur: (value: React.MouseEvent | TFieldValue) => void`
+	- `onFocus: () => void`
+	- `value?: TFieldValue`
+	- `meta`
+	  - `dirty?: boolean`
+	  - `touched?: boolean`
+	  - `visited?: boolean`
+	  - `error?: TErrorMsg`
 
-- `defaultValue?: TFieldValue`
-  Field default value
-- `validate?: TValidator | TValidator[]` - TValidator is a function which returns error message based on field value. - `(value: TFieldValue) => string | undefined` - Default be called when field `onChange` and form `startSubmit`
+- `defaultValue?: TFieldValue` 
+	
+	Field default value
+	
+- `validate?: TValidator | TValidator[]`
+	- TValidator is a function which returns error message based on field value. 
+		- `(value: TFieldValue) => string | undefined` 
+	- Default be called when field `onChange` and form `startSubmit`
 - `format?: (value: TFieldValue) => TFieldValue`
-
+  
   Format field value to be displayed in field input. For example, we can format number to currency. Should be used with `parse` in pairs.
-
+  
 - `parse?: (value: TFieldValue) => TFieldValue`
-
+  
   Parse field input display value to be stored in RxForm. Should be used with `format` in pairs
+  
+- `destroyValueOnUnmount?: boolean` 
 
-- `destroyValueOnUnmount?: boolean`
-
-  ```
-  	When field unmount, determine whether to destroy the field value or not
-  ```
+ 	When field unmount, determine whether to destroy the field value or not
 
 ## 数据流
 

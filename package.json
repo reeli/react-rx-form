@@ -31,7 +31,7 @@
       "tslint --fix",
       "git add"
     ],
-    "*.{json,md}": [
+    "*.{json}": [
       "prettier --printWidth=120 --write",
       "git add"
     ]
