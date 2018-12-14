@@ -39,7 +39,7 @@ Please check more examples [here](http://react-rx-form.surge.sh).
 
 ## API
 
-### RxForm
+### `RxForm`
 
 The Form component which maintain all fields state.
 
@@ -57,7 +57,7 @@ The Form component which maintain all fields state.
  	 - `values: { [fieldName: string]: TFieldValue }`
  	 - `onSubmitError: (errors: { [fieldName: string]: TErrorMsg }) => any`
 
-### Field
+### `Field`
 
 The Field Component is connect each individual input to RxForm.
 
@@ -101,7 +101,7 @@ The Field Component is connect each individual input to RxForm.
 
  	When field unmount, determine whether to destroy the field value or not.
  	
-### FieldArray
+### `FieldArray`
 
  - `name: string`
 	 - 	Field array name.
@@ -119,7 +119,7 @@ The Field Component is connect each individual input to RxForm.
 	 
 	 The init length of the array.
 	 
-### FormSection
+### `FormSection`
 
 The FormSection component makes it easy to split forms into smaller components that are reusable across multiple forms. It does this by prefixing the name of Field, FieldArray children, at any depth, with the value specified in the name prop.
 
@@ -129,7 +129,7 @@ The FormSection component makes it easy to split forms into smaller components t
 	
 -  `children: React.ReactNode`
 	 
-### FormValues
+### `FormValues`
 
 The FormValues component provides form values to it's children.
 
@@ -140,7 +140,7 @@ The FormValues component provides form values to it's children.
 	- `formValues: { [fieldName: string]: TFieldValue }`
    - `updateFormValues: (formValues: IFormValues) => any`
 
-### WithForm
+### `WithForm`
 
 The WithForm components provide form context to it's children.
 
