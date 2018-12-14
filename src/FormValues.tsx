@@ -15,7 +15,7 @@ import {
 class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCoreState> {
   subscription: Subscription | null = null;
   state = {
-    formValues: {} as IFormValues,
+    formValues: this.props.getFormValues() as IFormValues,
   };
 
   componentDidMount() {
@@ -33,7 +33,7 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
         }),
       )
       .subscribe();
-    this.subscription = this.props.formContextValue.subscribe(formStateObserver$);
+    this.subscription = this.props.subscribe(formStateObserver$);
   }
 
   getFormValues = () => {
@@ -50,7 +50,7 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
   render() {
     return this.props.children({
       formValues: this.state.formValues,
-      updateFormValues: this.props.formContextValue.updateFormValues,
+      updateFormValues: this.props.updateFormValues,
     });
   }
 }
@@ -59,7 +59,7 @@ export const FormValues = React.forwardRef((props: IFormValuesCommonProps, ref?:
   return (
     <FormConsumer>
       {(formContextValue) => {
-        return <FormValuesCore formContextValue={formContextValue} {...props} ref={ref} />;
+        return <FormValuesCore {...formContextValue} {...props} ref={ref} />;
       }}
     </FormConsumer>
   );

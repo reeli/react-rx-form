@@ -27,6 +27,10 @@ export class RxForm extends React.Component<IRxFormProps> {
   private formActionSubject$ = new Subject();
   private formStateSubscription: Subscription | null = null;
 
+  componentDidMount() {
+    this.formStateSubject$.next(this.formState);
+  }
+
   updateFormValues = (formValues: IFormValues) => {
     this.formState = {
       fields: this.formState.fields,

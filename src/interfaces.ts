@@ -97,9 +97,7 @@ export interface IFormValuesCommonProps {
   children: TChildrenRender<IFormValuesInnerProps>;
 }
 
-export interface IFormValuesCoreProps extends IFormValuesCommonProps {
-  formContextValue: IFormContextValue;
-}
+export interface IFormValuesCoreProps extends IFormValuesCommonProps, IFormContextValue {}
 
 export interface IFields {
   [fieldName: string]: IFieldMeta;
