@@ -17,6 +17,7 @@ import {
   TOnSubmit,
 } from "./interfaces";
 import { isContainError, log, setErrors, setFieldsError, setFieldsMeta } from "./utils";
+import { WithDidMount } from "./WithDidMount";
 
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {
@@ -26,10 +27,6 @@ export class RxForm extends React.Component<IRxFormProps> {
   private formStateSubject$ = new Subject();
   private formActionSubject$ = new Subject();
   private formStateSubscription: Subscription | null = null;
-
-  componentDidMount() {
-    this.formStateSubject$.next(this.formState);
-  }
 
   updateFormValues = (formValues: IFormValues) => {
     this.formState = {
@@ -196,6 +193,10 @@ export class RxForm extends React.Component<IRxFormProps> {
     };
   };
 
+  notifyFormState = () => {
+    this.formStateSubject$.next(this.formState);
+  };
+
   render() {
     return (
       <FormProvider
@@ -209,6 +210,7 @@ export class RxForm extends React.Component<IRxFormProps> {
           setErrors: this.setErrors,
         }}
       >
+        <WithDidMount onDidMount={this.notifyFormState} />
         {this.props.children({
           handleSubmit: this.handleSubmit,
         })}
