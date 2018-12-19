@@ -1,7 +1,6 @@
 import { cloneDeep, omit, set } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
-import { Subscription } from "rxjs/internal/Subscription";
 import { Observer } from "rxjs/internal/types";
 import { FormProvider } from "./FormContext";
 import {
@@ -26,7 +25,6 @@ export class RxForm extends React.Component<IRxFormProps> {
   } as IFormState;
   private formStateSubject$ = new Subject();
   private formActionSubject$ = new Subject();
-  private formStateSubscription: Subscription | null = null;
 
   updateFormValues = (formValues: IFormValues) => {
     this.formState = {
@@ -34,13 +32,6 @@ export class RxForm extends React.Component<IRxFormProps> {
       values: formValues,
     };
   };
-
-  componentWillUnmount() {
-    if (this.formStateSubscription) {
-      this.formStateSubscription.unsubscribe();
-      this.formStateSubscription = null;
-    }
-  }
 
   updateField = (state: IFormState, action: IFieldAction) => {
     const { fields, values } = state;
