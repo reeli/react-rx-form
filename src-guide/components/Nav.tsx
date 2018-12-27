@@ -1,5 +1,5 @@
+import { MenuList } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
-import MenuList from "@material-ui/core/MenuList/MenuList";
 import Paper from "@material-ui/core/Paper/Paper";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { req } from "../AppRoutes";
 
 export const Nav = () => {
   return (
-    <Paper square={true}>
+    <Paper square={true} style={{ position: "fixed", top: 0, bottom: 0 }}>
       <MenuList>
         <MenuItem>
           <h3>React Rx Form</h3>
