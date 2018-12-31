@@ -1,5 +1,19 @@
 # React Rx Form
 
+As you know, form is a little bit annoying in `React`. RxForm is a small library that help you:
+
+1. Maintain Form state
+2. Validation and error messages
+3. Handling form submission
+
+Compare with Redux Form:
+
+1. Your can use it directly in your project, no need any config.
+2. It's more friendly to Typescript.
+
+> If you dont' want to use it someday, it is convenient to switch to redux-form. Because their interfaces are the same. So don't worry, just give it a try!
+  
+
 ### Install
 
 `npm install @react-rx/form`
