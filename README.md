@@ -1,4 +1,9 @@
-# React Rx Form
+# React Rx Form 
+
+[![Build Status](https://img.shields.io/travis/reeli/react-rx-form.svg?style=flat-square&branch=master)](https://travis-ci.org/reeli/react-rx-form)
+[![codecov](https://codecov.io/gh/reeli/react-rx-form/branch/master/graph/badge.svg)](https://codecov.io/gh/reeli/react-rx-form)
+[![License](https://img.shields.io/npm/l/@react-rx/form.svg?style=flat-square)](https://npmjs.org/package/@react-rx/form)
+
 
 As you know, form is a little bit annoying in `React`. RxForm is a small library that help you:
 
