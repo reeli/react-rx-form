@@ -44,7 +44,7 @@ export class RxForm extends React.Component<IRxFormProps> {
           ...meta,
         },
       },
-      values: set<IFormValues>(values, name, payload),
+      values: set<IFormValues>({ ...values }, name, payload), // Notice: _.set will mutate object,
     };
   };
 
