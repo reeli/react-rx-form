@@ -21,7 +21,7 @@ import { WithDidMount } from "./WithDidMount";
 export class RxForm extends React.Component<IRxFormProps> {
   private formState = {
     fields: {},
-    values: this.props.initialValues || {},
+    values: cloneDeep(this.props.initialValues) || {},
   } as IFormState;
   private formStateSubject$ = new Subject();
   private formActionSubject$ = new Subject();
