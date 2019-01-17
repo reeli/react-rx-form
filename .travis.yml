@@ -4,9 +4,11 @@ node_js:
   - "11"
 
 script:
+  - npm install codecov -g
   - tsc --noEmit
   - npm test
 
 after_success:
+  - codecov
   - bash <(curl -s https://codecov.io/bash)
   - npm run deploy
