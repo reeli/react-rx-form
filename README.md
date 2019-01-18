@@ -110,11 +110,15 @@ The Field Component is connect each individual input to RxForm.
 
 - `format?: (value: TFieldValue) => TFieldValue`
   
-  Format field value to be displayed in field input. For example, we can format number to currency. Should be used with `parse` in pairs.
+  Format field value to be displayed in field input. For example, we can format number to currency. Should be used with `parse` in pairs. For example, covert numbers into currencies(`format(10000) => 10,000$`). 
   
 - `parse?: (value: TFieldValue) => TFieldValue`
   
-  Parse field input display value to be stored in RxForm. Should be used with `format` in pairs.
+  Parse field input display value to be stored in RxForm. Should be used with `format` in pairs. For example, covert currencies into numbers(`parse(10,000$) => 10000`).
+  
+- `normalize?: (value: TFieldValue) => TFieldValue` 
+  
+  Convert whatever the user has entered into the value that you want display in the Field and store in RxForm. For example, covert user inputs to be in all uppercase(`normalize(value) => value.toUppercase()`)    
   
 - `destroyValueOnUnmount?: boolean` 
 

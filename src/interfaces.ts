@@ -43,6 +43,7 @@ export interface IFieldProps {
   validate?: TValidator | TValidator[];
   format?: (value: TFieldValue) => TFieldValue;
   parse?: (value: TFieldValue) => TFieldValue;
+  normalize?: (value: TFieldValue) => TFieldValue;
   destroyValueOnUnmount?: boolean;
 }
 

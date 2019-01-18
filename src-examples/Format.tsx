@@ -6,10 +6,6 @@ export class Format extends React.Component {
     return require(`!!raw-loader!../src-examples/Format.tsx`);
   }
 
-  static doc() {
-    return require(`!raw-loader!markdown-loader!../src-examples/Field.md`);
-  }
-
   onSubmit = (values: any) => {
     alert(JSON.stringify(values, null, 2));
   };

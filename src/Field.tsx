@@ -127,17 +127,19 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
   };
 
   onChange = (evtOrValue: React.MouseEvent | TFieldValue) => {
-    const value = pickValue(evtOrValue);
+    const value = this.parseValue(pickValue(evtOrValue));
     const dirty = isDirty(value, this.props.defaultValue);
+
     const meta = {
       error: validateField(value, this.props.validate),
       dirty,
     } as IFieldMeta;
+
     this.props.dispatch({
       name: this.props.name,
       type: FieldActionTypes.change,
       meta,
-      payload: this.parseValue(value),
+      payload: value,
     });
   };
 
@@ -164,16 +166,28 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
   };
 
   parseValue = (value: TFieldValue): TFieldValue => {
-    if (typeof this.props.parse === "function") {
-      return this.props.parse(value);
+    const { parse, normalize } = this.props;
+    if (parse && typeof parse === "function") {
+      value = parse(value);
     }
+
+    if (normalize && typeof normalize === "function") {
+      value = normalize(value);
+    }
+
     return value;
   };
 
   formatValue = (value: TFieldValue): TFieldValue => {
-    if (typeof this.props.format === "function") {
-      return this.props.format(value);
+    const { format, normalize } = this.props;
+    if (format && typeof format === "function") {
+      value = format(value);
     }
+
+    if (normalize && typeof normalize === "function") {
+      value = normalize(value);
+    }
+
     return value;
   };
 
