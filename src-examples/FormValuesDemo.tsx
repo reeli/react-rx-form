@@ -1,12 +1,20 @@
-import { Field, FormValues, RxForm } from "@react-rx/form";
+import { Field, FormValues, IFormValues, RxForm } from "@react-rx/form";
 import * as React from "react";
+
+interface ISubmitValues extends IFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  checkbox: string;
+  sex: string;
+}
 
 export class FormValuesDemo extends React.Component {
   static tsc() {
     return require(`!!raw-loader!../src-examples/FormValuesDemo.tsx`);
   }
 
-  onSubmit = (values: any) => {
+  onSubmit = (values: ISubmitValues) => {
     alert(JSON.stringify(values, null, 2));
   };
 

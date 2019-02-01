@@ -109,7 +109,7 @@ export interface IFormValues {
 }
 
 export type TErrors = Dictionary<string | undefined>;
-export type TOnSubmit = (values: IFormValues, onSubmitError: (errors: TErrors) => any) => any;
+export type TOnSubmit<T extends IFormValues = any> = (values: T, onSubmitError: (errors: TErrors) => any) => any;
 
 interface IRxFormInnerProps {
   handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any;
