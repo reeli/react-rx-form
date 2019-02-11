@@ -3,14 +3,14 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
-import { FormConsumer } from "./FormContext";
 import {
   IFormState,
   IFormValues,
   IFormValuesCommonProps,
   IFormValuesCoreProps,
   IFormValuesCoreState,
-} from "./interfaces";
+} from "./__types__/interfaces";
+import { FormConsumer } from "./FormContext";
 
 class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCoreState> {
   subscription: Subscription | null = null;

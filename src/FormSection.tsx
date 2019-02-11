@@ -1,6 +1,6 @@
 import * as React from "react";
+import { IFormSectionProps } from "./__types__/interfaces";
 import { FormConsumer, FormProvider } from "./FormContext";
-import { IFormSectionProps } from "./interfaces";
 
 export const FormSection = ({ name, children }: { name: IFormSectionProps["name"]; children: React.ReactNode }) => {
   return (

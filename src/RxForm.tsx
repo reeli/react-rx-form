@@ -2,7 +2,6 @@ import { cloneDeep, omit, set } from "lodash";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Observer } from "rxjs/internal/types";
-import { FormProvider } from "./FormContext";
 import {
   FieldActionTypes,
   FormActionTypes,
@@ -14,7 +13,9 @@ import {
   IRxFormProps,
   TErrors,
   TOnSubmit,
-} from "./interfaces";
+} from "./__types__/interfaces";
+import { FormProvider } from "./FormContext";
+
 import { isContainError, log, setErrors, setFieldsError, setFieldsMeta } from "./utils";
 import { WithDidMount } from "./WithDidMount";
 

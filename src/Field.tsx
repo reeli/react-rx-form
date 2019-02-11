@@ -3,7 +3,6 @@ import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
-import { FormConsumer } from "./FormContext";
 import {
   FieldActionTypes,
   FormActionTypes,
@@ -14,7 +13,8 @@ import {
   IFormAction,
   IFormState,
   TFieldValue,
-} from "./interfaces";
+} from "./__types__/interfaces";
+import { FormConsumer } from "./FormContext";
 import { isDirty, pickValue, validateField } from "./utils";
 
 const getFieldValue = ({ defaultValue, getFormValues, name }: IFieldCoreProps) => {

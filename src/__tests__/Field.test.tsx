@@ -2,8 +2,8 @@ import { mount } from "enzyme";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { maxLength5, required } from "../../src-modules/utils/validations";
+import { FormActionTypes } from "../__types__/interfaces";
 import { Field } from "../Field";
-import { FormActionTypes } from "../interfaces";
 import { RxForm } from "../RxForm";
 import { pickInputPropsFromFieldProps } from "../utils";
 

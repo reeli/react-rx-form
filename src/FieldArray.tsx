@@ -1,7 +1,7 @@
 import { filter, get, map, set, size, times } from "lodash";
 import * as React from "react";
+import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, TFieldValue } from "./__types__/interfaces";
 import { FormConsumer, FormProvider } from "./FormContext";
-import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, TFieldValue } from "./interfaces";
 
 class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
   componentDidMount() {
