@@ -1,7 +1,9 @@
 import { Field, FormValues, IFormValues, RxForm } from "@react-rx/form";
 import * as React from "react";
 
-interface ISubmitValues extends IFormValues {
+type TSubmitFormValues<T extends IFormValues> = { [P in keyof T]: T[P] };
+
+interface IValues {
   firstName: string;
   lastName: string;
   email: string;
@@ -14,7 +16,7 @@ export class FormValuesDemo extends React.Component {
     return require(`!!raw-loader!../src-examples/FormValuesDemo.tsx`);
   }
 
-  onSubmit = (values: ISubmitValues) => {
+  onSubmit = (values: TSubmitFormValues<IValues>) => {
     alert(JSON.stringify(values, null, 2));
   };
 
