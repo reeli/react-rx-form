@@ -1,5 +1,5 @@
 import { get, isUndefined } from "lodash";
-import { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
@@ -33,13 +33,13 @@ interface IFieldProps {
 const getFieldValue = ({
   defaultValue,
   formValues,
-  name,
+  prefixedName,
 }: {
   defaultValue: TFieldValue;
   formValues: IFormValues;
-  name: string;
+  prefixedName: string;
 }) => {
-  const initialValue = get(formValues, name);
+  const initialValue = get(formValues, prefixedName);
   if (!isUndefined(initialValue)) {
     return initialValue;
   }
@@ -50,25 +50,25 @@ export function Field(props: IFieldProps) {
   let formStateSubscription: Subscription | null = null;
   let formActionSubscription: Subscription | null = null;
 
-  const { dispatch, subscribe, subscribeFormAction, getFormValues } = useContext(FormContext);
+  const { dispatch, subscribe, subscribeFormAction, getFormValues, fieldPrefix } = useContext(FormContext);
+  const prefixedName = `${fieldPrefix || ""}${props.name}`;
 
   const defaultValue = getFieldValue({
     defaultValue: props.defaultValue,
     formValues: getFormValues(),
-    name: props.name,
+    prefixedName,
   });
 
   const [fieldValue, setFieldValue] = useState(defaultValue);
   const [fieldMeta, setFieldMeta] = useState({});
 
   const onFormStateChange = () => {
-    const { name } = props;
     const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
         map(({ fields, values }) => ({
-          meta: fields[name],
-          value: get(values, name),
+          meta: fields[prefixedName],
+          value: get(values, prefixedName),
         })),
         distinctUntilChanged((next, prev) => next.meta === prev.meta && prev.value === next.value),
         tap(({ meta, value }) => {
@@ -85,17 +85,16 @@ export function Field(props: IFieldProps) {
 
   const onFormActionChange = () => {
     const formActionObserver$ = new Subject<IFormAction>();
-    const { name, validate } = props;
 
     formActionObserver$
       .pipe(
         filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
         map(({ payload: { fields, values } }: IFormAction) => ({
-          meta: fields[name],
-          value: get(values, name),
+          meta: fields[prefixedName],
+          value: get(values, prefixedName),
         })),
         tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
-          const error = validateField(value, validate);
+          const error = validateField(value, props.validate);
           if (error) {
             onChange(value);
           }
@@ -109,7 +108,7 @@ export function Field(props: IFieldProps) {
   const registerField = ({ value, meta }: IFieldState) => {
     // register field
     dispatch({
-      name: props.name,
+      name: prefixedName,
       type: FieldActionTypes.register,
       meta,
       payload: parseValue(value),
@@ -126,7 +125,7 @@ export function Field(props: IFieldProps) {
     } as IFieldMeta;
 
     dispatch({
-      name: props.name,
+      name: prefixedName,
       type: FieldActionTypes.change,
       meta,
       payload: value,
@@ -135,7 +134,7 @@ export function Field(props: IFieldProps) {
 
   const onFocus = () => {
     dispatch({
-      name: props.name,
+      name: prefixedName,
       type: FieldActionTypes.focus,
       meta: {
         visited: true,
@@ -146,7 +145,7 @@ export function Field(props: IFieldProps) {
   const onBlur = (evtOrValue: React.MouseEvent | TFieldValue) => {
     const value = pickValue(evtOrValue);
     dispatch({
-      name: props.name,
+      name: prefixedName,
       type: FieldActionTypes.blur,
       meta: {
         touched: true,
@@ -195,7 +194,7 @@ export function Field(props: IFieldProps) {
 
     return () => {
       dispatch({
-        name: props.name,
+        name: prefixedName,
         type: FieldActionTypes.destroy,
         meta: {
           destroyValueOnUnmount: !!props.destroyValueOnUnmount,
@@ -213,11 +212,10 @@ export function Field(props: IFieldProps) {
     };
   }, []);
 
-  const { fieldPrefix } = useContext(FormContext);
   return props.children({
     value: formatValue(fieldValue),
     meta: fieldMeta,
-    name: `${fieldPrefix || ""}${props.name}`,
+    name: prefixedName,
     onChange,
     onFocus,
     onBlur,

@@ -70,14 +70,15 @@ export function FieldArrayCore(props: IFieldArrayProps) {
 
 export const FieldArray = React.forwardRef((props: IFieldArrayProps) => {
   const formContext = useContext(FormContext);
+  const name = `${formContext.fieldPrefix || ""}${props.name}`;
   return (
     <FormProvider
       value={{
         ...formContext,
-        fieldPrefix: `${formContext.fieldPrefix || ""}${props.name}`,
+        fieldPrefix: name,
       }}
     >
-      <FieldArrayCore {...props} name={`${formContext.fieldPrefix || ""}${props.name}`} />
+      <FieldArrayCore {...props} name={name} />
     </FormProvider>
   );
 });
