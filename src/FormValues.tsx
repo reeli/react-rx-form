@@ -1,24 +1,25 @@
 import { isEqual } from "lodash";
-import * as React from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
-import {
-  IFormState,
-  IFormValues,
-  IFormValuesCommonProps,
-  IFormValuesCoreProps,
-  IFormValuesCoreState,
-} from "./__types__/interfaces";
-import { FormConsumer } from "./FormContext";
+import { IFormContextValue, IFormState, IFormValues, TChildrenRender } from "./__types__/interfaces";
+import { FormContext } from "./FormContext";
 
-class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCoreState> {
-  subscription: Subscription | null = null;
-  state = {
-    formValues: this.props.getFormValues() as IFormValues,
-  };
+interface IFormValuesInnerProps {
+  formValues: IFormValues;
+  updateFormValues: IFormContextValue["updateFormValues"];
+}
+interface IFormValuesProps {
+  children: TChildrenRender<IFormValuesInnerProps>;
+}
 
-  componentDidMount() {
+export function FormValues(props: IFormValuesProps) {
+  let subscription: Subscription | null = null;
+  const { updateFormValues, getFormValues, subscribe } = useContext(FormContext);
+  const defaultFormValues = getFormValues() as IFormValues;
+  const [formValues, setFormValues] = useState(defaultFormValues);
+  useLayoutEffect(() => {
     const formStateObserver$ = new Subject<IFormState>();
     formStateObserver$
       .pipe(
@@ -26,41 +27,20 @@ class FormValuesCore extends React.Component<IFormValuesCoreProps, IFormValuesCo
           ...formState.values,
         })),
         distinctUntilChanged(isEqual),
-        tap((formValues: IFormValues) => {
-          this.setState({
-            formValues,
-          });
-        }),
+        tap((values: IFormValues) => setFormValues(values)),
       )
       .subscribe();
-    this.subscription = this.props.subscribe(formStateObserver$);
-  }
+    subscription = subscribe(formStateObserver$);
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+        subscription = null;
+      }
+    };
+  }, []);
 
-  getFormValues = () => {
-    return this.state.formValues;
-  };
-
-  componentWillUnmount() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-      this.subscription = null;
-    }
-  }
-
-  render() {
-    return this.props.children({
-      formValues: this.state.formValues,
-      updateFormValues: this.props.updateFormValues,
-    });
-  }
+  return props.children({
+    formValues,
+    updateFormValues,
+  });
 }
-
-export const FormValues = React.forwardRef((props: IFormValuesCommonProps, ref?: React.Ref<any>) => {
-  return (
-    <FormConsumer>
-      {(formContextValue) => {
-        return <FormValuesCore {...formContextValue} {...props} ref={ref} />;
-      }}
-    </FormConsumer>
-  );
-});

@@ -1,22 +1,21 @@
-import * as React from "react";
-import { IFormSectionProps } from "./__types__/interfaces";
-import { FormConsumer, FormProvider } from "./FormContext";
+import React, { ReactNode, useContext } from "react";
+import { FormContext, FormProvider } from "./FormContext";
 
-export const FormSection = ({ name, children }: { name: IFormSectionProps["name"]; children: React.ReactNode }) => {
+interface IFormSectionProps {
+  name: string;
+  children: ReactNode;
+}
+
+export const FormSection = ({ name, children }: IFormSectionProps) => {
+  const formContext = useContext(FormContext);
   return (
-    <FormConsumer>
-      {(formContextValue) => {
-        return (
-          <FormProvider
-            value={{
-              ...formContextValue,
-              fieldPrefix: `${formContextValue.fieldPrefix || ""}${name}.`,
-            }}
-          >
-            {children}
-          </FormProvider>
-        );
+    <FormProvider
+      value={{
+        ...formContext,
+        fieldPrefix: `${formContext.fieldPrefix || ""}${name}.`,
       }}
-    </FormConsumer>
+    >
+      {children}
+    </FormProvider>
   );
 };

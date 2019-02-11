@@ -14,11 +14,10 @@ import {
   omitBy,
   reduce,
 } from "lodash";
-import * as React from "react";
 import {
   IFieldAction,
   IFieldInnerProps,
-  IFieldProps,
+  IFieldMeta,
   IFields,
   IFormAction,
   IFormState,
@@ -55,7 +54,10 @@ export const setErrors = (fields: IFields, errors: TErrors) => {
   });
 };
 
-export const pickInputPropsFromFieldProps = ({ meta, ...others }: IFieldInnerProps) => {
+export const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IFieldInnerProps>({
+  meta,
+  ...others
+}: T) => {
   return {
     ...others,
     error: meta ? meta.error : undefined,
@@ -66,7 +68,7 @@ export const isDirty = (value: TFieldValue, defaultValue: string) => {
   return !isEqual(value, defaultValue);
 };
 
-export const validateField = (value: string | boolean, validate?: IFieldProps["validate"]) => {
+export const validateField = (value: string | boolean, validate?: TValidator | TValidator[]) => {
   if (isUndefined(validate)) {
     return;
   }
@@ -115,7 +117,7 @@ export const isEmptyValue = (value: any) => {
   return isEmpty(value);
 };
 
-export const pickValue = (evtOrValue: React.MouseEvent | TFieldValue) => {
+export const pickValue = (evtOrValue: MouseEvent | TFieldValue) => {
   const isEvent = isObject(evtOrValue) && evtOrValue.target;
   return isEvent ? evtOrValue.target.value : evtOrValue;
 };

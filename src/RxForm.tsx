@@ -1,5 +1,5 @@
 import { cloneDeep, omit, set } from "lodash";
-import * as React from "react";
+import React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Observer } from "rxjs/internal/types";
 import {
@@ -10,7 +10,7 @@ import {
   IFormAction,
   IFormState,
   IFormValues,
-  IRxFormProps,
+  TChildrenRender,
   TErrors,
   TOnSubmit,
 } from "./__types__/interfaces";
@@ -19,22 +19,31 @@ import { FormProvider } from "./FormContext";
 import { isContainError, log, setErrors, setFieldsError, setFieldsMeta } from "./utils";
 import { WithDidMount } from "./WithDidMount";
 
-export class RxForm extends React.Component<IRxFormProps> {
-  private formState = {
-    fields: {},
-    values: cloneDeep(this.props.initialValues) || {},
-  } as IFormState;
-  private formStateSubject$ = new Subject();
-  private formActionSubject$ = new Subject();
+interface IRxFormInnerProps {
+  handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any;
+}
 
-  updateFormValues = (formValues: IFormValues) => {
-    this.formState = {
-      fields: this.formState.fields,
+interface IRxFormProps {
+  children: TChildrenRender<IRxFormInnerProps>;
+  initialValues?: IFormValues;
+}
+
+export function RxForm(props: IRxFormProps) {
+  let formState = {
+    fields: {},
+    values: cloneDeep(props.initialValues) || {},
+  } as IFormState;
+  const formStateSubject$ = new Subject();
+  const formActionSubject$ = new Subject();
+
+  const updateFormValues = (formValues: IFormValues) => {
+    formState = {
+      fields: formState.fields,
       values: formValues,
     };
   };
 
-  updateField = (state: IFormState, action: IFieldAction) => {
+  const updateField = (state: IFormState, action: IFieldAction) => {
     const { fields, values } = state;
     const { payload, meta = {} as IFieldMeta, name } = action;
     return {
@@ -49,7 +58,7 @@ export class RxForm extends React.Component<IRxFormProps> {
     };
   };
 
-  updateFieldState = (state: IFormState, action: IFieldAction) => {
+  const updateFieldState = (state: IFormState, action: IFieldAction) => {
     const { fields, values } = state;
     const { name, meta } = action;
     return {
@@ -63,38 +72,38 @@ export class RxForm extends React.Component<IRxFormProps> {
     };
   };
 
-  onSubmitError = (errors: TErrors) => {
+  const onSubmitError = (errors: TErrors) => {
     // TODO: Check if if values should be different if fields contains error
 
-    this.formState = {
-      values: this.formState.values,
-      fields: setErrors(this.formState.fields, errors),
+    formState = {
+      values: formState.values,
+      fields: setErrors(formState.fields, errors),
     };
 
-    this.formStateSubject$.next(this.formState);
+    formStateSubject$.next(formState);
   };
 
-  setErrors = (errors: TErrors) => {
-    this.formState = {
-      values: this.formState.values,
-      fields: setFieldsError(errors, this.formState.fields),
+  const setFormErrors = (errors: TErrors) => {
+    formState = {
+      values: formState.values,
+      fields: setFieldsError(errors, formState.fields),
     };
-    this.formStateSubject$.next(this.formState);
+    formStateSubject$.next(formState);
   };
 
-  notifyFormActionChange = (action: IFormAction) => {
-    this.formActionSubject$.next(action);
+  const notifyFormActionChange = (action: IFormAction) => {
+    formActionSubject$.next(action);
   };
 
-  getFormValues = () => {
-    return this.formState.values;
+  const getFormValues = () => {
+    return formState.values;
   };
 
-  getFormState = () => {
-    return this.formState;
+  const getFormState = () => {
+    return formState;
   };
 
-  removeField = (state: IFormState, action: IFieldAction) => {
+  const removeField = (state: IFormState, action: IFieldAction) => {
     if (action.meta && action.meta.destroyValueOnUnmount) {
       return {
         fields: omit(state.fields, action.name),
@@ -110,34 +119,34 @@ export class RxForm extends React.Component<IRxFormProps> {
     };
   };
 
-  dispatch = (action: IFieldAction | IFormAction) => {
-    const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(this.formState);
+  const dispatch = (action: IFieldAction | IFormAction) => {
+    const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(formState);
 
     switch (action.type) {
       case FieldActionTypes.register:
       case FieldActionTypes.blur:
       case FieldActionTypes.change: {
-        this.formState = this.updateField(this.formState, action as IFieldAction);
-        this.formStateSubject$.next(this.formState);
+        formState = updateField(formState, action as IFieldAction);
+        formStateSubject$.next(formState);
         break;
       }
       case FieldActionTypes.focus: {
-        this.formState = this.updateFieldState(this.formState, action as IFieldAction);
-        this.formStateSubject$.next(this.formState);
+        formState = updateFieldState(formState, action as IFieldAction);
+        formStateSubject$.next(formState);
         break;
       }
       case FieldActionTypes.destroy: {
-        this.formState = this.removeField(this.formState, action as IFieldAction);
-        this.formStateSubject$.next(this.formState);
+        formState = removeField(formState, action as IFieldAction);
+        formStateSubject$.next(formState);
         break;
       }
       case FormActionTypes.startSubmit: {
-        this.notifyFormActionChange(action as IFormAction);
+        notifyFormActionChange(action as IFormAction);
         break;
       }
     }
 
-    const nextState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(this.formState);
+    const nextState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(formState);
 
     log({
       action,
@@ -146,67 +155,65 @@ export class RxForm extends React.Component<IRxFormProps> {
     });
   };
 
-  subscribe = (observer: Observer<any>) => {
-    return this.formStateSubject$.subscribe(observer);
+  const subscribe = (observer: Observer<any>) => {
+    return formStateSubject$.subscribe(observer);
   };
 
-  subscribeFormAction = (observer: Observer<any>) => {
-    return this.formActionSubject$.subscribe(observer);
+  const subscribeFormAction = (observer: Observer<any>) => {
+    return formActionSubject$.subscribe(observer);
   };
 
-  updateFormState = (formState: IFormState) => {
-    this.formStateSubject$.next(formState);
+  const updateFormState = (state: IFormState) => {
+    formStateSubject$.next(state);
   };
 
-  handleSubmit = (onSubmit: TOnSubmit) => {
+  const handleSubmit = (onSubmit: TOnSubmit) => {
     return (evt: React.FormEvent) => {
       evt.preventDefault();
 
-      this.formState = {
-        fields: setFieldsMeta(this.formState.fields),
-        values: this.formState.values,
+      formState = {
+        fields: setFieldsMeta(formState.fields),
+        values: formState.values,
       };
 
-      this.updateFormState(this.formState);
+      updateFormState(formState);
 
-      this.dispatch({
+      dispatch({
         type: FormActionTypes.startSubmit,
-        payload: this.formState,
+        payload: formState,
       });
 
-      if (isContainError(this.formState.fields)) {
+      if (isContainError(formState.fields)) {
         return;
       }
 
-      const values = this.getFormValues();
+      const values = getFormValues();
       if (values) {
-        onSubmit(values, this.onSubmitError);
+        onSubmit(values, onSubmitError);
       }
     };
   };
 
-  notifyFormState = () => {
-    this.formStateSubject$.next(this.formState);
+  const notifyFormState = () => {
+    formStateSubject$.next(formState);
   };
 
-  render() {
-    return (
-      <FormProvider
-        value={{
-          subscribe: this.subscribe,
-          dispatch: this.dispatch,
-          subscribeFormAction: this.subscribeFormAction,
-          updateFormValues: this.updateFormValues,
-          getFormValues: this.getFormValues,
-          getFormState: this.getFormState,
-          setErrors: this.setErrors,
-        }}
-      >
-        <WithDidMount onDidMount={this.notifyFormState} />
-        {this.props.children({
-          handleSubmit: this.handleSubmit,
-        })}
-      </FormProvider>
-    );
-  }
+  return (
+    <FormProvider
+      value={{
+        subscribe,
+        dispatch,
+        subscribeFormAction,
+        updateFormValues,
+        getFormValues,
+        getFormState,
+        setErrors: setFormErrors,
+      }}
+    >
+      <WithDidMount onDidMount={notifyFormState} />
+      {props.children({
+        handleSubmit,
+      })}
+    </FormProvider>
+  );
 }

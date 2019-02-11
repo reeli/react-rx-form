@@ -69,52 +69,55 @@ export class FieldArrayForm extends React.Component {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <FieldArray name={"members"} initLength={1}>
-              {({ fields, add, remove }) => (
-                <ul>
-                  <li>
-                    <button type="button" onClick={() => add()}>
-                      Add member
-                    </button>
-                  </li>
-                  {fields.map((member, idx) => (
-                    <li key={member}>
-                      <h3>{`member${idx + 1}`}</h3>
-                      <Field name={`${member}.firstName`} validate={required()}>
-                        {({ name, value = "", onChange, meta: { error } }) => (
-                          <div>
-                            <input
-                              name={name}
-                              value={value}
-                              onChange={(e) => onChange(e.target.value)}
-                              type="text"
-                              placeholder={`First Name${idx}`}
-                            />
-                            {error && <div style={{ color: "red" }}>{error}</div>}
-                          </div>
-                        )}
-                      </Field>
-                      <Field name={`${member}.lastName`} validate={required()}>
-                        {({ name, value = "", onChange, meta: { error } }) => (
-                          <div>
-                            <input
-                              name={name}
-                              value={value}
-                              onChange={(e) => onChange(e.target.value)}
-                              type="text"
-                              placeholder="Last Name"
-                            />
-                            {error && <div style={{ color: "red" }}>{error}</div>}
-                          </div>
-                        )}
-                      </Field>
-                      <button type="button" onClick={() => remove(idx)}>
-                        Remove members
+              {({ fields, add, remove }) => {
+                console.log(fields, "fields");
+                return (
+                  <ul>
+                    <li>
+                      <button type="button" onClick={() => add()}>
+                        Add member
                       </button>
-                      {this.renderHobbies(member)}
                     </li>
-                  ))}
-                </ul>
-              )}
+                    {fields.map((member, idx) => (
+                      <li key={member}>
+                        <h3>{`member${idx + 1}`}</h3>
+                        <Field name={`${member}.firstName`} validate={required()}>
+                          {({ name, value = "", onChange, meta: { error } }) => (
+                            <div>
+                              <input
+                                name={name}
+                                value={value}
+                                onChange={(e) => onChange(e.target.value)}
+                                type="text"
+                                placeholder={`First Name${idx}`}
+                              />
+                              {error && <div style={{ color: "red" }}>{error}</div>}
+                            </div>
+                          )}
+                        </Field>
+                        <Field name={`${member}.lastName`} validate={required()}>
+                          {({ name, value = "", onChange, meta: { error } }) => (
+                            <div>
+                              <input
+                                name={name}
+                                value={value}
+                                onChange={(e) => onChange(e.target.value)}
+                                type="text"
+                                placeholder="Last Name"
+                              />
+                              {error && <div style={{ color: "red" }}>{error}</div>}
+                            </div>
+                          )}
+                        </Field>
+                        <button type="button" onClick={() => remove(idx)}>
+                          Remove members
+                        </button>
+                        {this.renderHobbies(member)}
+                      </li>
+                    ))}
+                  </ul>
+                );
+              }}
             </FieldArray>
             <Button type="submit">Submit</Button>
           </form>

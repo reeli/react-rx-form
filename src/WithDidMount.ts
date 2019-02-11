@@ -1,15 +1,13 @@
-import * as React from "react";
+import { useLayoutEffect } from "react";
 
 interface IWithDidMountProps {
   onDidMount: () => void;
 }
 
-export class WithDidMount extends React.Component<IWithDidMountProps> {
-  componentDidMount() {
-    this.props.onDidMount();
-  }
+export function WithDidMount(props: IWithDidMountProps) {
+  useLayoutEffect(() => {
+    props.onDidMount();
+  }, []);
 
-  render() {
-    return null;
-  }
+  return null;
 }
