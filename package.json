@@ -79,12 +79,12 @@
   },
   "dependencies": {
     "lodash": "^4.17.10",
-    "lodash-es": "^4.17.10",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "rxjs": "^6.3.1"
   },
   "devDependencies": {
+    "lodash-es": "^4.17.10",
     "@types/lodash": "^4.14.116",
     "@types/lodash-es": "4.17.1",
     "@types/react-dom": "^16.0.7",
