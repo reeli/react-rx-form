@@ -1,7 +1,7 @@
 import Button from "@material-ui/core/Button/Button";
 import FormControl from "@material-ui/core/FormControl/FormControl";
 import { Field, FormValues, RxForm } from "@react-rx/form";
-import * as React from "react";
+import React from "react";
 import { CustomCheckbox } from "src-components/CustomCheckbox";
 import { CustomInput } from "src-components/CustomInput";
 import { DebounceInput } from "../src-components/DebounceInput";
@@ -13,15 +13,11 @@ export class PrefillForm extends React.Component {
   }
 
   form: any;
-  formValues: any;
-  ref: any = React.createRef();
   onSubmit = (values: any) => {
     alert(JSON.stringify(values, null, 2));
   };
 
   componentDidMount() {
-    console.log(this.form.getFormValues(), "this.form.formState");
-    console.log(this.ref.current.getFormValues(), "this.formValues");
     // setTimeout(() => {
     //   alert("hehaha");
     // }, 2000);
@@ -29,12 +25,7 @@ export class PrefillForm extends React.Component {
 
   render() {
     return (
-      <RxForm
-        initialValues={{ firstName: "rui", lastName: "li" }}
-        ref={(ref: any) => {
-          this.form = ref;
-        }}
-      >
+      <RxForm initialValues={{ firstName: "rui", lastName: "li" }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <div>
@@ -47,7 +38,7 @@ export class PrefillForm extends React.Component {
               <Field name="email">
                 {(fieldProps) => <CustomInput {...fieldProps} type="email" placeholder="Email" />}
               </Field>
-              <FormValues ref={this.ref}>
+              <FormValues>
                 {({ formValues, updateFormValues }) => (
                   <>
                     <div>{JSON.stringify(formValues)}</div>

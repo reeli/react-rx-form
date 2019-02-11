@@ -1,9 +1,9 @@
 import { Dictionary } from "lodash";
-import React from "react";
+import * as React from "react";
 import { Observer } from "rxjs/internal/types";
 
 export type TRequired<T> = { [P in keyof T]: T[P] };
-export type TChildrenRender<TProps> = (props: TProps) => React.ReactNode;
+export type TChildrenRender<TProps> = (props: TProps) => JSX.Element | null;
 
 export enum FieldActionTypes {
   register = "@@rx-form/field/REGISTER_FIELD",
