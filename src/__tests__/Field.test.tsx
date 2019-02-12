@@ -1,97 +1,119 @@
 import { mount } from "enzyme";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
+import { FormActionTypes, IFieldInnerProps, IFieldMeta } from "src/__types__/interfaces";
 import { maxLength5, required } from "../../src-modules/utils/validations";
-import { FormActionTypes } from "../__types__/interfaces";
 import { Field } from "../Field";
+import { FormValues } from "../FormValues";
 import { RxForm } from "../RxForm";
-import { pickInputPropsFromFieldProps } from "../utils";
 
-describe("should have correct initial state", () => {
-  it("should have initial empty fieldState", () => {
+describe("field initial", () => {
+  it("when field initial, expected error not exists", () => {
     const wrapper = mount(
-      <Field name={"firstName"}>
-        {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+      <Field name={"firstName"}>{(fieldState) => <MockInput {...pickInputPropsFromFieldProps(fieldState)} />}</Field>,
+    );
+    expect(wrapper.find(MockInput).props().error).toBe(undefined);
+    wrapper.unmount();
+  });
+
+  it("when pass default value, expected set as field value", () => {
+    const wrapper = mount(
+      <Field name={"firstName"} defaultValue={"Tony"}>
+        {(fieldState) => (
+          <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
+        )}
       </Field>,
     );
 
-    const instance = wrapper.children().instance() as any;
-    expect(instance.state).toEqual({
-      meta: {},
-    });
+    expect(wrapper.find("input").props().value).toEqual("Tony");
+    wrapper.unmount();
   });
 
-  it("should set field value by initial form values in priority", () => {
+  it("when passed initial form values, expected to set field value as defaultValue", () => {
     const wrapper = mount(
       <RxForm initialValues={{ firstName: "Jay" }}>
         {() => (
-          <Field name={"firstName"} defaultValue={"Tony"} ref={"field"}>
-            {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+          <Field name={"firstName"}>
+            {(fieldState) => (
+              <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
+            )}
           </Field>
         )}
       </RxForm>,
     );
-    const instance = wrapper.ref("field") as any;
-    expect(instance.state).toEqual({
-      value: "Jay",
-      meta: {},
-    });
+
+    expect(wrapper.find("input").props().value).toEqual("Jay");
+    wrapper.unmount();
   });
 
-  it("should set field value by defaultValue prop if not have initialValues", () => {
+  it("when both have initial values and default value, expected to use initial form values in priority", () => {
     const wrapper = mount(
-      <Field name={"firstName"} defaultValue={"Tony"}>
-        {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
-      </Field>,
+      <RxForm initialValues={{ firstName: "Jay" }}>
+        {() => (
+          <Field name={"firstName"} defaultValue={"Tony"}>
+            {(fieldState) => (
+              <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
+            )}
+          </Field>
+        )}
+      </RxForm>,
     );
-    const instance = wrapper.children().instance() as any;
-    expect(instance.state).toEqual({
-      value: "Tony",
-      meta: {},
-    });
+
+    expect(wrapper.find("input").props().value).toEqual("Jay");
+    wrapper.unmount();
   });
 });
 
-describe("when field change", () => {
-  it("should only update current field, not update other fields", () => {
+describe("field change", () => {
+  it("should only current field updated, the other fields has not updated", () => {
     const wrapper = mount(
-      <RxForm initialValues={{}}>
+      <RxForm>
         {() => (
           <>
-            <Field name={"firstName"} defaultValue={"Tony"} ref={"field1"} validate={required()}>
+            <Field name={"firstName"} defaultValue={"Tony"} validate={required()}>
               {(fieldState) => (
-                <input className={"firstName"} type="text" {...pickInputPropsFromFieldProps(fieldState)} />
+                <input
+                  className={"firstName"}
+                  type="text"
+                  name={fieldState.name}
+                  value={fieldState.value}
+                  onChange={fieldState.onChange}
+                />
               )}
             </Field>
-            <Field name={"lastName"} ref={"field2"} validate={required()}>
-              {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+            <Field name={"lastName"} validate={required()}>
+              {(fieldState) => (
+                <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
+              )}
             </Field>
           </>
         )}
       </RxForm>,
     );
 
-    const field1 = wrapper.ref("field1") as any;
-    const field2 = wrapper.ref("field2") as any;
-    field1.render = jest.fn();
-    field2.render = jest.fn();
+    wrapper.find(".firstName").simulate("change", { target: { value: "Ping" } });
 
-    wrapper.find(".firstName").simulate("change", { target: { value: "haha" } });
-    expect(field1.render).toHaveBeenCalledTimes(1);
-    expect(field2.render).toHaveBeenCalledTimes(0);
+    expect(wrapper.find(".firstName").props().value).toEqual("Ping");
+    expect(wrapper.find(".lastName").props().value).toBe(undefined);
   });
 });
 
-xdescribe("field validation", () => {
-  it("should remove error when field from invalid to valid", () => {
+describe("field validation", () => {
+  it("when field value is invalid, expected field error set", () => {
     const wrapper = mount(
-      <RxForm initialValues={{}}>
+      <RxForm>
         {() => (
           <>
-            <Field name={"firstName"} defaultValue={"Tony"} ref={"field1"} validate={[required(), maxLength5()]}>
+            <Field name={"firstName"} defaultValue={"Tony"} validate={[required(), maxLength5()]}>
               {(fieldState) => (
                 <div>
-                  <input className={"firstName"} type="text" {...pickInputPropsFromFieldProps(fieldState)} />
+                  <input
+                    className={"firstName"}
+                    type="text"
+                    name={fieldState.name}
+                    value={fieldState.value}
+                    onChange={fieldState.onChange}
+                  />
                   {fieldState.meta.error && <span className={"error"}>error</span>}
                 </div>
               )}
@@ -100,13 +122,43 @@ xdescribe("field validation", () => {
         )}
       </RxForm>,
     );
-    wrapper.find(".firstName").simulate("change", { target: { value: "hahhaaha" } });
-    wrapper.find(".firstName").simulate("change", { target: { value: "ha" } });
+
+    wrapper.find(".firstName").simulate("change", { target: { value: "PingPong" } });
+    expect(wrapper.find(".error").exists()).toBe(true);
+  });
+
+  it("when field changed from invalid to valid, expected error no exists", () => {
+    const wrapper = mount(
+      <RxForm>
+        {() => (
+          <>
+            <Field name={"firstName"} defaultValue={"Tony"} validate={[required(), maxLength5()]}>
+              {(fieldState) => (
+                <div>
+                  <input
+                    className={"firstName"}
+                    type="text"
+                    name={fieldState.name}
+                    value={fieldState.value}
+                    onChange={fieldState.onChange}
+                  />
+                  {fieldState.meta.error && <span className={"error"}>error</span>}
+                </div>
+              )}
+            </Field>
+          </>
+        )}
+      </RxForm>,
+    );
+
+    wrapper.find(".firstName").simulate("change", { target: { value: "PingPing" } });
+    wrapper.find(".firstName").simulate("change", { target: { value: "Pong" } });
+
     expect(wrapper.find(".error").exists()).toBe(false);
   });
 });
 
-describe("#onFormActionChange", () => {
+xdescribe("#onFormActionChange", () => {
   it("should dispatch field.change action if field contains error when start submit", () => {
     const instance = createForm().ref("field");
     const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
@@ -174,7 +226,7 @@ describe("#onFormActionChange", () => {
   });
 });
 
-describe("#onFormStateChange", () => {
+xdescribe("#onFormStateChange", () => {
   it("should call setState when field state changed", () => {
     const instance = createForm().ref("field");
     const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
@@ -221,8 +273,10 @@ describe("#onFormStateChange", () => {
     const wrapper = mount(
       <RxForm initialValues={{}}>
         {() => (
-          <Field name={"firstName"} ref={"field"} validate={required()}>
-            {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+          <Field name={"firstName"} validate={required()}>
+            {(fieldState) => (
+              <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
+            )}
           </Field>
         )}
       </RxForm>,
@@ -254,45 +308,25 @@ describe("#onFormStateChange", () => {
   });
 });
 
-describe("#onFocus", () => {
-  it("should dispatch field focus action with correct params", () => {
-    const instance = createForm().ref("field");
-    const { mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      dispatch: mockDispatch,
-    };
-    instance.onFocus();
-    expect(mockDispatch).toHaveBeenCalledWith({
-      name: "firstName",
-      type: "@@rx-form/field/FOCUS",
-      meta: {
-        visited: true,
-      },
-    });
+describe("field blur", () => {
+  it("when input blur, expected `touched` prop to equal true", () => {
+    const wrapper = createForm();
+    const inputEle = wrapper.find("input");
+    inputEle.simulate("blur");
+    expect(wrapper.find(MockInput).props().touched).toBe(true);
   });
 });
 
-describe("#onBlur", () => {
-  it("should dispatch field blur action with correct params", () => {
-    const instance = createForm().ref("field");
-    const { mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      dispatch: mockDispatch,
-    };
-    instance.onBlur();
-    expect(mockDispatch).toHaveBeenCalledWith({
-      name: "firstName",
-      type: "@@rx-form/field/BLUR",
-      meta: {
-        touched: true,
-      },
-    });
+describe("field focus", () => {
+  it("when focus on input, expected `visited` props to equal true", () => {
+    const wrapper = createForm();
+    const inputEle = wrapper.find("input");
+    inputEle.simulate("focus");
+    expect(wrapper.find(MockInput).props().visited).toBe(true);
   });
 });
 
-describe("#registerField", () => {
+xdescribe("#registerField", () => {
   it("should call dispatch with correct params", () => {
     const instance = createForm().ref("field");
     const { mockDispatch } = createMocks();
@@ -319,7 +353,7 @@ describe("#registerField", () => {
   });
 });
 
-describe("#format", () => {
+describe("format and parse field value", () => {
   it("should format value for field input", () => {
     const wrapper = mount(
       <Field
@@ -328,60 +362,70 @@ describe("#format", () => {
         validate={required()}
         format={(value) => (value ? `${value}.` : value)}
       >
-        {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+        {(fieldState) => (
+          <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
+        )}
       </Field>,
     );
     expect(wrapper.find("input").prop("value")).toEqual("Tony.");
   });
-});
 
-describe("#parse", () => {
   it("should parse value before store it to form", () => {
     const wrapper = mount(
-      <RxForm initialValues={{}}>
+      <RxForm>
         {() => (
-          <Field
-            name={"firstName"}
-            defaultValue={"Tony"}
-            ref={"field"}
-            validate={required()}
-            format={(value) => (value ? `${value}.` : value)}
-            parse={(value) => (value ? value.replace(/\./g, "") : value)}
-          >
-            {(fieldState) => (
-              <input
-                type="text"
-                {...pickInputPropsFromFieldProps(fieldState)}
-                onChange={(evt) => {
-                  fieldState.onChange(evt.target.value);
-                }}
-              />
+          <FormValues>
+            {({ formValues }) => (
+              <div>
+                <Field
+                  name={"firstName"}
+                  defaultValue={"Tony"}
+                  validate={required()}
+                  format={(value) => (value ? `${value}.` : value)}
+                  parse={(value) => (value ? value.replace(/\./g, "") : value)}
+                >
+                  {(fieldState) => (
+                    <input
+                      type="text"
+                      name={fieldState.name}
+                      value={fieldState.value}
+                      onChange={(evt) => {
+                        fieldState.onChange(evt.target.value);
+                      }}
+                    />
+                  )}
+                </Field>
+                <div className={"storedFirstName"}>{formValues.firstName}</div>
+              </div>
             )}
-          </Field>
+          </FormValues>
         )}
       </RxForm>,
     );
-    const formInstance = wrapper.instance() as any;
-    wrapper.find("input").simulate("change", { target: { value: "TonyRui." } });
-    expect(formInstance.formState).toEqual({
-      fields: {
-        firstName: {
-          dirty: true,
-        },
-      },
-      values: {
-        firstName: "TonyRui",
-      },
-    });
+
+    wrapper.find("input").simulate("change", { target: { value: "TonyDong." } });
+    expect(wrapper.find(".storedFirstName").text()).toEqual("TonyDong");
   });
 });
+
+const MockInput = ({ label, error, touched, visited, ...others }: any) => {
+  return (
+    <>
+      <label>{label}</label>
+      <input type="text" {...others} />
+      {touched && <div className={"touched"}>touched</div>}
+      {visited && <div className={"visited"}>visited</div>}
+      {error && <div className={"error"}>{error}</div>}
+    </>
+  );
+};
 
 const createForm: any = () =>
   mount(
     <RxForm initialValues={{}}>
       {() => (
-        <Field name={"firstName"} defaultValue={"Tony"} ref={"field"} validate={required()}>
-          {(fieldState) => <input type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+        <Field name={"firstName"} defaultValue={"Tony"} validate={required()}>
+          {(fieldState) => <MockInput type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
         </Field>
       )}
     </RxForm>,
@@ -399,5 +443,12 @@ const createMocks = () => {
     mockSub$,
     mockSubscribe,
     mockDispatch,
+  };
+};
+
+const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IFieldInnerProps>({ meta, ...others }: T) => {
+  return {
+    ...others,
+    ...(meta || {}),
   };
 };
