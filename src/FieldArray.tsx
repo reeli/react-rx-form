@@ -1,12 +1,13 @@
 import { filter, get, map, set, size, times } from "lodash";
 import React, { ReactNode, useContext, useLayoutEffect, useState } from "react";
-import { IFieldArrayCoreState, TChildrenRender, TFieldValue } from "./__types__/interfaces";
+import { TChildrenRender, TFieldValue } from "./__types__/interfaces";
 import { FormContext, FormProvider } from "./FormContext";
 
-interface IFieldArrayInnerProps extends IFieldArrayCoreState {
+interface IFieldArrayInnerProps {
   add: () => any;
   remove: (idx: number) => any;
   each: (mapper: (fieldName: string, idx: number) => ReactNode) => ReactNode;
+  fields: any[];
 }
 
 interface IFieldArrayProps {
@@ -15,7 +16,7 @@ interface IFieldArrayProps {
   initLength?: number;
 }
 
-export function FieldArrayCore(props: IFieldArrayProps) {
+function FieldArrayCore(props: IFieldArrayProps) {
   const { getFormValues, updateFormValues } = useContext(FormContext);
   const getFieldsByIdx = (): string[] => {
     return map(get(getFormValues(), props.name), (_, idx: number) => `[${idx}]`);
@@ -68,7 +69,7 @@ export function FieldArrayCore(props: IFieldArrayProps) {
   });
 }
 
-export const FieldArray = React.forwardRef((props: IFieldArrayProps) => {
+export const FieldArray = (props: IFieldArrayProps) => {
   const formContext = useContext(FormContext);
   const name = `${formContext.fieldPrefix || ""}${props.name}`;
   return (
@@ -81,4 +82,4 @@ export const FieldArray = React.forwardRef((props: IFieldArrayProps) => {
       <FieldArrayCore {...props} name={name} />
     </FormProvider>
   );
-});
+};
