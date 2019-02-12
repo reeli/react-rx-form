@@ -1,12 +1,14 @@
 import { filter, get, map, set, size, times } from "lodash";
-import React, { ReactNode, useContext, useLayoutEffect, useState } from "react";
-import { TChildrenRender, TFieldValue } from "./__types__/interfaces";
+import React, { useContext, useLayoutEffect, useState } from "react";
+import { TChildrenRender, TFieldValue } from "src/__types__/interfaces";
 import { FormContext, FormProvider } from "./FormContext";
+
+type TMapper = (prefix: string, idx: number) => JSX.Element;
 
 interface IFieldArrayInnerProps {
   add: () => any;
   remove: (idx: number) => any;
-  each: (mapper: (fieldName: string, idx: number) => ReactNode) => ReactNode;
+  each: (mapper: TMapper) => any;
   fields: any[];
 }
 
@@ -53,7 +55,7 @@ function FieldArrayCore(props: IFieldArrayProps) {
     setFields(getFieldsByIdx());
   };
 
-  const each = (mapper: (prefix: string, idx: number) => React.ReactNode) => {
+  const each = (mapper: TMapper) => {
     const fieldValues = get(getFormValues(), props.name);
     return map(fieldValues, (_: TFieldValue, idx: number) => {
       const name = `[${idx}]`;
