@@ -1,14 +1,14 @@
 import { mount } from "enzyme";
 import * as React from "react";
 import { Subject } from "rxjs/internal/Subject";
-import { FormActionTypes, IFieldInnerProps, IFieldMeta } from "src/__types__/interfaces";
+import { IFieldInnerProps, IFieldMeta } from "src/__types__/interfaces";
 import { maxLength5, required } from "../../src-modules/utils/validations";
 import { Field } from "../Field";
 import { FormValues } from "../FormValues";
 import { RxForm } from "../RxForm";
 
 describe("field initial", () => {
-  it("when field initial, expected error not exists", () => {
+  it("should have correct initial state", () => {
     const wrapper = mount(
       <Field name={"firstName"}>{(fieldState) => <MockInput {...pickInputPropsFromFieldProps(fieldState)} />}</Field>,
     );
@@ -102,6 +102,13 @@ describe("field change", () => {
     expect(wrapper.find(".firstName").props().value).toEqual("Ping");
     expect(wrapper.find(".lastName").props().value).toBe(undefined);
   });
+
+  it("when field change, expect to set `dirty` prop", () => {
+    const wrapper = createForm();
+    const inputEle = wrapper.find("input");
+    inputEle.simulate("change", { target: { value: "Ping" } });
+    expect(wrapper.find(MockInput).props().dirty).toBe(true);
+  });
 });
 
 describe("field validation", () => {
@@ -164,71 +171,37 @@ describe("field validation", () => {
   });
 });
 
-xdescribe("#onFormActionChange", () => {
-  it("should dispatch field.change action if field contains error when start submit", () => {
-    const instance = createForm().ref("field");
-    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      subscribeFormAction: mockSubscribe,
-      dispatch: mockDispatch,
-    };
-    instance.onFormActionChange();
+describe("form submit", () => {
+  const mockSubmit = jest.fn();
 
-    const mockFormState = {
-      fields: {
-        firstName: {
-          focused: true,
-        },
-      },
-      values: {
-        firstName: "",
-      },
-    };
+  const renderForm = (defaultValue: string) =>
+    mount(
+      <RxForm>
+        {({ handleSubmit }) => (
+          <form onSubmit={handleSubmit(mockSubmit)}>
+            <Field name={"firstName"} validate={required()} defaultValue={defaultValue}>
+              {(fieldState) => <MockInput type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
+            </Field>
+            <button type={"submit"}>submit</button>
+          </form>
+        )}
+      </RxForm>,
+    );
 
-    mockSub$.next({
-      type: FormActionTypes.startSubmit,
-      payload: mockFormState,
-    });
+  it("when any of the field invalid, expected form submit failed and set correct error to field", () => {
+    const wrapper = renderForm("");
+    wrapper.find("button").simulate("submit");
 
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toBeCalledWith({
-      name: "firstName",
-      type: "@@rx-form/field/CHANGE",
-      meta: {
-        dirty: true,
-        error: "no empty defaultValue",
-      },
-      payload: "",
-    });
+    expect(mockSubmit).not.toBeCalled();
+    expect(wrapper.find(MockInput).props().error).toEqual("no empty defaultValue");
+    wrapper.unmount();
   });
 
-  it("should do nothing if field do not contains error when start submit", () => {
-    const instance = createForm().ref("field") as any;
-    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      subscribeFormAction: mockSubscribe,
-      dispatch: mockDispatch,
-    };
-    instance.onFormActionChange();
-
-    mockSub$.next({
-      type: FormActionTypes.startSubmit,
-      payload: {
-        fields: {
-          firstName: {
-            name: "firstName",
-            meta: {},
-          },
-        },
-        values: {
-          firstName: "Rui",
-        },
-      },
-    });
-
-    expect(mockDispatch).toHaveBeenCalledTimes(0);
+  it("when all fields valid, expected form submit succeed", () => {
+    const wrapper = renderForm("funny");
+    wrapper.find("button").simulate("submit");
+    expect(mockSubmit).toBeCalledTimes(1);
+    wrapper.unmount();
   });
 });
 
@@ -277,7 +250,7 @@ xdescribe("#onFormStateChange", () => {
 
   it("should not call setState when field state not change", () => {
     const wrapper = mount(
-      <RxForm initialValues={{}}>
+      <RxForm>
         {() => (
           <Field name={"firstName"} validate={required()}>
             {(fieldState) => (
@@ -329,33 +302,6 @@ describe("field focus", () => {
     const inputEle = wrapper.find("input");
     inputEle.simulate("focus");
     expect(wrapper.find(MockInput).props().visited).toBe(true);
-  });
-});
-
-xdescribe("#registerField", () => {
-  it("should call dispatch with correct params", () => {
-    const instance = createForm().ref("field");
-    const { mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      dispatch: mockDispatch,
-    };
-
-    instance.registerField({
-      value: "Rui",
-      meta: {
-        dirty: false,
-      },
-    });
-
-    expect(mockDispatch).toHaveBeenCalledWith({
-      name: "firstName",
-      type: "@@rx-form/field/REGISTER_FIELD",
-      meta: {
-        dirty: false,
-      },
-      payload: "Rui",
-    });
   });
 });
 
@@ -414,13 +360,11 @@ describe("format and parse field value", () => {
   });
 });
 
-const MockInput = ({ label, error, touched, visited, ...others }: any) => {
+const MockInput = ({ label, error, touched, visited, dirty, ...others }: any) => {
   return (
     <>
       <label>{label}</label>
       <input type="text" {...others} />
-      {touched && <div className={"touched"}>touched</div>}
-      {visited && <div className={"visited"}>visited</div>}
       {error && <div className={"error"}>{error}</div>}
     </>
   );
@@ -428,7 +372,7 @@ const MockInput = ({ label, error, touched, visited, ...others }: any) => {
 
 const createForm: any = () =>
   mount(
-    <RxForm initialValues={{}}>
+    <RxForm>
       {() => (
         <Field name={"firstName"} defaultValue={"Tony"} validate={required()}>
           {(fieldState) => <MockInput type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
