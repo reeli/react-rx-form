@@ -83,7 +83,13 @@ describe("field change", () => {
             </Field>
             <Field name={"lastName"} validate={required()}>
               {(fieldState) => (
-                <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
+                <input
+                  type="text"
+                  className={"lastName"}
+                  name={fieldState.name}
+                  value={fieldState.value}
+                  onChange={fieldState.onChange}
+                />
               )}
             </Field>
           </>
