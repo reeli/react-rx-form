@@ -123,10 +123,7 @@ export function RxForm(props: IRxFormProps) {
         return;
       }
 
-      const values = getFormValues();
-      if (values) {
-        onSubmit(values, setErrors);
-      }
+      onSubmit(getFormValues(), setErrors);
     };
   };
 
