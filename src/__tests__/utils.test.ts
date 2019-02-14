@@ -1,4 +1,4 @@
-import { isEmptyValue, pickInputPropsFromFieldProps } from "../utils";
+import { isEmptyValue, pickDOMAttrs, pickInputPropsFromFieldProps } from "../utils";
 
 describe("#pickInputPropsFromFieldProps", () => {
   it("should pick correct input props from field props", () => {
@@ -39,5 +39,29 @@ describe("#isEmptyValue", () => {
     expect(isEmptyValue(0)).toEqual(false);
     expect(isEmptyValue(false)).toEqual(false);
     expect(isEmptyValue(() => {})).toEqual(false);
+  });
+});
+
+describe("#pickDOMAttrs", () => {
+  it("should pick correct dom attributes", () => {
+    const mockProps = {
+      name: "members[0].firstName",
+      value: "rui",
+      meta: {
+        error: "no empty error",
+        touched: true,
+        visited: true,
+      },
+      onChange: "onChange",
+      onBlur: "onBlur",
+      onFocus: "onFocus",
+    };
+    expect(pickDOMAttrs(mockProps)).toEqual({
+      name: "members[0].firstName",
+      value: "rui",
+      onChange: "onChange",
+      onBlur: "onBlur",
+      onFocus: "onFocus",
+    });
   });
 });

@@ -78,6 +78,7 @@
     ]
   },
   "dependencies": {
+    "@emotion/is-prop-valid": "^0.7.3",
     "lodash": "^4.17.11",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",

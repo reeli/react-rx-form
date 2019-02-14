@@ -1,3 +1,4 @@
+import isPropValid from "@emotion/is-prop-valid";
 import { cloneDeep, Dictionary, isArray, isBoolean, isEmpty, isFunction, isNumber, omitBy } from "lodash";
 import { IFieldAction, IFieldInnerProps, IFieldMeta, IFormAction, IFormState } from "src/__types__/interfaces";
 
@@ -42,4 +43,15 @@ export const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IF
     ...others,
     error: meta ? meta.error : undefined,
   };
+};
+
+export const pickDOMAttrs = (props: Dictionary<any>) => {
+  const o: { [key: string]: any } = {};
+
+  for (const k in props) {
+    if (props.hasOwnProperty(k) && isPropValid(k)) {
+      o[k] = props[k];
+    }
+  }
+  return o;
 };
