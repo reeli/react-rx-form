@@ -1,5 +1,5 @@
-import { IFieldAction, IFieldMeta, IFields, IFormState, IFormValues, TErrors } from "@react-rx/form";
 import { isEmpty, keys, mapValues, omit, reduce, set } from "lodash";
+import { IFieldAction, IFieldMeta, IFields, IFormState, IFormValues, TErrors } from "src/__types__/interfaces";
 
 export const formUpdateField = (state: IFormState, action: IFieldAction) => {
   const { fields, values } = state;
@@ -53,14 +53,6 @@ export const formUpdateValues = (formState: IFormState) => {
   });
 };
 
-export const formSetFields = (fields: IFields) => {
-  return mapValues(fields, (field) => ({
-    ...field,
-    touched: true,
-    visited: true,
-  }));
-};
-
 export const formSetErrors = (errors: TErrors, fields: IFields): IFields => {
   if (isEmpty(errors)) {
     return mapValues(fields, (field) => {
@@ -86,6 +78,6 @@ export const formSetErrors = (errors: TErrors, fields: IFields): IFields => {
   };
 };
 
-export const isFormContainsError = (fields: IFields) => {
-  return reduce(fields, (result, item) => result || (item && !!item.error), false);
+export const isFormValid = (fields: IFields) => {
+  return reduce(fields, (result, item) => result && (item && !item.error), true);
 };

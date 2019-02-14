@@ -20,7 +20,7 @@ import {
   formSetErrors,
   formUpdateField,
   formUpdateValues,
-  isFormContainsError,
+  isFormValid,
 } from "./formHelpers";
 import { log } from "./utils";
 import { WithDidMount } from "./WithDidMount";
@@ -119,7 +119,7 @@ export function RxForm(props: IRxFormProps) {
         payload: formState,
       });
 
-      if (isFormContainsError(formState.fields)) {
+      if (!isFormValid(formState.fields)) {
         return;
       }
 

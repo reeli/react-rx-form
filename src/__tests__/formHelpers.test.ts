@@ -1,4 +1,4 @@
-import { formSetErrors, isFormContainsError } from "../formHelpers";
+import { formSetErrors, isFormValid } from "../formHelpers";
 
 describe("#formSetErrors", () => {
   it("should set errors to formState if errors exist", () => {
@@ -96,15 +96,15 @@ describe("#formSetErrors", () => {
   });
 });
 
-describe("#isFormContainsError", () => {
-  it("should return true if field state has error", () => {
-    const formState = createFormState({ hasError: true });
-    expect(isFormContainsError(formState)).toEqual(true);
+describe("#isFormValid", () => {
+  it("should return true if field state has no error", () => {
+    const formState = createFormState({ hasError: false });
+    expect(isFormValid(formState)).toEqual(true);
   });
 
-  it("should return false if field state has no error", () => {
-    const formState = createFormState({ hasError: false });
-    expect(isFormContainsError(formState)).toEqual(false);
+  it("should return false if field state has error", () => {
+    const formState = createFormState({ hasError: true });
+    expect(isFormValid(formState)).toEqual(false);
   });
 });
 
