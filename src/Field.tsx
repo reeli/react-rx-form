@@ -16,8 +16,8 @@ import {
   TFieldValue,
   TValidator,
 } from "./__types__/interfaces";
+import { isFieldDirty, pickValue, validateField } from "./fieldHelper";
 import { FormContext } from "./FormContext";
-import { isDirty, pickValue, validateField } from "./utils";
 
 interface IFieldProps {
   name: string;
@@ -117,7 +117,7 @@ export function Field(props: IFieldProps) {
 
   const onChange = (evtOrValue: React.MouseEvent | TFieldValue) => {
     const value = parseValue(pickValue(evtOrValue));
-    const dirty = isDirty(value, props.defaultValue);
+    const dirty = isFieldDirty(value, props.defaultValue);
 
     const meta = {
       error: validateField(value, props.validate),

@@ -18,12 +18,13 @@ import {
   formFocusField,
   formRemoveField,
   formSetErrors,
+  formSetFields,
   formUpdateField,
   formUpdateValues,
   isFormContainsError,
   setFieldsError,
 } from "./formHelpers";
-import { log, setFieldsMeta } from "./utils";
+import { log } from "./utils";
 import { WithDidMount } from "./WithDidMount";
 
 interface IRxFormInnerProps {
@@ -131,7 +132,7 @@ export function RxForm(props: IRxFormProps) {
       evt.preventDefault();
 
       formState = {
-        fields: setFieldsMeta(formState.fields),
+        fields: formSetFields(formState.fields),
         values: formState.values,
       };
 

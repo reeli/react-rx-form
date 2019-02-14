@@ -53,6 +53,14 @@ export const formUpdateValues = (formState: IFormState) => {
   });
 };
 
+export const formSetFields = (fields: IFields) => {
+  return mapValues(fields, (field) => ({
+    ...field,
+    touched: true,
+    visited: true,
+  }));
+};
+
 export const formSetErrors = (fields: IFields, errors: TErrors) => {
   if (isEmpty(errors)) {
     return fields;

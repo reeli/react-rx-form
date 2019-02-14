@@ -1,70 +1,5 @@
-import {
-  cloneDeep,
-  Dictionary,
-  isArray,
-  isBoolean,
-  isEmpty,
-  isEqual,
-  isFunction,
-  isNumber,
-  isObject,
-  isUndefined,
-  mapValues,
-  omitBy,
-  reduce,
-} from "lodash";
-import {
-  IFieldAction,
-  IFieldInnerProps,
-  IFieldMeta,
-  IFields,
-  IFormAction,
-  IFormState,
-  TFieldValue,
-  TValidator,
-} from "src/__types__/interfaces";
-
-export const combineValidators = (validators: TValidator[]) => {
-  return (value: TFieldValue): string | undefined => {
-    return reduce(
-      validators,
-      (error: string | undefined, validator) => {
-        return error || validateField(value, validator);
-      },
-      undefined,
-    );
-  };
-};
-
-export const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IFieldInnerProps>({
-  meta,
-  ...others
-}: T) => {
-  return {
-    ...others,
-    error: meta ? meta.error : undefined,
-  };
-};
-
-export const isDirty = (value: TFieldValue, defaultValue: string) => {
-  return !isEqual(value, defaultValue);
-};
-
-export const validateField = (value: string | boolean, validate?: TValidator | TValidator[]) => {
-  if (isUndefined(validate)) {
-    return;
-  }
-
-  if (isArray(validate)) {
-    return combineValidators(validate)(value);
-  }
-
-  if (typeof validate === "function") {
-    return validate(value);
-  }
-
-  return;
-};
+import { cloneDeep, Dictionary, isArray, isBoolean, isEmpty, isFunction, isNumber, omitBy } from "lodash";
+import { IFieldAction, IFieldInnerProps, IFieldMeta, IFormAction, IFormState } from "src/__types__/interfaces";
 
 export const log = ({
   action,
@@ -99,15 +34,12 @@ export const isEmptyValue = (value: any) => {
   return isEmpty(value);
 };
 
-export const pickValue = (evtOrValue: MouseEvent | TFieldValue) => {
-  const isEvent = isObject(evtOrValue) && evtOrValue.target;
-  return isEvent ? evtOrValue.target.value : evtOrValue;
-};
-
-export const setFieldsMeta = (fields: IFields) => {
-  return mapValues(fields, (field) => ({
-    ...field,
-    touched: true,
-    visited: true,
-  }));
+export const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IFieldInnerProps>({
+  meta,
+  ...others
+}: T) => {
+  return {
+    ...others,
+    error: meta ? meta.error : undefined,
+  };
 };
