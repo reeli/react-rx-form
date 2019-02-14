@@ -18,7 +18,6 @@ import {
   formFocusField,
   formRemoveField,
   formSetErrors,
-  formSetFields,
   formUpdateField,
   formUpdateValues,
   isFormContainsError,
@@ -111,20 +110,9 @@ export function RxForm(props: IRxFormProps) {
     return formActionSubject$.subscribe(observer);
   };
 
-  const updateFormState = (state: IFormState) => {
-    formStateSubject$.next(state);
-  };
-
   const handleSubmit = (onSubmit: TOnSubmit) => {
     return (evt: React.FormEvent) => {
       evt.preventDefault();
-
-      formState = {
-        fields: formSetFields(formState.fields),
-        values: formState.values,
-      };
-
-      updateFormState(formState);
 
       dispatch({
         type: FormActionTypes.startSubmit,

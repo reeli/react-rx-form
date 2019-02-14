@@ -90,15 +90,14 @@ export function Field(props: IFieldProps) {
       .pipe(
         filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
         map(({ payload: { fields, values } }: IFormAction) => ({
-          meta: fields[prefixedName],
+          meta: {
+            ...fields[prefixedName],
+            touched: true,
+            visited: true,
+          },
           value: get(values, prefixedName),
         })),
-        tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
-          const error = validateField(value, props.validate);
-          if (error) {
-            onChange(value);
-          }
-        }),
+        tap(({ value, meta }: { meta: IFieldMeta; value: TFieldValue }) => onChange(value, meta)),
       )
       .subscribe();
 
@@ -115,11 +114,12 @@ export function Field(props: IFieldProps) {
     });
   };
 
-  const onChange = (evtOrValue: React.MouseEvent | TFieldValue) => {
+  const onChange = (evtOrValue: React.MouseEvent | TFieldValue, otherMeta?: IFieldMeta) => {
     const value = parseValue(pickValue(evtOrValue));
     const dirty = isFieldDirty(value, props.defaultValue);
 
     const meta = {
+      ...otherMeta,
       error: validateField(value, props.validate),
       dirty,
     } as IFieldMeta;

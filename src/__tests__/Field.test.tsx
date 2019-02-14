@@ -203,87 +203,15 @@ describe("form submit", () => {
     expect(mockSubmit).toBeCalledTimes(1);
     wrapper.unmount();
   });
-});
 
-xdescribe("#onFormStateChange", () => {
-  it("should call setState when field state changed", () => {
-    const instance = createForm().ref("field");
-    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      subscribe: mockSubscribe,
-      dispatch: mockDispatch,
-    };
-    const mockSetState = jest.fn();
-    instance.setState = mockSetState;
-    instance.onFormStateChange();
+  it("when form submit, expected field visited and touched", () => {
+    const wrapper = renderForm("");
+    wrapper.find("button").simulate("submit");
 
-    mockSub$.next({
-      fields: {
-        firstName: {
-          dirty: true,
-        },
-      },
-      values: {
-        firstName: "ru",
-      },
-    });
+    const fieldProps = wrapper.find(MockInput).props();
 
-    mockSub$.next({
-      fields: {
-        firstName: {
-          dirty: true,
-        },
-      },
-      values: {
-        firstName: "rui",
-      },
-    });
-
-    expect(instance.setState).lastCalledWith({
-      meta: {
-        dirty: true,
-      },
-      value: "rui",
-    });
-  });
-
-  it("should not call setState when field state not change", () => {
-    const wrapper = mount(
-      <RxForm>
-        {() => (
-          <Field name={"firstName"} validate={required()}>
-            {(fieldState) => (
-              <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
-            )}
-          </Field>
-        )}
-      </RxForm>,
-    ) as any;
-
-    const instance = wrapper.ref("field");
-    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      subscribe: mockSubscribe,
-      dispatch: mockDispatch,
-    };
-    const mockSetState = jest.fn();
-    instance.setState = mockSetState;
-    instance.onFormStateChange();
-
-    mockSub$.next({
-      fields: {
-        lastName: {
-          dirty: true,
-        },
-      },
-      values: {
-        lastName: "rui",
-      },
-    });
-
-    expect(instance.setState).not.toHaveBeenCalled();
+    expect(fieldProps.visited).toBe(true);
+    expect(fieldProps.touched).toBe(true);
   });
 });
 
@@ -381,6 +309,95 @@ const createForm: any = () =>
     </RxForm>,
   );
 
+const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IFieldInnerProps>({ meta, ...others }: T) => {
+  return {
+    ...others,
+    ...(meta || {}),
+  };
+};
+
+xdescribe("#onFormStateChange", () => {
+  it("should call setState when field state changed", () => {
+    const instance = createForm().ref("field");
+    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
+    instance.props = {
+      ...instance.props,
+      subscribe: mockSubscribe,
+      dispatch: mockDispatch,
+    };
+    const mockSetState = jest.fn();
+    instance.setState = mockSetState;
+    instance.onFormStateChange();
+
+    mockSub$.next({
+      fields: {
+        firstName: {
+          dirty: true,
+        },
+      },
+      values: {
+        firstName: "ru",
+      },
+    });
+
+    mockSub$.next({
+      fields: {
+        firstName: {
+          dirty: true,
+        },
+      },
+      values: {
+        firstName: "rui",
+      },
+    });
+
+    expect(instance.setState).lastCalledWith({
+      meta: {
+        dirty: true,
+      },
+      value: "rui",
+    });
+  });
+
+  it("should not call setState when field state not change", () => {
+    const wrapper = mount(
+      <RxForm>
+        {() => (
+          <Field name={"firstName"} validate={required()}>
+            {(fieldState) => (
+              <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
+            )}
+          </Field>
+        )}
+      </RxForm>,
+    ) as any;
+
+    const instance = wrapper.ref("field");
+    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
+    instance.props = {
+      ...instance.props,
+      subscribe: mockSubscribe,
+      dispatch: mockDispatch,
+    };
+    const mockSetState = jest.fn();
+    instance.setState = mockSetState;
+    instance.onFormStateChange();
+
+    mockSub$.next({
+      fields: {
+        lastName: {
+          dirty: true,
+        },
+      },
+      values: {
+        lastName: "rui",
+      },
+    });
+
+    expect(instance.setState).not.toHaveBeenCalled();
+  });
+});
+
 const createMocks = () => {
   const mockSub$ = new Subject();
   const mockSubscribe = (observer: any) => {
@@ -393,12 +410,5 @@ const createMocks = () => {
     mockSub$,
     mockSubscribe,
     mockDispatch,
-  };
-};
-
-const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IFieldInnerProps>({ meta, ...others }: T) => {
-  return {
-    ...others,
-    ...(meta || {}),
   };
 };
