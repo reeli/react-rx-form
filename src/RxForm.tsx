@@ -1,4 +1,4 @@
-import { cloneDeep, omit, set } from "lodash";
+import { cloneDeep } from "lodash";
 import React from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Observer } from "rxjs/internal/types";
@@ -6,17 +6,24 @@ import {
   FieldActionTypes,
   FormActionTypes,
   IFieldAction,
-  IFieldMeta,
   IFormAction,
   IFormState,
   IFormValues,
   TChildrenRender,
   TErrors,
   TOnSubmit,
-} from "./__types__/interfaces";
+} from "src/__types__/interfaces";
 import { FormProvider } from "./FormContext";
-
-import { isContainError, log, setErrors, setFieldsError, setFieldsMeta } from "./utils";
+import {
+  formFocusField,
+  formRemoveField,
+  formSetErrors,
+  formUpdateField,
+  formUpdateValues,
+  isFormContainsError,
+  setFieldsError,
+} from "./formHelpers";
+import { log, setFieldsMeta } from "./utils";
 import { WithDidMount } from "./WithDidMount";
 
 interface IRxFormInnerProps {
@@ -37,39 +44,7 @@ export function RxForm(props: IRxFormProps) {
   const formActionSubject$ = new Subject();
 
   const updateFormValues = (formValues: IFormValues) => {
-    formState = {
-      fields: formState.fields,
-      values: formValues,
-    };
-  };
-
-  const updateField = (state: IFormState, action: IFieldAction) => {
-    const { fields, values } = state;
-    const { payload, meta = {} as IFieldMeta, name } = action;
-    return {
-      fields: {
-        ...fields,
-        [name]: {
-          ...fields[name],
-          ...meta,
-        },
-      },
-      values: set<IFormValues>({ ...values }, name, payload), // Notice: _.set will mutate object,
-    };
-  };
-
-  const updateFieldState = (state: IFormState, action: IFieldAction) => {
-    const { fields, values } = state;
-    const { name, meta } = action;
-    return {
-      values,
-      fields: {
-        ...fields,
-        [name]: {
-          ...meta,
-        },
-      },
-    };
+    formState = formUpdateValues(formState)(formValues);
   };
 
   const onSubmitError = (errors: TErrors) => {
@@ -77,7 +52,7 @@ export function RxForm(props: IRxFormProps) {
 
     formState = {
       values: formState.values,
-      fields: setErrors(formState.fields, errors),
+      fields: formSetErrors(formState.fields, errors),
     };
 
     formStateSubject$.next(formState);
@@ -103,22 +78,6 @@ export function RxForm(props: IRxFormProps) {
     return formState;
   };
 
-  const removeField = (state: IFormState, action: IFieldAction) => {
-    if (action.meta && action.meta.destroyValueOnUnmount) {
-      return {
-        fields: omit(state.fields, action.name),
-        values: omit(state.values, action.name),
-      };
-    }
-
-    // keep values when field destroy for cross page form
-    // eg: in PageA, switch to PageB, should keep PageA fields values.
-    return {
-      ...state,
-      fields: omit(state.fields, action.name),
-    };
-  };
-
   const dispatch = (action: IFieldAction | IFormAction) => {
     const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(formState);
 
@@ -126,17 +85,17 @@ export function RxForm(props: IRxFormProps) {
       case FieldActionTypes.register:
       case FieldActionTypes.blur:
       case FieldActionTypes.change: {
-        formState = updateField(formState, action as IFieldAction);
+        formState = formUpdateField(formState, action as IFieldAction);
         formStateSubject$.next(formState);
         break;
       }
       case FieldActionTypes.focus: {
-        formState = updateFieldState(formState, action as IFieldAction);
+        formState = formFocusField(formState, action as IFieldAction);
         formStateSubject$.next(formState);
         break;
       }
       case FieldActionTypes.destroy: {
-        formState = removeField(formState, action as IFieldAction);
+        formState = formRemoveField(formState, action as IFieldAction);
         formStateSubject$.next(formState);
         break;
       }
@@ -183,7 +142,7 @@ export function RxForm(props: IRxFormProps) {
         payload: formState,
       });
 
-      if (isContainError(formState.fields)) {
+      if (isFormContainsError(formState.fields)) {
         return;
       }
 
