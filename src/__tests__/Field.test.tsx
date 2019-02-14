@@ -1,6 +1,5 @@
 import { mount } from "enzyme";
 import * as React from "react";
-import { Subject } from "rxjs/internal/Subject";
 import { IFieldInnerProps, IFieldMeta } from "src/__types__/interfaces";
 import { maxLength5, required } from "../../src-modules/utils/validations";
 import { Field } from "../Field";
@@ -109,6 +108,15 @@ describe("field change", () => {
     inputEle.simulate("change", { target: { value: "Ping" } });
     expect(wrapper.find(MockInput).props().dirty).toBe(true);
   });
+
+  it("when field change, expected to get correct input value", () => {
+    const wrapper = createForm();
+    const inputEle = wrapper.find("input");
+    inputEle.simulate("change", { target: { value: "Pin" } });
+    inputEle.simulate("change", { target: { value: "Ping" } });
+
+    expect(wrapper.find(MockInput).props().value).toEqual("Ping");
+  });
 });
 
 describe("field validation", () => {
@@ -212,6 +220,7 @@ describe("form submit", () => {
 
     expect(fieldProps.visited).toBe(true);
     expect(fieldProps.touched).toBe(true);
+    expect(fieldProps.dirty).toBe(false);
   });
 });
 
@@ -233,47 +242,16 @@ describe("field focus", () => {
   });
 });
 
-describe("format and parse field value", () => {
-  it("should format value for field input", () => {
-    const wrapper = mount(
-      <Field
-        name={"firstName"}
-        defaultValue={"Tony"}
-        validate={required()}
-        format={(value) => (value ? `${value}.` : value)}
-      >
-        {(fieldState) => (
-          <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
-        )}
-      </Field>,
-    );
-    expect(wrapper.find("input").prop("value")).toEqual("Tony.");
-  });
-
-  it("should parse value before store it to form", () => {
-    const wrapper = mount(
+describe("transform field value", () => {
+  const renderForm = (props: any) => {
+    return mount(
       <RxForm>
         {() => (
           <FormValues>
             {({ formValues }) => (
               <div>
-                <Field
-                  name={"firstName"}
-                  defaultValue={"Tony"}
-                  validate={required()}
-                  format={(value) => (value ? `${value}.` : value)}
-                  parse={(value) => (value ? value.replace(/\./g, "") : value)}
-                >
-                  {(fieldState) => (
-                    <input
-                      type="text"
-                      name={fieldState.name}
-                      value={fieldState.value}
-                      onChange={(evt) => {
-                        fieldState.onChange(evt.target.value);
-                      }}
-                    />
-                  )}
+                <Field name={"firstName"} defaultValue={"Tony"} validate={required()} {...props}>
+                  {({ meta, ...others }) => <input {...others} />}
                 </Field>
                 <div className={"storedFirstName"}>{formValues.firstName}</div>
               </div>
@@ -282,9 +260,45 @@ describe("format and parse field value", () => {
         )}
       </RxForm>,
     );
+  };
+
+  it("should format field value for input", () => {
+    const wrapper = renderForm({
+      format: (value: any) => (value ? `${value}.` : value),
+    });
+    expect(wrapper.find("input").prop("value")).toEqual("Tony.");
+  });
+
+  it("should parse value before store it to form", () => {
+    const wrapper = renderForm({
+      format: (value: string) => (value ? `${value}.` : value),
+      parse: (value: string) => (value ? value.replace(/\./g, "") : value),
+    });
 
     wrapper.find("input").simulate("change", { target: { value: "TonyDong." } });
     expect(wrapper.find(".storedFirstName").text()).toEqual("TonyDong");
+  });
+
+  it("should normalize field value", () => {
+    const wrapper = renderForm({
+      normalize: lower,
+    });
+
+    wrapper.find("input").simulate("change", { target: { value: "Tony Dong" } });
+    expect(wrapper.find("input").prop("value")).toEqual("tony dong");
+  });
+
+  it("when both use format/parse and normalize, expected field value be transformed correctly", () => {
+    const wrapper = renderForm({
+      format: (value: string) => (value ? `${value}.` : value),
+      parse: (value: string) => (value ? value.replace(/\./g, "") : value),
+      normalize: lower,
+    });
+
+    wrapper.find("input").simulate("change", { target: { value: "Tony Dong." } });
+
+    expect(wrapper.find("input").prop("value")).toEqual("tony dong.");
+    expect(wrapper.find(".storedFirstName").text()).toEqual("tony dong");
   });
 });
 
@@ -298,11 +312,11 @@ const MockInput = ({ label, error, touched, visited, dirty, ...others }: any) =>
   );
 };
 
-const createForm: any = () =>
+const createForm: any = (otherProps: any = {}) =>
   mount(
     <RxForm>
       {() => (
-        <Field name={"firstName"} defaultValue={"Tony"} validate={required()}>
+        <Field name={"firstName"} defaultValue={"Tony"} validate={required()} {...otherProps}>
           {(fieldState) => <MockInput type="text" {...pickInputPropsFromFieldProps(fieldState)} />}
         </Field>
       )}
@@ -316,99 +330,4 @@ const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IFieldInn
   };
 };
 
-xdescribe("#onFormStateChange", () => {
-  it("should call setState when field state changed", () => {
-    const instance = createForm().ref("field");
-    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      subscribe: mockSubscribe,
-      dispatch: mockDispatch,
-    };
-    const mockSetState = jest.fn();
-    instance.setState = mockSetState;
-    instance.onFormStateChange();
-
-    mockSub$.next({
-      fields: {
-        firstName: {
-          dirty: true,
-        },
-      },
-      values: {
-        firstName: "ru",
-      },
-    });
-
-    mockSub$.next({
-      fields: {
-        firstName: {
-          dirty: true,
-        },
-      },
-      values: {
-        firstName: "rui",
-      },
-    });
-
-    expect(instance.setState).lastCalledWith({
-      meta: {
-        dirty: true,
-      },
-      value: "rui",
-    });
-  });
-
-  it("should not call setState when field state not change", () => {
-    const wrapper = mount(
-      <RxForm>
-        {() => (
-          <Field name={"firstName"} validate={required()}>
-            {(fieldState) => (
-              <input type="text" name={fieldState.name} value={fieldState.value} onChange={fieldState.onChange} />
-            )}
-          </Field>
-        )}
-      </RxForm>,
-    ) as any;
-
-    const instance = wrapper.ref("field");
-    const { mockSub$, mockSubscribe, mockDispatch } = createMocks();
-    instance.props = {
-      ...instance.props,
-      subscribe: mockSubscribe,
-      dispatch: mockDispatch,
-    };
-    const mockSetState = jest.fn();
-    instance.setState = mockSetState;
-    instance.onFormStateChange();
-
-    mockSub$.next({
-      fields: {
-        lastName: {
-          dirty: true,
-        },
-      },
-      values: {
-        lastName: "rui",
-      },
-    });
-
-    expect(instance.setState).not.toHaveBeenCalled();
-  });
-});
-
-const createMocks = () => {
-  const mockSub$ = new Subject();
-  const mockSubscribe = (observer: any) => {
-    mockSub$.subscribe(observer);
-  };
-
-  const mockDispatch = jest.fn();
-
-  return {
-    mockSub$,
-    mockSubscribe,
-    mockDispatch,
-  };
-};
+const lower = (value: string) => value && value.toLowerCase();
