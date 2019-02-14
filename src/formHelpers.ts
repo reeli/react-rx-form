@@ -61,19 +61,7 @@ export const formSetFields = (fields: IFields) => {
   }));
 };
 
-export const formSetErrors = (fields: IFields, errors: TErrors) => {
-  if (isEmpty(errors)) {
-    return fields;
-  }
-  return mapValues(fields, (field, name) => {
-    return {
-      ...field,
-      error: errors[name],
-    };
-  });
-};
-
-export const setFieldsError = (errors: TErrors, fields: IFields): IFields => {
+export const formSetErrors = (errors: TErrors, fields: IFields): IFields => {
   if (isEmpty(errors)) {
     return mapValues(fields, (field) => {
       return {

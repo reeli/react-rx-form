@@ -1,4 +1,4 @@
-import { formSetErrors, isFormContainsError, setFieldsError } from "../formHelpers";
+import { formSetErrors, isFormContainsError } from "../formHelpers";
 
 describe("#formSetErrors", () => {
   it("should set errors to formState if errors exist", () => {
@@ -18,16 +18,14 @@ describe("#formSetErrors", () => {
         dirty: true,
       },
     };
-    expect(formSetErrors(formState, errors)).toEqual(expectedResult);
+    expect(formSetErrors(errors, formState)).toEqual(expectedResult);
   });
   it("should do nothing if errors not exist", () => {
     const formState = createFormState({ hasError: false });
     const errors = {};
-    expect(formSetErrors(formState, errors)).toEqual(formState);
+    expect(formSetErrors(errors, formState)).toEqual(formState);
   });
-});
 
-describe("#setFieldsError", () => {
   it("should set partial fields errors", () => {
     const mockFields = {
       username: {
@@ -56,7 +54,7 @@ describe("#setFieldsError", () => {
     };
 
     expect(
-      setFieldsError(
+      formSetErrors(
         {
           username: "no empty error",
           password: "not empty error",
@@ -94,7 +92,7 @@ describe("#setFieldsError", () => {
       },
     };
 
-    expect(setFieldsError({}, mockFields)).toEqual(expected);
+    expect(formSetErrors({}, mockFields)).toEqual(expected);
   });
 });
 

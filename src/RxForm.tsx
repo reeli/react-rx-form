@@ -22,7 +22,6 @@ import {
   formUpdateField,
   formUpdateValues,
   isFormContainsError,
-  setFieldsError,
 } from "./formHelpers";
 import { log } from "./utils";
 import { WithDidMount } from "./WithDidMount";
@@ -48,21 +47,10 @@ export function RxForm(props: IRxFormProps) {
     formState = formUpdateValues(formState)(formValues);
   };
 
-  const onSubmitError = (errors: TErrors) => {
-    // TODO: Check if if values should be different if fields contains error
-
+  const setErrors = (errors: TErrors) => {
     formState = {
       values: formState.values,
-      fields: formSetErrors(formState.fields, errors),
-    };
-
-    formStateSubject$.next(formState);
-  };
-
-  const setFormErrors = (errors: TErrors) => {
-    formState = {
-      values: formState.values,
-      fields: setFieldsError(errors, formState.fields),
+      fields: formSetErrors(errors, formState.fields),
     };
     formStateSubject$.next(formState);
   };
@@ -149,7 +137,7 @@ export function RxForm(props: IRxFormProps) {
 
       const values = getFormValues();
       if (values) {
-        onSubmit(values, onSubmitError);
+        onSubmit(values, setErrors);
       }
     };
   };
@@ -167,7 +155,7 @@ export function RxForm(props: IRxFormProps) {
         updateFormValues,
         getFormValues,
         getFormState,
-        setErrors: setFormErrors,
+        setErrors,
       }}
     >
       <WithDidMount onDidMount={notifyFormState} />
