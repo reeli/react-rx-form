@@ -1,5 +1,5 @@
 import { cloneDeep } from "lodash";
-import React from "react";
+import React, { useEffect } from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Observer } from "rxjs/internal/types";
 import {
@@ -23,7 +23,6 @@ import {
   isFormValid,
 } from "./formHelpers";
 import { log } from "./utils";
-import { WithDidMount } from "./WithDidMount";
 
 interface IRxFormInnerProps {
   handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any;
@@ -127,9 +126,10 @@ export function RxForm(props: IRxFormProps) {
     };
   };
 
-  const notifyFormState = () => {
+  // Notify formState after all field mounted, so that FormValues can get correct field initial state.
+  useEffect(() => {
     formStateSubject$.next(formState);
-  };
+  }, []);
 
   return (
     <FormProvider
@@ -143,7 +143,6 @@ export function RxForm(props: IRxFormProps) {
         setErrors,
       }}
     >
-      <WithDidMount onDidMount={notifyFormState} />
       {props.children({
         handleSubmit,
       })}
