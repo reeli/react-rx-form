@@ -10,7 +10,6 @@ export class SubmitValidationForm extends React.Component {
   }
 
   onSubmit = (values: any, onSubmitError: any) => {
-    console.log(values, "values on Submit");
     const errors = {} as any;
 
     if (values.username.length === 0) {

@@ -4,5 +4,5 @@ export * from "./FormSection";
 export * from "./RxForm";
 export * from "./utils";
 export * from "./FormValues";
-export * from "./interfaces";
+export * from "./__types__/interfaces";
 export { FormConsumer as WithForm } from "./FormContext";

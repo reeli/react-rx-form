@@ -1,151 +1,85 @@
 import { get, isUndefined } from "lodash";
-import * as React from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
-import { FormConsumer } from "./FormContext";
 import {
   FieldActionTypes,
   FormActionTypes,
-  IFieldCoreProps,
+  IFieldInnerProps,
   IFieldMeta,
-  IFieldProps,
   IFieldState,
   IFormAction,
   IFormState,
+  IFormValues,
+  TChildrenRender,
   TFieldValue,
-} from "./interfaces";
-import { isDirty, pickValue, validateField } from "./utils";
+  TValidator,
+} from "src/__types__/interfaces";
+import { isFieldDirty, pickValue, validateField } from "./fieldHelper";
+import { FormContext } from "./FormContext";
 
-const getFieldValue = ({ defaultValue, getFormValues, name }: IFieldCoreProps) => {
-  const formValues = getFormValues();
-  const initialValue = get(formValues, name);
+interface IFieldProps {
+  name: string;
+  children: TChildrenRender<IFieldInnerProps>;
+  defaultValue?: TFieldValue;
+  validate?: TValidator | TValidator[];
+  format?: (value: TFieldValue) => TFieldValue;
+  parse?: (value: TFieldValue) => TFieldValue;
+  normalize?: (value: TFieldValue) => TFieldValue;
+  destroyValueOnUnmount?: boolean;
+}
+
+const getFieldValue = ({
+  defaultValue,
+  formValues,
+  prefixedName,
+}: {
+  defaultValue: TFieldValue;
+  formValues: IFormValues;
+  prefixedName: string;
+}) => {
+  const initialValue = get(formValues, prefixedName);
   if (!isUndefined(initialValue)) {
     return initialValue;
   }
   return defaultValue;
 };
 
-export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
-  private formStateSubscription: Subscription | null = null;
-  private formActionSubscription: Subscription | null = null;
+export function Field(props: IFieldProps) {
+  const { dispatch, subscribe, subscribeFormAction, getFormValues, fieldPrefix } = useContext(FormContext);
+  const prefixedName = `${fieldPrefix || ""}${props.name}`;
 
-  state = {
-    value: getFieldValue(this.props),
-    meta: {},
-  };
+  const defaultValue = getFieldValue({
+    defaultValue: props.defaultValue,
+    formValues: getFormValues(),
+    prefixedName,
+  });
 
-  componentDidMount() {
-    const { value, meta } = this.state;
+  const [fieldValue, setFieldValue] = useState(defaultValue);
+  const [fieldMeta, setFieldMeta] = useState({});
 
-    // should register observers before register field, otherwise the last field will lost field state
-    // this cause the last field render even if I only changed the first field
-
-    this.onFormStateChange();
-    this.onFormActionChange();
-
-    this.registerField({
-      value,
-      meta,
-    });
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch({
-      name: this.props.name,
-      type: FieldActionTypes.destroy,
-      meta: {
-        destroyValueOnUnmount: !!this.props.destroyValueOnUnmount,
-      },
-    });
-
-    if (this.formStateSubscription) {
-      this.formStateSubscription.unsubscribe();
-      this.formStateSubscription = null;
-    }
-    if (this.formActionSubscription) {
-      this.formActionSubscription.unsubscribe();
-      this.formActionSubscription = null;
-    }
-  }
-
-  onFormStateChange = () => {
-    const { name } = this.props;
-    const formStateObserver$ = new Subject<IFormState>();
-    formStateObserver$
-      .pipe(
-        map(({ fields, values }) => ({
-          meta: fields[name],
-          value: get(values, name),
-        })),
-        distinctUntilChanged((next, prev) => next.meta === prev.meta && prev.value === next.value),
-        tap(({ meta, value }) => {
-          if (meta || value) {
-            this.setState({
-              meta,
-              value,
-            });
-          }
-        }),
-      )
-      .subscribe();
-
-    this.formStateSubscription = this.props.subscribe(formStateObserver$);
-  };
-
-  onFormActionChange = () => {
-    const formActionObserver$ = new Subject<IFormAction>();
-    const { name, validate } = this.props;
-
-    formActionObserver$
-      .pipe(
-        filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
-        map(({ payload: { fields, values } }: IFormAction) => ({
-          meta: fields[name],
-          value: get(values, name),
-        })),
-        tap(({ value }: { meta: IFieldMeta; value: TFieldValue }) => {
-          const error = validateField(value, validate);
-          if (error) {
-            this.onChange(value);
-          }
-        }),
-      )
-      .subscribe();
-
-    this.formActionSubscription = this.props.subscribeFormAction(formActionObserver$);
-  };
-
-  registerField = ({ value, meta }: IFieldState) => {
-    // register field
-    this.props.dispatch({
-      name: this.props.name,
-      type: FieldActionTypes.register,
-      meta,
-      payload: this.parseValue(value),
-    });
-  };
-
-  onChange = (evtOrValue: React.MouseEvent | TFieldValue) => {
-    const value = this.parseValue(pickValue(evtOrValue));
-    const dirty = isDirty(value, this.props.defaultValue);
+  const onChange = (evtOrValue: React.MouseEvent | TFieldValue, otherMeta?: IFieldMeta) => {
+    const value = parseValue(pickValue(evtOrValue));
+    const dirty = isFieldDirty(value, props.defaultValue);
 
     const meta = {
-      error: validateField(value, this.props.validate),
+      ...otherMeta,
+      error: validateField(value, props.validate),
       dirty,
     } as IFieldMeta;
 
-    this.props.dispatch({
-      name: this.props.name,
+    dispatch({
+      name: prefixedName,
       type: FieldActionTypes.change,
       meta,
       payload: value,
     });
   };
 
-  onFocus = () => {
-    this.props.dispatch({
-      name: this.props.name,
+  const onFocus = () => {
+    dispatch({
+      name: prefixedName,
       type: FieldActionTypes.focus,
       meta: {
         visited: true,
@@ -153,20 +87,20 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
     });
   };
 
-  onBlur = (evtOrValue: React.MouseEvent | TFieldValue) => {
+  const onBlur = (evtOrValue: React.MouseEvent | TFieldValue) => {
     const value = pickValue(evtOrValue);
-    this.props.dispatch({
-      name: this.props.name,
+    dispatch({
+      name: prefixedName,
       type: FieldActionTypes.blur,
       meta: {
         touched: true,
       },
-      payload: this.parseValue(value),
+      payload: parseValue(value),
     });
   };
 
-  parseValue = (value: TFieldValue): TFieldValue => {
-    const { parse, normalize } = this.props;
+  const parseValue = (value: TFieldValue): TFieldValue => {
+    const { parse, normalize } = props;
     if (parse && typeof parse === "function") {
       value = parse(value);
     }
@@ -178,8 +112,8 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
     return value;
   };
 
-  formatValue = (value: TFieldValue): TFieldValue => {
-    const { format, normalize } = this.props;
+  const formatValue = (value: TFieldValue): TFieldValue => {
+    const { format, normalize } = props;
     if (format && typeof format === "function") {
       value = format(value);
     }
@@ -191,30 +125,98 @@ export class FieldCore extends React.Component<IFieldCoreProps, IFieldState> {
     return value;
   };
 
-  render() {
-    const { value, meta } = this.state;
-    return this.props.children({
-      value: this.formatValue(value),
-      meta,
-      name: this.props.name,
-      onChange: this.onChange,
-      onFocus: this.onFocus,
-      onBlur: this.onBlur,
-    });
-  }
-}
+  useLayoutEffect(() => {
+    let formStateSubscription: Subscription | null = null;
+    let formActionSubscription: Subscription | null = null;
 
-export const Field = React.forwardRef((props: IFieldProps, ref?: React.Ref<any>) => (
-  <FormConsumer>
-    {(formContextValue) => {
-      return (
-        <FieldCore
-          {...formContextValue}
-          {...props}
-          name={`${formContextValue.fieldPrefix || ""}${props.name}`}
-          ref={ref}
-        />
-      );
-    }}
-  </FormConsumer>
-));
+    const onFormStateChange = () => {
+      const formStateObserver$ = new Subject<IFormState>();
+
+      formStateObserver$
+        .pipe(
+          map(({ fields, values }) => ({
+            meta: fields[prefixedName],
+            value: get(values, prefixedName),
+          })),
+          distinctUntilChanged((next, prev) => next.meta === prev.meta && prev.value === next.value),
+          tap(({ meta, value }) => {
+            if (meta || value) {
+              setFieldValue(value);
+              setFieldMeta(meta);
+            }
+          }),
+        )
+        .subscribe();
+
+      formStateSubscription = subscribe(formStateObserver$);
+    };
+
+    const onFormActionChange = () => {
+      const formActionObserver$ = new Subject<IFormAction>();
+
+      formActionObserver$
+        .pipe(
+          filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
+          map(({ payload: { fields, values } }: IFormAction) => ({
+            meta: {
+              ...fields[prefixedName],
+              touched: true,
+              visited: true,
+            },
+            value: get(values, prefixedName),
+          })),
+          tap(({ value, meta }: { meta: IFieldMeta; value: TFieldValue }) => onChange(value, meta)),
+        )
+        .subscribe();
+
+      formActionSubscription = subscribeFormAction(formActionObserver$);
+    };
+
+    const registerField = ({ value, meta }: IFieldState) => {
+      // register field
+      dispatch({
+        name: prefixedName,
+        type: FieldActionTypes.register,
+        meta,
+        payload: parseValue(value),
+      });
+    };
+
+    // should register observers before register field, otherwise the last field will lost field state
+    // this cause the last field render even if I only changed the first field
+
+    onFormStateChange();
+    onFormActionChange();
+
+    registerField({
+      value: fieldValue,
+      meta: fieldMeta,
+    });
+
+    return () => {
+      dispatch({
+        name: prefixedName,
+        type: FieldActionTypes.destroy,
+        meta: {
+          destroyValueOnUnmount: !!props.destroyValueOnUnmount,
+        },
+      });
+
+      if (formStateSubscription) {
+        formStateSubscription.unsubscribe();
+      }
+      if (formActionSubscription) {
+        formActionSubscription.unsubscribe();
+      }
+    };
+  }, []);
+
+  return props.children({
+    value: formatValue(fieldValue),
+    meta: fieldMeta,
+    name: prefixedName,
+    onChange,
+    onFocus,
+    onBlur,
+  });
+}

@@ -39,10 +39,6 @@ describe("<FormValues/>", () => {
     const firstNameInput = wrapper.find("input[name='firstName']");
     firstNameInput.simulate("change", { target: { value: "123" } });
 
-    // update wrapper
-    wrapper.instance().forceUpdate();
-    wrapper.update();
-
     const lastNameInput = wrapper.find("input[name='lastName']");
     expect(lastNameInput.length).toEqual(1);
   });

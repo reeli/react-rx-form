@@ -4,7 +4,7 @@ import { CustomInput } from "src-components";
 import { Field } from "../Field";
 import { RxForm } from "../RxForm";
 
-describe("#updateFormValues", () => {
+xdescribe("#updateFormValues", () => {
   it("should correctly set form values", () => {
     const { instance } = createForm();
     instance.updateFormValues({ firstName: "rui", address: [{ street1: "street1" }, { street2: "street2" }] });

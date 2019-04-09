@@ -1,86 +1,6 @@
-import {
-  cloneDeep,
-  Dictionary,
-  isArray,
-  isBoolean,
-  isEmpty,
-  isEqual,
-  isFunction,
-  isNumber,
-  isObject,
-  isUndefined,
-  keys,
-  mapValues,
-  omitBy,
-  reduce,
-} from "lodash";
-import * as React from "react";
-import {
-  IFieldAction,
-  IFieldInnerProps,
-  IFieldProps,
-  IFields,
-  IFormAction,
-  IFormState,
-  TErrors,
-  TFieldValue,
-  TValidator,
-} from "./interfaces";
-
-export const combineValidators = (validators: TValidator[]) => {
-  return (value: TFieldValue): string | undefined => {
-    return reduce(
-      validators,
-      (error: string | undefined, validator) => {
-        return error || validateField(value, validator);
-      },
-      undefined,
-    );
-  };
-};
-
-export const isContainError = (fields: IFields) => {
-  return reduce(fields, (result, item) => result || (item && !!item.error), false);
-};
-
-export const setErrors = (fields: IFields, errors: TErrors) => {
-  if (isEmpty(errors)) {
-    return fields;
-  }
-  return mapValues(fields, (field, name) => {
-    return {
-      ...field,
-      error: errors[name],
-    };
-  });
-};
-
-export const pickInputPropsFromFieldProps = ({ meta, ...others }: IFieldInnerProps) => {
-  return {
-    ...others,
-    error: meta ? meta.error : undefined,
-  };
-};
-
-export const isDirty = (value: TFieldValue, defaultValue: string) => {
-  return !isEqual(value, defaultValue);
-};
-
-export const validateField = (value: string | boolean, validate?: IFieldProps["validate"]) => {
-  if (isUndefined(validate)) {
-    return;
-  }
-
-  if (isArray(validate)) {
-    return combineValidators(validate)(value);
-  }
-
-  if (typeof validate === "function") {
-    return validate(value);
-  }
-
-  return;
-};
+import isPropValid from "@emotion/is-prop-valid";
+import { cloneDeep, Dictionary, isArray, isBoolean, isEmpty, isFunction, isNumber, omitBy } from "lodash";
+import { IFieldAction, IFieldInnerProps, IFieldMeta, IFormAction, IFormState } from "src/__types__/interfaces";
 
 export const log = ({
   action,
@@ -115,40 +35,23 @@ export const isEmptyValue = (value: any) => {
   return isEmpty(value);
 };
 
-export const pickValue = (evtOrValue: React.MouseEvent | TFieldValue) => {
-  const isEvent = isObject(evtOrValue) && evtOrValue.target;
-  return isEvent ? evtOrValue.target.value : evtOrValue;
-};
-
-export const setFieldsMeta = (fields: IFields) => {
-  return mapValues(fields, (field) => ({
-    ...field,
-    touched: true,
-    visited: true,
-  }));
-};
-
-export const setFieldsError = (errors: TErrors, fields: IFields): IFields => {
-  if (isEmpty(errors)) {
-    return mapValues(fields, (field) => {
-      return {
-        ...field,
-        error: undefined,
-      };
-    });
-  }
-
-  const temp = {} as IFields;
-  keys(errors).forEach((name: string) => {
-    if (fields[name]) {
-      temp[name] = {
-        ...fields[name],
-        error: errors[name],
-      };
-    }
-  });
+export const pickInputPropsFromFieldProps = <T extends { meta: IFieldMeta } = IFieldInnerProps>({
+  meta,
+  ...others
+}: T) => {
   return {
-    ...fields,
-    ...temp,
+    ...others,
+    error: meta ? meta.error : undefined,
   };
+};
+
+export const pickDOMAttrs = (props: Dictionary<any>) => {
+  const o: { [key: string]: any } = {};
+
+  for (const k in props) {
+    if (props.hasOwnProperty(k) && isPropValid(k)) {
+      o[k] = props[k];
+    }
+  }
+  return o;
 };

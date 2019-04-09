@@ -1,142 +1,104 @@
-import { cloneDeep, omit, set } from "lodash";
-import * as React from "react";
-import { Subject } from "rxjs/internal/Subject";
+import { cloneDeep } from "lodash";
+import React, { useMemo } from "react";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Observer } from "rxjs/internal/types";
-import { FormProvider } from "./FormContext";
 import {
   FieldActionTypes,
   FormActionTypes,
   IFieldAction,
-  IFieldMeta,
   IFormAction,
   IFormState,
   IFormValues,
-  IRxFormProps,
+  TChildrenRender,
   TErrors,
   TOnSubmit,
-} from "./interfaces";
-import { isContainError, log, setErrors, setFieldsError, setFieldsMeta } from "./utils";
-import { WithDidMount } from "./WithDidMount";
+} from "src/__types__/interfaces";
+import { FormProvider } from "./FormContext";
+import {
+  formFocusField,
+  formRemoveField,
+  formSetErrors,
+  formUpdateField,
+  formUpdateValues,
+  isFormValid,
+} from "./formHelpers";
+import { log } from "./utils";
 
-export class RxForm extends React.Component<IRxFormProps> {
-  private formState = {
-    fields: {},
-    values: cloneDeep(this.props.initialValues) || {},
-  } as IFormState;
-  private formStateSubject$ = new Subject();
-  private formActionSubject$ = new Subject();
+interface IRxFormInnerProps {
+  handleSubmit: (onSubmit: TOnSubmit) => (formEvent: React.FormEvent) => any;
+}
 
-  updateFormValues = (formValues: IFormValues) => {
-    this.formState = {
-      fields: this.formState.fields,
-      values: formValues,
-    };
-  };
+interface IRxFormProps {
+  children: TChildrenRender<IRxFormInnerProps>;
+  initialValues?: IFormValues;
+}
 
-  updateField = (state: IFormState, action: IFieldAction) => {
-    const { fields, values } = state;
-    const { payload, meta = {} as IFieldMeta, name } = action;
+export function RxForm(props: IRxFormProps) {
+  const { formStateSubject$, formActionSubject$ } = useMemo(() => {
     return {
-      fields: {
-        ...fields,
-        [name]: {
-          ...fields[name],
-          ...meta,
-        },
-      },
-      values: set<IFormValues>({ ...values }, name, payload), // Notice: _.set will mutate object,
+      formStateSubject$: new BehaviorSubject<IFormState>({
+        fields: {},
+        values: cloneDeep(props.initialValues) || {},
+      }),
+      formActionSubject$: new Subject(),
     };
+  }, []);
+
+  const updateFormValues = (formValues: IFormValues) => {
+    formUpdateValues(formStateSubject$.getValue())(formValues);
   };
 
-  updateFieldState = (state: IFormState, action: IFieldAction) => {
-    const { fields, values } = state;
-    const { name, meta } = action;
-    return {
-      values,
-      fields: {
-        ...fields,
-        [name]: {
-          ...meta,
-        },
-      },
-    };
-  };
-
-  onSubmitError = (errors: TErrors) => {
-    // TODO: Check if if values should be different if fields contains error
-
-    this.formState = {
-      values: this.formState.values,
-      fields: setErrors(this.formState.fields, errors),
+  const setErrors = (errors: TErrors) => {
+    const fromState = formStateSubject$.getValue();
+    const nextFormState = {
+      values: fromState.values,
+      fields: formSetErrors(errors, fromState.fields),
     };
 
-    this.formStateSubject$.next(this.formState);
+    formStateSubject$.next(nextFormState);
   };
 
-  setErrors = (errors: TErrors) => {
-    this.formState = {
-      values: this.formState.values,
-      fields: setFieldsError(errors, this.formState.fields),
-    };
-    this.formStateSubject$.next(this.formState);
+  const notifyFormActionChange = (action: IFormAction) => {
+    formActionSubject$.next(action);
   };
 
-  notifyFormActionChange = (action: IFormAction) => {
-    this.formActionSubject$.next(action);
+  const getFormValues = () => {
+    return formStateSubject$.getValue().values;
   };
 
-  getFormValues = () => {
-    return this.formState.values;
+  const getFormState = () => {
+    return formStateSubject$.getValue();
   };
 
-  getFormState = () => {
-    return this.formState;
-  };
-
-  removeField = (state: IFormState, action: IFieldAction) => {
-    if (action.meta && action.meta.destroyValueOnUnmount) {
-      return {
-        fields: omit(state.fields, action.name),
-        values: omit(state.values, action.name),
-      };
-    }
-
-    // keep values when field destroy for cross page form
-    // eg: in PageA, switch to PageB, should keep PageA fields values.
-    return {
-      ...state,
-      fields: omit(state.fields, action.name),
-    };
-  };
-
-  dispatch = (action: IFieldAction | IFormAction) => {
-    const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(this.formState);
+  const dispatch = (action: IFieldAction | IFormAction) => {
+    const formState = formStateSubject$.getValue();
+    const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(formState);
 
     switch (action.type) {
       case FieldActionTypes.register:
       case FieldActionTypes.blur:
       case FieldActionTypes.change: {
-        this.formState = this.updateField(this.formState, action as IFieldAction);
-        this.formStateSubject$.next(this.formState);
+        const nextFormState = formUpdateField(formState, action as IFieldAction);
+        formStateSubject$.next(nextFormState);
         break;
       }
       case FieldActionTypes.focus: {
-        this.formState = this.updateFieldState(this.formState, action as IFieldAction);
-        this.formStateSubject$.next(this.formState);
+        const nextFormState = formFocusField(formState, action as IFieldAction);
+        formStateSubject$.next(nextFormState);
         break;
       }
       case FieldActionTypes.destroy: {
-        this.formState = this.removeField(this.formState, action as IFieldAction);
-        this.formStateSubject$.next(this.formState);
+        const nextFormState = formRemoveField(formState, action as IFieldAction);
+        formStateSubject$.next(nextFormState);
         break;
       }
       case FormActionTypes.startSubmit: {
-        this.notifyFormActionChange(action as IFormAction);
+        notifyFormActionChange(action as IFormAction);
         break;
       }
     }
 
-    const nextState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(this.formState);
+    const nextState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(formState);
 
     log({
       action,
@@ -145,67 +107,46 @@ export class RxForm extends React.Component<IRxFormProps> {
     });
   };
 
-  subscribe = (observer: Observer<any>) => {
-    return this.formStateSubject$.subscribe(observer);
+  const subscribe = (observer: Observer<any>) => {
+    return formStateSubject$.subscribe(observer);
   };
 
-  subscribeFormAction = (observer: Observer<any>) => {
-    return this.formActionSubject$.subscribe(observer);
+  const subscribeFormAction = (observer: Observer<any>) => {
+    return formActionSubject$.subscribe(observer);
   };
 
-  updateFormState = (formState: IFormState) => {
-    this.formStateSubject$.next(formState);
-  };
-
-  handleSubmit = (onSubmit: TOnSubmit) => {
+  const handleSubmit = (onSubmit: TOnSubmit) => {
     return (evt: React.FormEvent) => {
       evt.preventDefault();
 
-      this.formState = {
-        fields: setFieldsMeta(this.formState.fields),
-        values: this.formState.values,
-      };
-
-      this.updateFormState(this.formState);
-
-      this.dispatch({
+      dispatch({
         type: FormActionTypes.startSubmit,
-        payload: this.formState,
+        payload: formStateSubject$.getValue(), // TODO: remove payload
       });
 
-      if (isContainError(this.formState.fields)) {
+      if (!isFormValid(formStateSubject$.getValue().fields)) {
         return;
       }
 
-      const values = this.getFormValues();
-      if (values) {
-        onSubmit(values, this.onSubmitError);
-      }
+      onSubmit(getFormValues(), setErrors);
     };
   };
 
-  notifyFormState = () => {
-    this.formStateSubject$.next(this.formState);
-  };
-
-  render() {
-    return (
-      <FormProvider
-        value={{
-          subscribe: this.subscribe,
-          dispatch: this.dispatch,
-          subscribeFormAction: this.subscribeFormAction,
-          updateFormValues: this.updateFormValues,
-          getFormValues: this.getFormValues,
-          getFormState: this.getFormState,
-          setErrors: this.setErrors,
-        }}
-      >
-        <WithDidMount onDidMount={this.notifyFormState} />
-        {this.props.children({
-          handleSubmit: this.handleSubmit,
-        })}
-      </FormProvider>
-    );
-  }
+  return (
+    <FormProvider
+      value={{
+        subscribe,
+        dispatch,
+        subscribeFormAction,
+        updateFormValues,
+        getFormValues,
+        getFormState,
+        setErrors,
+      }}
+    >
+      {props.children({
+        handleSubmit,
+      })}
+    </FormProvider>
+  );
 }

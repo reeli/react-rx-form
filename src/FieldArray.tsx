@@ -1,73 +1,87 @@
 import { filter, get, map, set, size, times } from "lodash";
-import * as React from "react";
-import { FormConsumer, FormProvider } from "./FormContext";
-import { IFieldArrayCoreProps, IFieldArrayCoreState, IFieldArrayProps, TFieldValue } from "./interfaces";
+import React, { useContext, useLayoutEffect, useState } from "react";
+import { TChildrenRender, TFieldValue } from "src/__types__/interfaces";
+import { FormContext, FormProvider } from "./FormContext";
 
-class FieldArrayCore extends React.Component<IFieldArrayCoreProps, IFieldArrayCoreState> {
-  componentDidMount() {
-    const fieldArrayValues = get(this.props.getFormValues(), this.props.name);
-    if (this.props.initLength) {
-      times(this.props.initLength - size(fieldArrayValues), this.add);
+type TMapper = (prefix: string, idx: number) => JSX.Element;
+
+interface IFieldArrayInnerProps {
+  add: () => any;
+  remove: (idx: number) => any;
+  each: (mapper: TMapper) => any;
+  fields: any[];
+}
+
+interface IFieldArrayProps {
+  name: string;
+  children: TChildrenRender<IFieldArrayInnerProps>;
+  initLength?: number;
+}
+
+function FieldArrayCore(props: IFieldArrayProps) {
+  const { getFormValues, updateFormValues } = useContext(FormContext);
+  const getFieldsByIdx = (): string[] => {
+    return map(get(getFormValues(), props.name), (_, idx: number) => `[${idx}]`);
+  };
+
+  const [fields, setFields] = useState(getFieldsByIdx());
+
+  useLayoutEffect(() => {
+    const fieldArrayValues = get(getFormValues(), props.name);
+    if (props.initLength) {
+      times(props.initLength - size(fieldArrayValues), add);
     }
-  }
+    return () => {};
+  }, []);
 
-  remove = (idx: number, { getFormValues, updateFormValues }: IFieldArrayCoreProps) => {
+  const remove = (idx: number) => {
     const formValues = getFormValues();
-    const newFieldArrayValues = filter(get(formValues, this.props.name), (_, n: number) => {
+    const newFieldArrayValues = filter(get(formValues, props.name), (_, n: number) => {
       return n !== idx;
     });
 
-    const nextFormValues = set(formValues, this.props.name, newFieldArrayValues);
+    const nextFormValues = set(formValues, props.name, newFieldArrayValues);
     updateFormValues(nextFormValues);
-    this.forceUpdate();
+
+    setFields(getFieldsByIdx());
   };
 
-  add = () => {
-    const formValues = this.props.getFormValues();
-    const nextFormValues = set(formValues, this.props.name, get(formValues, this.props.name, []).concat(undefined));
+  const add = () => {
+    const formValues = getFormValues();
+    const nextFormValues = set(formValues, props.name, get(formValues, props.name, []).concat(undefined));
 
-    this.props.updateFormValues(nextFormValues);
-    this.forceUpdate();
+    updateFormValues(nextFormValues);
+
+    setFields(getFieldsByIdx());
   };
 
-  formatFieldsByIdx = (fields: any[]): string[] => {
-    return map(fields, (_, idx: number) => `[${idx}]`);
-  };
-
-  each = (mapper: (prefix: string, idx: number) => React.ReactNode) => {
-    const fieldValues = get(this.props.getFormValues(), this.props.name);
+  const each = (mapper: TMapper) => {
+    const fieldValues = get(getFormValues(), props.name);
     return map(fieldValues, (_: TFieldValue, idx: number) => {
       const name = `[${idx}]`;
       return mapper(name, idx);
     });
   };
 
-  render() {
-    return this.props.children({
-      fields: this.formatFieldsByIdx(get(this.props.getFormValues(), this.props.name)),
-      add: this.add,
-      each: this.each,
-      remove: (idx: number) => this.remove(idx, this.props),
-    });
-  }
+  return props.children({
+    fields,
+    add,
+    each,
+    remove: (idx: number) => remove(idx),
+  });
 }
 
-export const FieldArray = React.forwardRef((props: IFieldArrayProps, ref?: React.Ref<any>) => (
-  <FormConsumer>
-    {(formContextValue) => (
-      <FormProvider
-        value={{
-          ...formContextValue,
-          fieldPrefix: `${formContextValue.fieldPrefix || ""}${props.name}`,
-        }}
-      >
-        <FieldArrayCore
-          {...props}
-          {...formContextValue}
-          ref={ref}
-          name={`${formContextValue.fieldPrefix || ""}${props.name}`}
-        />
-      </FormProvider>
-    )}
-  </FormConsumer>
-));
+export const FieldArray = (props: IFieldArrayProps) => {
+  const formContext = useContext(FormContext);
+  const name = `${formContext.fieldPrefix || ""}${props.name}`;
+  return (
+    <FormProvider
+      value={{
+        ...formContext,
+        fieldPrefix: name,
+      }}
+    >
+      <FieldArrayCore {...props} name={name} />
+    </FormProvider>
+  );
+};
