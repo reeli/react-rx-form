@@ -140,7 +140,6 @@ export function Field(props: IFieldProps) {
           })),
           distinctUntilChanged((next, prev) => next.meta === prev.meta && prev.value === next.value),
           tap(({ meta, value }) => {
-            console.log(meta, value);
             if (meta || value) {
               setFieldValue(value);
               setFieldMeta(meta);

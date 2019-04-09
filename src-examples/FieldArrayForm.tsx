@@ -70,7 +70,6 @@ export class FieldArrayForm extends React.Component {
           <form onSubmit={handleSubmit(this.onSubmit)}>
             <FieldArray name={"members"} initLength={1}>
               {({ fields, add, remove }) => {
-                console.log(fields, "fields");
                 return (
                   <ul>
                     <li>
