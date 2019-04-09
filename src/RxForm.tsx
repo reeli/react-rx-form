@@ -1,6 +1,6 @@
 import { cloneDeep } from "lodash";
-import React, { useEffect } from "react";
-import { Subject } from "rxjs/internal/Subject";
+import React, { useMemo } from "react";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Observer } from "rxjs/internal/types";
 import {
   FieldActionTypes,
@@ -34,23 +34,28 @@ interface IRxFormProps {
 }
 
 export function RxForm(props: IRxFormProps) {
-  let formState = {
-    fields: {},
-    values: cloneDeep(props.initialValues) || {},
-  } as IFormState;
-  const formStateSubject$ = new Subject();
-  const formActionSubject$ = new Subject();
+  const { formStateSubject$, formActionSubject$ } = useMemo(() => {
+    return {
+      formStateSubject$: new BehaviorSubject<IFormState>({
+        fields: {},
+        values: cloneDeep(props.initialValues) || {},
+      }),
+      formActionSubject$: new Subject(),
+    };
+  }, []);
 
   const updateFormValues = (formValues: IFormValues) => {
-    formState = formUpdateValues(formState)(formValues);
+    formUpdateValues(formStateSubject$.getValue())(formValues);
   };
 
   const setErrors = (errors: TErrors) => {
-    formState = {
-      values: formState.values,
-      fields: formSetErrors(errors, formState.fields),
+    const fromState = formStateSubject$.getValue();
+    const nextFormState = {
+      values: fromState.values,
+      fields: formSetErrors(errors, fromState.fields),
     };
-    formStateSubject$.next(formState);
+
+    formStateSubject$.next(nextFormState);
   };
 
   const notifyFormActionChange = (action: IFormAction) => {
@@ -58,32 +63,33 @@ export function RxForm(props: IRxFormProps) {
   };
 
   const getFormValues = () => {
-    return formState.values;
+    return formStateSubject$.getValue().values;
   };
 
   const getFormState = () => {
-    return formState;
+    return formStateSubject$.getValue();
   };
 
   const dispatch = (action: IFieldAction | IFormAction) => {
+    const formState = formStateSubject$.getValue();
     const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(formState);
 
     switch (action.type) {
       case FieldActionTypes.register:
       case FieldActionTypes.blur:
       case FieldActionTypes.change: {
-        formState = formUpdateField(formState, action as IFieldAction);
-        formStateSubject$.next(formState);
+        const nextFormState = formUpdateField(formState, action as IFieldAction);
+        formStateSubject$.next(nextFormState);
         break;
       }
       case FieldActionTypes.focus: {
-        formState = formFocusField(formState, action as IFieldAction);
-        formStateSubject$.next(formState);
+        const nextFormState = formFocusField(formState, action as IFieldAction);
+        formStateSubject$.next(nextFormState);
         break;
       }
       case FieldActionTypes.destroy: {
-        formState = formRemoveField(formState, action as IFieldAction);
-        formStateSubject$.next(formState);
+        const nextFormState = formRemoveField(formState, action as IFieldAction);
+        formStateSubject$.next(nextFormState);
         break;
       }
       case FormActionTypes.startSubmit: {
@@ -113,9 +119,11 @@ export function RxForm(props: IRxFormProps) {
     return (evt: React.FormEvent) => {
       evt.preventDefault();
 
+      const formState = formStateSubject$.getValue();
+
       dispatch({
         type: FormActionTypes.startSubmit,
-        payload: formState,
+        payload: formState, // TODO: remove payload
       });
 
       if (!isFormValid(formState.fields)) {
@@ -125,11 +133,6 @@ export function RxForm(props: IRxFormProps) {
       onSubmit(getFormValues(), setErrors);
     };
   };
-
-  // Notify formState after all field mounted, so that FormValues can get correct field initial state.
-  useEffect(() => {
-    formStateSubject$.next(formState);
-  }, []);
 
   return (
     <FormProvider
