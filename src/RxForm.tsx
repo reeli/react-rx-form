@@ -119,14 +119,12 @@ export function RxForm(props: IRxFormProps) {
     return (evt: React.FormEvent) => {
       evt.preventDefault();
 
-      const formState = formStateSubject$.getValue();
-
       dispatch({
         type: FormActionTypes.startSubmit,
-        payload: formState, // TODO: remove payload
+        payload: formStateSubject$.getValue(), // TODO: remove payload
       });
 
-      if (!isFormValid(formState.fields)) {
+      if (!isFormValid(formStateSubject$.getValue().fields)) {
         return;
       }
 
