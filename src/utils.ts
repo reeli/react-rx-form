@@ -1,5 +1,6 @@
 import isPropValid from "@emotion/is-prop-valid";
 import { cloneDeep, Dictionary, isArray, isBoolean, isEmpty, isFunction, isNumber, omitBy } from "lodash";
+import { useRef } from "react";
 import { IFieldAction, IFieldInnerProps, IFieldMeta, IFormAction, IFormState } from "src/__types__/interfaces";
 
 export const log = ({
@@ -54,4 +55,10 @@ export const pickDOMAttrs = (props: Dictionary<any>) => {
     }
   }
   return o;
+};
+
+export const useValueRef = (value: any) => {
+  const ref = useRef(null);
+  ref.current = value;
+  return ref;
 };

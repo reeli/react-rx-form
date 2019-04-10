@@ -205,10 +205,17 @@ describe("form submit", () => {
     wrapper.unmount();
   });
 
-  it("when all fields valid, expected form submit succeed", () => {
+  it("when all fields valid, expected form submit succeed with correct form values", () => {
     const wrapper = renderForm("funny");
+    wrapper.find("input").simulate("change", { target: { value: "Test1" } });
     wrapper.find("button").simulate("submit");
+
+    const firstArg = mockSubmit.mock.calls[0][0];
+    expect(firstArg).toEqual({
+      firstName: "Test1",
+    });
     expect(mockSubmit).toBeCalledTimes(1);
+
     wrapper.unmount();
   });
 

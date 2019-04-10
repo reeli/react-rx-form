@@ -18,6 +18,7 @@ import {
 } from "src/__types__/interfaces";
 import { isFieldDirty, pickValue, validateField } from "./fieldHelper";
 import { FormContext } from "./FormContext";
+import { useValueRef } from "./utils";
 
 interface IFieldProps {
   name: string;
@@ -58,6 +59,8 @@ export function Field(props: IFieldProps) {
 
   const [fieldValue, setFieldValue] = useState(defaultValue);
   const [fieldMeta, setFieldMeta] = useState({});
+  const fieldValueRef = useValueRef(fieldValue);
+  const fieldMetaRef = useValueRef(fieldMeta);
 
   const { registerField, onFocus, onChange, onBlur, formatValue } = useMemo(() => {
     const parseValue = (value: TFieldValue): TFieldValue => {
@@ -168,8 +171,8 @@ export function Field(props: IFieldProps) {
         .pipe(
           filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
           tap(() =>
-            onChange(fieldValue, {
-              ...fieldMeta,
+            onChange(fieldValueRef.current, {
+              ...(fieldMetaRef.current as any),
               visited: true,
               touched: true,
             }),
@@ -187,7 +190,7 @@ export function Field(props: IFieldProps) {
     onFormActionChange();
 
     registerField({
-      value: fieldValue,
+      value: fieldValueRef.current,
       meta: fieldMeta,
     });
 
@@ -210,7 +213,7 @@ export function Field(props: IFieldProps) {
   }, []);
 
   return props.children({
-    value: formatValue(fieldValue),
+    value: formatValue(fieldValueRef.current),
     meta: fieldMeta,
     name: prefixedName,
     onChange,
