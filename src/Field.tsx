@@ -1,5 +1,5 @@
 import { get, isUndefined } from "lodash";
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useMemo, useState } from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
@@ -59,72 +59,81 @@ export function Field(props: IFieldProps) {
   const [fieldValue, setFieldValue] = useState(defaultValue);
   const [fieldMeta, setFieldMeta] = useState({});
 
-  const onChange = (evtOrValue: React.MouseEvent | TFieldValue, otherMeta?: IFieldMeta) => {
-    const value = parseValue(pickValue(evtOrValue));
-    const dirty = isFieldDirty(value, props.defaultValue);
+  const { registerField, onFocus, onChange, onBlur, formatValue } = useMemo(() => {
+    const parseValue = (value: TFieldValue): TFieldValue => {
+      const { parse, normalize } = props;
+      if (parse && typeof parse === "function") {
+        value = parse(value);
+      }
 
-    const meta = {
-      ...otherMeta,
-      error: validateField(value, props.validate),
-      dirty,
-    } as IFieldMeta;
+      if (normalize && typeof normalize === "function") {
+        value = normalize(value);
+      }
 
-    dispatch({
-      name: prefixedName,
-      type: FieldActionTypes.change,
-      meta,
-      payload: value,
-    });
-  };
+      return value;
+    };
 
-  const onFocus = () => {
-    dispatch({
-      name: prefixedName,
-      type: FieldActionTypes.focus,
-      meta: {
-        visited: true,
+    return {
+      registerField: ({ value, meta }: IFieldState) => {
+        dispatch({
+          name: prefixedName,
+          type: FieldActionTypes.register,
+          meta,
+          payload: parseValue(value),
+        });
       },
-    });
-  };
-
-  const onBlur = (evtOrValue: React.MouseEvent | TFieldValue) => {
-    const value = pickValue(evtOrValue);
-    dispatch({
-      name: prefixedName,
-      type: FieldActionTypes.blur,
-      meta: {
-        visited: true,
-        touched: true,
+      onFocus: () => {
+        dispatch({
+          name: prefixedName,
+          type: FieldActionTypes.focus,
+          meta: {
+            visited: true,
+          },
+        });
       },
-      payload: parseValue(value),
-    });
-  };
+      onChange: (evtOrValue: React.MouseEvent | TFieldValue, otherMeta?: IFieldMeta) => {
+        const value = parseValue(pickValue(evtOrValue));
+        const dirty = isFieldDirty(value, props.defaultValue);
 
-  const parseValue = (value: TFieldValue): TFieldValue => {
-    const { parse, normalize } = props;
-    if (parse && typeof parse === "function") {
-      value = parse(value);
-    }
+        const meta = {
+          ...otherMeta,
+          error: validateField(value, props.validate),
+          dirty,
+        } as IFieldMeta;
 
-    if (normalize && typeof normalize === "function") {
-      value = normalize(value);
-    }
+        dispatch({
+          name: prefixedName,
+          type: FieldActionTypes.change,
+          meta,
+          payload: value,
+        });
+      },
+      onBlur: (evtOrValue: React.MouseEvent | TFieldValue) => {
+        const value = pickValue(evtOrValue);
+        dispatch({
+          name: prefixedName,
+          type: FieldActionTypes.blur,
+          meta: {
+            visited: true,
+            touched: true,
+          },
+          payload: parseValue(value),
+        });
+      },
+      formatValue: (value: TFieldValue): TFieldValue => {
+        const { format, normalize } = props;
+        if (format && typeof format === "function") {
+          value = format(value);
+        }
 
-    return value;
-  };
+        if (normalize && typeof normalize === "function") {
+          value = normalize(value);
+        }
 
-  const formatValue = (value: TFieldValue): TFieldValue => {
-    const { format, normalize } = props;
-    if (format && typeof format === "function") {
-      value = format(value);
-    }
-
-    if (normalize && typeof normalize === "function") {
-      value = normalize(value);
-    }
-
-    return value;
-  };
+        return value;
+      },
+    };
+  }, []);
 
   useLayoutEffect(() => {
     let formStateSubscription: Subscription | null = null;
@@ -169,16 +178,6 @@ export function Field(props: IFieldProps) {
         .subscribe();
 
       formActionSubscription = subscribeFormAction(formActionObserver$);
-    };
-
-    const registerField = ({ value, meta }: IFieldState) => {
-      // register field
-      dispatch({
-        name: prefixedName,
-        type: FieldActionTypes.register,
-        meta,
-        payload: parseValue(value),
-      });
     };
 
     // should register observers before register field, otherwise the last field will lost field state

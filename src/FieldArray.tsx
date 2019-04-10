@@ -1,5 +1,5 @@
 import { filter, get, map, set, size, times } from "lodash";
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useMemo, useState } from "react";
 import { TChildrenRender, TFieldValue } from "src/__types__/interfaces";
 import { FormContext, FormProvider } from "./FormContext";
 
@@ -23,8 +23,42 @@ function FieldArrayCore(props: IFieldArrayProps) {
   const getFieldsByIdx = (): string[] => {
     return map(get(getFormValues(), props.name), (_, idx: number) => `[${idx}]`);
   };
+  const defaultFields = getFieldsByIdx();
+  const [fields, setFields] = useState(defaultFields);
 
-  const [fields, setFields] = useState(getFieldsByIdx());
+  const { add, each, remove } = useMemo(
+    () => ({
+      remove: (idx: number) => {
+        const formValues = getFormValues();
+        const newFieldArrayValues = filter(get(formValues, props.name), (_, n: number) => {
+          return n !== idx;
+        });
+
+        const nextFormValues = set(formValues, props.name, newFieldArrayValues);
+        updateFormValues(nextFormValues);
+
+        setFields(getFieldsByIdx);
+      },
+
+      add: () => {
+        const formValues = getFormValues();
+        const nextFormValues = set(formValues, props.name, get(formValues, props.name, []).concat(undefined));
+
+        updateFormValues(nextFormValues);
+
+        setFields(getFieldsByIdx);
+      },
+
+      each: (mapper: TMapper) => {
+        const fieldValues = get(getFormValues(), props.name);
+        return map(fieldValues, (_: TFieldValue, idx: number) => {
+          const name = `[${idx}]`;
+          return mapper(name, idx);
+        });
+      },
+    }),
+    [],
+  );
 
   useLayoutEffect(() => {
     const fieldArrayValues = get(getFormValues(), props.name);
@@ -33,35 +67,6 @@ function FieldArrayCore(props: IFieldArrayProps) {
     }
     return () => {};
   }, []);
-
-  const remove = (idx: number) => {
-    const formValues = getFormValues();
-    const newFieldArrayValues = filter(get(formValues, props.name), (_, n: number) => {
-      return n !== idx;
-    });
-
-    const nextFormValues = set(formValues, props.name, newFieldArrayValues);
-    updateFormValues(nextFormValues);
-
-    setFields(getFieldsByIdx());
-  };
-
-  const add = () => {
-    const formValues = getFormValues();
-    const nextFormValues = set(formValues, props.name, get(formValues, props.name, []).concat(undefined));
-
-    updateFormValues(nextFormValues);
-
-    setFields(getFieldsByIdx());
-  };
-
-  const each = (mapper: TMapper) => {
-    const fieldValues = get(getFormValues(), props.name);
-    return map(fieldValues, (_: TFieldValue, idx: number) => {
-      const name = `[${idx}]`;
-      return mapper(name, idx);
-    });
-  };
 
   return props.children({
     fields,
