@@ -61,9 +61,6 @@
       "!**/src/__tests__/helpers/**",
       "!**/src/**/index.ts"
     ],
-    "coverageReporters": [
-      "html"
-    ],
     "coverageThreshold": {
       "global": {
         "branches": 0,
