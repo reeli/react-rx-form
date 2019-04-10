@@ -93,6 +93,7 @@ export function Field(props: IFieldProps) {
       name: prefixedName,
       type: FieldActionTypes.blur,
       meta: {
+        visited: true,
         touched: true,
       },
       payload: parseValue(value),
@@ -157,15 +158,13 @@ export function Field(props: IFieldProps) {
       formActionObserver$
         .pipe(
           filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
-          map(({ payload: { fields, values } }: IFormAction) => ({
-            meta: {
-              ...fields[prefixedName],
-              touched: true,
+          tap(() =>
+            onChange(fieldValue, {
+              ...fieldMeta,
               visited: true,
-            },
-            value: get(values, prefixedName),
-          })),
-          tap(({ value, meta }: { meta: IFieldMeta; value: TFieldValue }) => onChange(value, meta)),
+              touched: true,
+            }),
+          ),
         )
         .subscribe();
 

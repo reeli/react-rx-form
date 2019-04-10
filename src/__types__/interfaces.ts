@@ -2,7 +2,6 @@ import { Dictionary } from "lodash";
 import * as React from "react";
 import { Observer } from "rxjs/internal/types";
 
-export type TRequired<T> = { [P in keyof T]: T[P] };
 export type TChildrenRender<TProps> = (props: TProps) => JSX.Element | null;
 
 export enum FieldActionTypes {
@@ -54,10 +53,6 @@ export interface IFormContextValue {
   setErrors: (errors: TErrors) => any;
 }
 
-export interface IFieldArrayCoreState {
-  fields: any[];
-}
-
 export interface IFields {
   [fieldName: string]: IFieldMeta;
 }
@@ -71,14 +66,11 @@ export type TOnSubmit<T extends IFormValues = any> = (values: T, onSubmitError: 
 
 export interface IFormAction {
   type: string;
-  payload: {
-    fields: IFields;
-    values: IFormValues;
-  };
 }
 
 export enum FormActionTypes {
   startSubmit = "@@rx-form/form/START_SUBMIT",
+  endSubmit = "@@rx-form/form/END_SUBMIT",
 }
 
 export interface IFormState {

@@ -121,7 +121,6 @@ export function RxForm(props: IRxFormProps) {
 
       dispatch({
         type: FormActionTypes.startSubmit,
-        payload: formStateSubject$.getValue(), // TODO: remove payload
       });
 
       if (!isFormValid(formStateSubject$.getValue().fields)) {
@@ -129,6 +128,10 @@ export function RxForm(props: IRxFormProps) {
       }
 
       onSubmit(getFormValues(), setErrors);
+
+      dispatch({
+        type: FormActionTypes.endSubmit,
+      });
     };
   };
 
