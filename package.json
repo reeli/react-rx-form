@@ -22,7 +22,7 @@
     "dev": "webpack-dev-server --config=webpack.config.ts --port=9000 --compress --open --history-api-fallback",
     "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts",
     "deploy": "./script/deploy.sh",
-    "test": "tsc --noEmit && jest --coverage",
+    "test": "tsc --noEmit && jest",
     "prepare": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf module && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json"
   },
   "lint-staged": {
@@ -57,22 +57,16 @@
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/src/**/*.{ts,tsx}",
-      "!**/src/__tests__/helpers/**",
-      "!**/src/**/index.ts"
+      "src/**/*.{ts,tsx}"
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 0,
-        "functions": 0,
-        "lines": 0,
-        "statements": 0
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
       }
-    },
-    "coveragePathIgnorePatterns": [
-      ".*\\.d\\.ts",
-      "<rootDir>/node_modules/"
-    ]
+    }
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^0.7.3",
@@ -110,7 +104,7 @@
     "highlight.js": "9.14.2",
     "html-webpack-plugin": "4.0.0-alpha",
     "husky": "1.3.1",
-    "jest": "24.7.1",
+    "jest": "23.6.0",
     "lint-staged": "8.1.3",
     "lodash-es": "^4.17.11",
     "markdown-loader": "5.0.0",
