@@ -43,7 +43,7 @@
     "modulePaths": [
       "<rootDir>"
     ],
-    "testRegex": "((\\.|/)(test|spec))\\.(tsx?)$",
+    "testRegex": ".*/__tests__/.+\\.(generator|test|spec)\\.(ts|tsx)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
