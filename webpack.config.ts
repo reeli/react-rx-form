@@ -1,7 +1,7 @@
 import * as config from "config";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import * as path from "path";
-import UglifyJsPlugin from "uglifyjs-webpack-plugin";
+import TerserPlugin from "terser-webpack-plugin";
 import * as webpack from "webpack";
 
 const BASE_DIRS = {
@@ -96,10 +96,10 @@ const webpackConfig: webpack.Configuration = {
       },
     },
     minimizer: [
-      new UglifyJsPlugin({
+      new TerserPlugin({
         cache: true,
         parallel: true,
-        uglifyOptions: {
+        terserOptions: {
           ecma: 5, // check if the code for uglify is ES5, especially for npm packages in node_modules
           mangle: true,
           compress: true,
