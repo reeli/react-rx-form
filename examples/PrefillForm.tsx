@@ -1,15 +1,15 @@
 import Button from "@material-ui/core/Button/Button";
 import FormControl from "@material-ui/core/FormControl/FormControl";
 import { Field, FormValues, RxForm } from "@react-rx/form";
+import { CustomCheckbox } from "guide/components/CustomCheckbox";
+import { CustomInput } from "guide/components/CustomInput";
 import React from "react";
-import { CustomCheckbox } from "src-components/CustomCheckbox";
-import { CustomInput } from "src-components/CustomInput";
-import { DebounceInput } from "../src-components/DebounceInput";
-import { required } from "../src-modules/utils/validations";
+import { DebounceInput } from "../guide/components/DebounceInput";
+import { required } from "../guide/utils/validations";
 
 export class PrefillForm extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/PrefillForm.tsx`);
+    return require(`!!raw-loader!../examples/PrefillForm.tsx`);
   }
 
   form: any;

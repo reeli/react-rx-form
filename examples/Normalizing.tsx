@@ -1,6 +1,6 @@
 import { Field, RxForm } from "@react-rx/form";
 import * as React from "react";
-import { required } from "../src-modules/utils/validations";
+import { required } from "../guide/utils/validations";
 
 const onlyNumber = (value: any) => {
   return value ? value.replace(/[^\d]/g, "") : value;
@@ -15,7 +15,7 @@ const between0And99 = (value: any) => {
 
 export class Normalizing extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/Normalizing.tsx`);
+    return require(`!!raw-loader!../examples/Normalizing.tsx`);
   }
 
   onSubmit = (values: any) => {

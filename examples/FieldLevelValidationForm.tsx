@@ -1,10 +1,10 @@
 import { Field, RxForm } from "@react-rx/form";
 import * as React from "react";
-import { maxLength5, required } from "../src-modules/utils/validations";
+import { maxLength5, required } from "../guide/utils/validations";
 
 export class FieldLevelValidationForm extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/FieldLevelValidationForm.tsx`);
+    return require(`!!raw-loader!../examples/FieldLevelValidationForm.tsx`);
   }
 
   onSubmit = (values: any) => {

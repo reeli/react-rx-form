@@ -2,7 +2,7 @@ import { dropEmpty, Field, IFormState, RxForm, WithForm } from "@react-rx/form";
 import { get, isEmpty, isEqual } from "lodash";
 import * as React from "react";
 import { tap } from "rxjs/operators";
-import { FormStateObservable } from "../src-components/FormStateObservable";
+import { FormStateObservable } from "../guide/components/FormStateObservable";
 
 const createValidate = (formState: IFormState) => {
   if (get(formState, "fields.username.touched") && get(formState, "fields.password.touched")) {
@@ -13,7 +13,7 @@ const createValidate = (formState: IFormState) => {
 
 export class LinkedFieldsDemo extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/LinkedFieldsDemo.tsx`);
+    return require(`!!raw-loader!../examples/LinkedFieldsDemo.tsx`);
   }
 
   onSubmit = (values: any) => {

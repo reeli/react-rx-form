@@ -5,8 +5,7 @@ import TerserPlugin from "terser-webpack-plugin";
 import * as webpack from "webpack";
 
 const BASE_DIRS = {
-  app: "./src-guide",
-  modules: "./src-modules",
+  app: "./guide",
   dist: "./public",
 };
 
@@ -114,7 +113,6 @@ const webpackConfig: webpack.Configuration = {
     alias: {
       "@react-rx/form": "src",
       lodash: "lodash-es",
-      config: path.resolve(__dirname, BASE_DIRS.modules, "./config/index.ts"),
     },
     extensions: [".tsx", ".ts", ".jsx", ".js"],
     modules: [__dirname, "node_modules"],

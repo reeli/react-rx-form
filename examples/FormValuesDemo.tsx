@@ -1,12 +1,22 @@
-import { Field, RxForm } from "@react-rx/form";
+import { Field, FormValues, IFormValues, RxForm } from "@react-rx/form";
 import * as React from "react";
 
-export class SimpleForm extends React.Component {
+type TSubmitFormValues<T extends IFormValues> = { [P in keyof T]: T[P] };
+
+interface IValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  checkbox: string;
+  sex: string;
+}
+
+export class FormValuesDemo extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/SimpleForm.tsx`);
+    return require(`!!raw-loader!../examples/FormValuesDemo.tsx`);
   }
 
-  onSubmit = (values: any) => {
+  onSubmit = (values: TSubmitFormValues<IValues>) => {
     alert(JSON.stringify(values, null, 2));
   };
 
@@ -15,32 +25,40 @@ export class SimpleForm extends React.Component {
       <RxForm>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit(this.onSubmit)}>
-            <Field name="firstName">
-              {({ value = "", onChange, onFocus, onBlur, name }) => (
-                <input
-                  name={name}
-                  value={value}
-                  onChange={(e) => onChange(e.target.value)}
-                  onFocus={onFocus}
-                  onBlur={onBlur}
-                  type="text"
-                  placeholder="First Name"
-                />
+            <FormValues>
+              {({ formValues }) => (
+                <>
+                  <Field name="firstName">
+                    {({ value = "", onChange, onFocus, onBlur, name }) => (
+                      <input
+                        name={name}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        onFocus={onFocus}
+                        onBlur={onBlur}
+                        type="text"
+                        placeholder="First Name"
+                      />
+                    )}
+                  </Field>
+                  {formValues.firstName && (
+                    <Field name="lastName" destroyValueOnUnmount={true}>
+                      {({ value = "", onChange, onFocus, onBlur, name }) => (
+                        <input
+                          name={name}
+                          value={value}
+                          onChange={(e) => onChange(e.target.value)}
+                          onFocus={onFocus}
+                          onBlur={onBlur}
+                          type="password"
+                          placeholder="Last Name"
+                        />
+                      )}
+                    </Field>
+                  )}
+                </>
               )}
-            </Field>
-            <Field name="lastName">
-              {({ value = "", onChange, onFocus, onBlur, name }) => (
-                <input
-                  name={name}
-                  value={value}
-                  onChange={(e) => onChange(e.target.value)}
-                  onFocus={onFocus}
-                  onBlur={onBlur}
-                  type="password"
-                  placeholder="Last Name"
-                />
-              )}
-            </Field>
+            </FormValues>
             <Field name="email">
               {({ value = "", onFocus, onBlur, onChange }) => (
                 <input

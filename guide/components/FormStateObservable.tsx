@@ -1,7 +1,7 @@
 import { IFormState } from "@react-rx/form";
 import * as React from "react";
 import { Observable, Subject, Subscription } from "rxjs";
-import { FormConsumer } from "../src/FormContext";
+import { FormConsumer } from "../../src/FormContext";
 
 class FormStateObservableCore extends React.Component<any> {
   subscription: Subscription | null = null;

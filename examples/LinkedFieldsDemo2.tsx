@@ -1,12 +1,12 @@
 import Button from "@material-ui/core/Button/Button";
 import { Field, pickInputPropsFromFieldProps, RxForm, WithForm } from "@react-rx/form";
+import { CustomInput } from "guide/components/CustomInput";
 import { isEmpty } from "lodash";
 import * as React from "react";
-import { CustomInput } from "src-components/CustomInput";
 
 export class LinkedFieldsDemo2 extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/LinkedFieldsDemo2.tsx`);
+    return require(`!!raw-loader!../examples/LinkedFieldsDemo2.tsx`);
   }
 
   onSubmit = (values: any, onSubmitError: any) => {

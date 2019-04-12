@@ -3,7 +3,7 @@ import * as React from "react";
 
 export class Format extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/Format.tsx`);
+    return require(`!!raw-loader!../examples/Format.tsx`);
   }
 
   onSubmit = (values: any) => {

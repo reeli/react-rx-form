@@ -1,4 +1,4 @@
-import { maxLength5, required } from "../../src-modules/utils/validations";
+import { maxLength5, required } from "../../guide/utils/validations";
 import { combineValidators, isFieldDirty, pickValue, validateField } from "../fieldHelper";
 
 describe("#combineValidators", () => {

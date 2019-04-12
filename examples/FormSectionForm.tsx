@@ -4,11 +4,11 @@ import { FormSection } from "../src/FormSection";
 
 export class FormSectionForm extends React.Component {
   static tsc() {
-    return require(`!!raw-loader!../src-examples/FormSectionForm.tsx`);
+    return require(`!!raw-loader!../examples/FormSectionForm.tsx`);
   }
 
   static doc() {
-    return require(`!raw-loader!markdown-loader!../src-examples/FormSectionForm.md`);
+    return require(`!raw-loader!markdown-loader!../examples/FormSectionForm.md`);
   }
 
   onSubmit = (values: any) => {

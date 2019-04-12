@@ -1,7 +1,7 @@
 import { mount } from "enzyme";
 import * as React from "react";
 import { IFieldInnerProps, IFieldMeta } from "src/__types__/interfaces";
-import { maxLength5, required } from "../../src-modules/utils/validations";
+import { maxLength5, required } from "../../guide/utils/validations";
 import { Field } from "../Field";
 import { FormValues } from "../FormValues";
 import { RxForm } from "../RxForm";

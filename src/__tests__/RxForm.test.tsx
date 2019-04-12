@@ -1,6 +1,6 @@
 import { mount } from "enzyme";
+import { CustomInput } from "guide/components/CustomInput";
 import * as React from "react";
-import { CustomInput } from "src-components";
 import { Field } from "../Field";
 import { RxForm } from "../RxForm";
 

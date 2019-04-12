@@ -1,16 +1,16 @@
 import Button from "@material-ui/core/Button/Button";
 import { Field, FieldArray, RxForm } from "@react-rx/form";
+import { required } from "guide/utils/validations";
 import { isEmpty } from "lodash";
 import * as React from "react";
-import { required } from "src-modules/utils/validations";
 
 export class FieldArrayForm extends React.Component {
   static tsc() {
-    return require(`!raw-loader!../src-examples/FieldArrayForm.tsx`);
+    return require(`!raw-loader!../examples/FieldArrayForm.tsx`);
   }
 
   static doc() {
-    return require(`!raw-loader!markdown-loader!../src-examples/FieldArrayForm.md`);
+    return require(`!raw-loader!markdown-loader!../examples/FieldArrayForm.md`);
   }
 
   onSubmit = (values: any, onSubmitError: any) => {
