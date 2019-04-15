@@ -10,9 +10,7 @@
     "**/__tests__/**",
     "**/helpers/**",
     "webpack.config.ts",
-    "src-components",
-    "src-examples",
-    "src-guide",
-    "src-modules"
+    "guide",
+    "examples"
   ]
 }
