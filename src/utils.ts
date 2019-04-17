@@ -1,7 +1,7 @@
 import isPropValid from "@emotion/is-prop-valid";
 import { cloneDeep, Dictionary, isArray, isBoolean, isEmpty, isFunction, isNumber, omitBy } from "lodash";
 import { useRef } from "react";
-import { IFieldAction, IFieldInnerProps, IFieldMeta, IFormAction, IFormState } from "src/__types__/interfaces";
+import { IFieldAction, IFieldInnerProps, IFieldMeta, IFormAction, IFormState } from "./__types__/interfaces";
 
 export const log = ({
   action,

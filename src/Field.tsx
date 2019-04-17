@@ -15,7 +15,7 @@ import {
   TChildrenRender,
   TFieldValue,
   TValidator,
-} from "src/__types__/interfaces";
+} from "./__types__/interfaces";
 import { isFieldDirty, pickValue, validateField } from "./fieldHelper";
 import { FormContext } from "./FormContext";
 import { useValueRef } from "./utils";

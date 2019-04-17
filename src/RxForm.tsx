@@ -12,7 +12,7 @@ import {
   TChildrenRender,
   TErrors,
   TOnSubmit,
-} from "src/__types__/interfaces";
+} from "./__types__/interfaces";
 import { FormProvider } from "./FormContext";
 import {
   formFocusField,
