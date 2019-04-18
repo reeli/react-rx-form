@@ -3,8 +3,8 @@ import { useContext, useLayoutEffect, useState } from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
-import { IFormContextValue, IFormState, IFormValues, TChildrenRender } from "./__types__/interfaces";
 import { FormContext } from "./FormContext";
+import { IFormContextValue, IFormState, IFormValues, TChildrenRender } from "./interfaces";
 
 interface IFormValuesInnerProps {
   formValues: IFormValues;

@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { IFormContextValue, IFormState } from "./__types__/interfaces";
+import { IFormContextValue, IFormState } from "./interfaces";
 
 const FormContext = createContext<IFormContextValue>({
   subscribe: (_: any) => {},

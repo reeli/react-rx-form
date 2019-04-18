@@ -3,6 +3,8 @@ import React, { useContext, useLayoutEffect, useMemo, useState } from "react";
 import { Subject } from "rxjs/internal/Subject";
 import { Subscription } from "rxjs/internal/Subscription";
 import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
+import { isFieldDirty, pickValue, validateField } from "./fieldHelper";
+import { FormContext } from "./FormContext";
 import {
   FieldActionTypes,
   FormActionTypes,
@@ -15,9 +17,7 @@ import {
   TChildrenRender,
   TFieldValue,
   TValidator,
-} from "./__types__/interfaces";
-import { isFieldDirty, pickValue, validateField } from "./fieldHelper";
-import { FormContext } from "./FormContext";
+} from "./interfaces";
 import { useValueRef } from "./utils";
 
 interface IFieldProps {

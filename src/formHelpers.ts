@@ -1,5 +1,5 @@
 import { isEmpty, keys, mapValues, omit, reduce, set } from "lodash";
-import { IFieldAction, IFieldMeta, IFields, IFormState, IFormValues, TErrors } from "./__types__/interfaces";
+import { IFieldAction, IFieldMeta, IFields, IFormState, IFormValues, TErrors } from "./interfaces";
 
 export const formUpdateField = (state: IFormState, action: IFieldAction) => {
   const { fields, values } = state;

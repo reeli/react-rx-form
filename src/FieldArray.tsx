@@ -1,7 +1,7 @@
 import { filter, get, map, set, size, times } from "lodash";
 import React, { useContext, useLayoutEffect, useMemo, useState } from "react";
-import { TChildrenRender, TFieldValue } from "./__types__/interfaces";
 import { FormContext, FormProvider } from "./FormContext";
+import { TChildrenRender, TFieldValue } from "./interfaces";
 
 type TMapper = (prefix: string, idx: number) => JSX.Element;
 

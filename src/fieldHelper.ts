@@ -1,6 +1,6 @@
 import { isArray, isEqual, isObject, isUndefined, reduce } from "lodash";
 
-import { TFieldValue, TValidator } from "./__types__/interfaces";
+import { TFieldValue, TValidator } from "./interfaces";
 
 export const isFieldDirty = (value: TFieldValue, defaultValue: string) => {
   return !isEqual(value, defaultValue);

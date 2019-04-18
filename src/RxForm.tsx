@@ -2,6 +2,15 @@ import { cloneDeep } from "lodash";
 import React, { useMemo } from "react";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Observer } from "rxjs/internal/types";
+import { FormProvider } from "./FormContext";
+import {
+  formFocusField,
+  formRemoveField,
+  formSetErrors,
+  formUpdateField,
+  formUpdateValues,
+  isFormValid,
+} from "./formHelpers";
 import {
   FieldActionTypes,
   FormActionTypes,
@@ -12,16 +21,7 @@ import {
   TChildrenRender,
   TErrors,
   TOnSubmit,
-} from "./__types__/interfaces";
-import { FormProvider } from "./FormContext";
-import {
-  formFocusField,
-  formRemoveField,
-  formSetErrors,
-  formUpdateField,
-  formUpdateValues,
-  isFormValid,
-} from "./formHelpers";
+} from "./interfaces";
 import { log } from "./utils";
 
 interface IRxFormInnerProps {
