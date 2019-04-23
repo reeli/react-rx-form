@@ -62,7 +62,7 @@ export function Field(props: IFieldProps) {
   const fieldValueRef = useValueRef(fieldValue);
   const fieldMetaRef = useValueRef(fieldMeta);
 
-  const { registerField, onFocus, onChange, onBlur, formatValue } = useMemo(() => {
+  const { registerField, triggerChange, onFocus, onChange, onBlur, formatValue } = useMemo(() => {
     const parseValue = (value: TFieldValue): TFieldValue => {
       const { parse, normalize } = props;
       if (parse && typeof parse === "function") {
@@ -74,6 +74,24 @@ export function Field(props: IFieldProps) {
       }
 
       return value;
+    };
+
+    const triggerChange = (evtOrValue: React.MouseEvent | TFieldValue, otherMeta?: IFieldMeta) => {
+      const value = parseValue(pickValue(evtOrValue));
+      const dirty = isFieldDirty(value, props.defaultValue);
+
+      const meta = {
+        ...otherMeta,
+        error: validateField(value, props.validate),
+        dirty,
+      } as IFieldMeta;
+
+      dispatch({
+        name: prefixedName,
+        type: FieldActionTypes.change,
+        meta,
+        payload: value,
+      });
     };
 
     return {
@@ -94,23 +112,8 @@ export function Field(props: IFieldProps) {
           },
         });
       },
-      onChange: (evtOrValue: React.MouseEvent | TFieldValue, otherMeta?: IFieldMeta) => {
-        const value = parseValue(pickValue(evtOrValue));
-        const dirty = isFieldDirty(value, props.defaultValue);
-
-        const meta = {
-          ...otherMeta,
-          error: validateField(value, props.validate),
-          dirty,
-        } as IFieldMeta;
-
-        dispatch({
-          name: prefixedName,
-          type: FieldActionTypes.change,
-          meta,
-          payload: value,
-        });
-      },
+      triggerChange,
+      onChange: (evtOrValue: React.MouseEvent | TFieldValue) => triggerChange(evtOrValue),
       onBlur: (evtOrValue: React.MouseEvent | TFieldValue) => {
         const value = pickValue(evtOrValue);
         dispatch({
@@ -171,7 +174,7 @@ export function Field(props: IFieldProps) {
         .pipe(
           filter(({ type }: IFormAction) => type === FormActionTypes.startSubmit),
           tap(() =>
-            onChange(fieldValueRef.current, {
+            triggerChange(fieldValueRef.current, {
               ...(fieldMetaRef.current as any),
               visited: true,
               touched: true,
