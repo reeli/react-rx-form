@@ -16,6 +16,7 @@
     "trailing-comma": true,
     "no-implicit-dependencies": false,
     "no-console": false,
-    "max-classes-per-file": false
+    "max-classes-per-file": false,
+    "no-shadowed-variable": false
   }
 }
