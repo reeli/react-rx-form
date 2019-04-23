@@ -68,12 +68,12 @@
       }
     }
   },
-  "dependencies": {
-    "@emotion/is-prop-valid": "^0.7.3",
-    "lodash": "^4.17.11",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "rxjs": "^6.4.0"
+  "peerDependencies": {
+    "react": "16.8.x",
+    "react-dom": "16.8.x",
+    "rxjs": "6.4.x",
+    "@emotion/is-prop-valid": "0.7.x",
+    "lodash": "4.17.x"
   },
   "devDependencies": {
     "@material-ui/core": "3.9.2",
