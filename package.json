@@ -4,7 +4,7 @@
   "description": "rx form for react, use typescript for development",
   "main": "lib/index.js",
   "module": "module/index.js",
-  "types": "module/index.d.ts",
+  "types": "src/index.ts",
   "files": [
     "lib",
     "module",
