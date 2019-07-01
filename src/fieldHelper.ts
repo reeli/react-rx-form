@@ -35,6 +35,6 @@ export const combineValidators = (validators: TValidator[]) => {
 };
 
 export const pickValue = (evtOrValue: MouseEvent | TFieldValue) => {
-  const isEvent = isObject(evtOrValue) && evtOrValue.target;
+  const isEvent = isObject(evtOrValue) && (evtOrValue as any).target;
   return isEvent ? evtOrValue.target.value : evtOrValue;
 };
