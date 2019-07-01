@@ -72,11 +72,11 @@
     "react": "16.8.x",
     "react-dom": "16.8.x",
     "rxjs": "6.4.x",
-    "@emotion/is-prop-valid": "0.7.x",
+    "@emotion/is-prop-valid": "0.7.x || 0.8.x",
     "lodash": "4.17.x"
   },
   "devDependencies": {
-    "@emotion/is-prop-valid": "0.7.3",
+    "@emotion/is-prop-valid": "0.8.2",
     "@material-ui/core": "3.9.2",
     "@material-ui/icons": "3.0.2",
     "@types/axios-mock-adapter": "1.10.0",
