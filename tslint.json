@@ -17,6 +17,7 @@
     "no-implicit-dependencies": false,
     "no-console": false,
     "max-classes-per-file": false,
-    "no-shadowed-variable": false
+    "no-shadowed-variable": false,
+    "no-var-requires": false
   }
 }
