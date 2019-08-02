@@ -51,20 +51,21 @@ export function Field(props: IFieldProps) {
   const { dispatch, subscribe, subscribeFormAction, getFormValues, fieldPrefix } = useContext(FormContext);
   const prefixedName = `${fieldPrefix || ""}${props.name}`;
 
-  const defaultValue = getFieldValue({
+  const defaultFieldValue = getFieldValue({
     defaultValue: props.defaultValue,
     formValues: getFormValues(),
     prefixedName,
   });
 
-  const [fieldValue, setFieldValue] = useState(defaultValue);
+  const [fieldValue, setFieldValue] = useState(defaultFieldValue);
   const [fieldMeta, setFieldMeta] = useState({});
   const fieldValueRef = useValueRef(fieldValue);
   const fieldMetaRef = useValueRef(fieldMeta);
+  const propsRef = useValueRef(props);
 
   const { registerField, triggerChange, onFocus, onChange, onBlur, formatValue } = useMemo(() => {
     const parseValue = (value: TFieldValue): TFieldValue => {
-      const { parse, normalize } = props;
+      const { parse, normalize } = propsRef.current || ({} as any);
       if (parse && typeof parse === "function") {
         value = parse(value);
       }
@@ -77,12 +78,13 @@ export function Field(props: IFieldProps) {
     };
 
     const triggerChange = (evtOrValue: React.MouseEvent | TFieldValue, otherMeta?: IFieldMeta) => {
+      const { validate } = propsRef.current || ({} as any);
       const value = parseValue(pickValue(evtOrValue));
-      const dirty = isFieldDirty(value, props.defaultValue);
+      const dirty = isFieldDirty(value, defaultFieldValue); // use `defaultValue` here previously
 
       const meta = {
         ...otherMeta,
-        error: validateField(value, props.validate),
+        error: validateField(value, validate),
         dirty,
       } as IFieldMeta;
 
@@ -127,7 +129,7 @@ export function Field(props: IFieldProps) {
         });
       },
       formatValue: (value: TFieldValue): TFieldValue => {
-        const { format, normalize } = props;
+        const { format, normalize } = propsRef.current || ({} as any);
         if (format && typeof format === "function") {
           value = format(value);
         }
@@ -194,7 +196,7 @@ export function Field(props: IFieldProps) {
 
     registerField({
       value: fieldValueRef.current,
-      meta: fieldMeta,
+      meta: fieldMetaRef.current as any,
     });
 
     return () => {
@@ -202,7 +204,7 @@ export function Field(props: IFieldProps) {
         name: prefixedName,
         type: FieldActionTypes.destroy,
         meta: {
-          destroyValueOnUnmount: !!props.destroyValueOnUnmount,
+          destroyValueOnUnmount: (propsRef.current || ({} as any)).destroyValueOnUnmount,
         },
       });
 
