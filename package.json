@@ -89,7 +89,7 @@
     "@types/jest": "24.0.15",
     "@types/lodash": "4.14.135",
     "@types/lodash-es": "4.17.1",
-    "@types/react": "16.8.2",
+    "@types/react": "16.9.2",
     "@types/react-dom": "16.8.0",
     "@types/react-redux": "7.0.1",
     "@types/react-router": "4.4.3",
