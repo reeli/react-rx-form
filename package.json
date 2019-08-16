@@ -75,7 +75,7 @@
     "react-dom": "16.9.x",
     "rxjs": "6.5.x",
     "@emotion/is-prop-valid": "0.8.x",
-    "lodash": "4.17.x"
+    "lodash": ">=4.17.13"
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "7.2.0",
@@ -112,7 +112,7 @@
     "husky": "3.0.3",
     "jest": "24.9.0",
     "lint-staged": "9.2.1",
-    "lodash": "4.17.11",
+    "lodash": "4.17.15",
     "lodash-es": "4.17.15",
     "markdown-loader": "5.1.0",
     "prettier": "1.18.2",
