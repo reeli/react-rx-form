@@ -10,43 +10,43 @@ import { Route } from "react-router";
 import { GettingStart } from "../examples/GettingStart";
 import { WithHighlight } from "./components/WithHighlight";
 
-const PageComp = ({ Comp, pageName }: { Comp: any; pageName: string }) => (
-  <React.Fragment>
-    <AppBar position="sticky">
-      <Toolbar>
-        <Typography variant="title" color="inherit">
-          {pageName}
-        </Typography>
-      </Toolbar>
-    </AppBar>
-    <Card elevation={0}>
-      <CardHeader title={<Typography variant="title">Form</Typography>} />
-      <CardContent>
-        <Comp />
-      </CardContent>
-      <CardHeader title={<Typography variant="title">API</Typography>} />
-      <CardContent>
-        {Comp.doc && (
-          <WithHighlight>
-            <Typography component={"div"}>
-              <div dangerouslySetInnerHTML={{ __html: Comp.doc() }} />
-            </Typography>
-          </WithHighlight>
-        )}
-      </CardContent>
-      <CardHeader title={<Typography variant="title">Code</Typography>} />
-      <CardContent>
-        {Comp.tsc && (
-          <WithHighlight>
-            <pre>
-              <code>{Comp.tsc()}</code>
-            </pre>
-          </WithHighlight>
-        )}
-      </CardContent>
-    </Card>
-  </React.Fragment>
-);
+const PageComp = ({ Comp, pageName }: { Comp: any; pageName: string }) => {
+  return (
+    <>
+      <AppBar position="sticky" style={{ background: "#3f51b5", color: "#fff" }}>
+        <Toolbar>
+          <Typography variant="h6">{pageName}</Typography>
+        </Toolbar>
+      </AppBar>
+      <Card elevation={0}>
+        <CardHeader title={<Typography variant="subtitle1">Form</Typography>} />
+        <CardContent>
+          <Comp />
+        </CardContent>
+        <CardHeader title={<Typography variant="subtitle1">API</Typography>} />
+        <CardContent>
+          {Comp.doc && (
+            <WithHighlight>
+              <Typography component={"div"}>
+                <div dangerouslySetInnerHTML={{ __html: Comp.doc().default }} />
+              </Typography>
+            </WithHighlight>
+          )}
+        </CardContent>
+        <CardHeader title={<Typography variant="subtitle1">Code</Typography>} />
+        <CardContent>
+          {Comp.tsc && (
+            <WithHighlight>
+              <pre>
+                <code>{Comp.tsc().default}</code>
+              </pre>
+            </WithHighlight>
+          )}
+        </CardContent>
+      </Card>
+    </>
+  );
+};
 
 export const req = (require as any).context("../examples", true, /\.tsx/);
 let routes: any[] = [];
@@ -55,11 +55,16 @@ req.keys().forEach((key: string) => {
 
   const route = {
     path: key.split(".")[1],
-    component: () =>
-      map(module, (Comp, i) => {
-        const pageName = key.split(".")[1].split("/")[1];
-        return <PageComp Comp={Comp} pageName={pageName} key={i} />;
-      }),
+    component: () => {
+      return (
+        <>
+          {map(module, (Comp, i) => {
+            const pageName = key.split(".")[1].split("/")[1];
+            return <PageComp Comp={Comp} pageName={pageName} key={i} />;
+          })}
+        </>
+      );
+    },
   };
 
   routes = routes.concat(route);

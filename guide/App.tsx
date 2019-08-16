@@ -1,4 +1,4 @@
-import createBrowserHistory from "history/createBrowserHistory";
+import { createBrowserHistory } from "history";
 import * as React from "react";
 import { Provider } from "react-redux";
 import { Router } from "react-router";
@@ -17,7 +17,7 @@ export class App extends React.Component {
           <Router history={history}>
             <>
               <Nav />
-              <div style={{ flex: 1, marginLeft: 210 }}>
+              <div style={{ flex: 1, marginLeft: 215 }}>
                 <AppRoutes />
               </div>
             </>
