@@ -1,4 +1,4 @@
-import Button from "@material-ui/core/Button/Button";
+import { Button } from "@material-ui/core";
 import { Field, pickInputPropsFromFieldProps, RxForm, WithForm } from "@react-rx/form";
 import { CustomInput } from "guide/components/CustomInput";
 import { isEmpty } from "lodash";

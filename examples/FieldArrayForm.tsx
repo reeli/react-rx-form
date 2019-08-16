@@ -1,4 +1,4 @@
-import Button from "@material-ui/core/Button/Button";
+import { Button } from "@material-ui/core";
 import { Field, FieldArray, RxForm } from "@react-rx/form";
 import { required } from "guide/utils/validations";
 import { isEmpty } from "lodash";
@@ -32,14 +32,14 @@ export class FieldArrayForm extends React.Component {
     return (
       <FieldArray name={`${member}.hobbies`}>
         {({ fields, add, remove }) => (
-          <ul>
-            <li>
-              <button onClick={() => add()} type={"button"}>
+          <div style={{ marginTop: 15 }}>
+            <div>
+              <Button onClick={() => add()} type={"button"} variant={"outlined"}>
                 add hobbies
-              </button>
-            </li>
+              </Button>
+            </div>
             {fields.map((hobby, idx) => (
-              <div key={idx}>
+              <div key={idx} style={{ marginTop: 15 }}>
                 <Field name={hobby} validate={required()}>
                   {({ name, value = "", onChange, meta: { error } }) => (
                     <div>
@@ -54,10 +54,12 @@ export class FieldArrayForm extends React.Component {
                     </div>
                   )}
                 </Field>
-                <div onClick={() => remove(idx)}>remove</div>
+                <Button onClick={() => remove(idx)} color={"secondary"} style={{ marginTop: 15 }}>
+                  remove
+                </Button>
               </div>
             ))}
-          </ul>
+          </div>
         )}
       </FieldArray>
     );
@@ -71,14 +73,14 @@ export class FieldArrayForm extends React.Component {
             <FieldArray name={"members"} initLength={1}>
               {({ fields, add, remove }) => {
                 return (
-                  <ul>
-                    <li>
-                      <button type="button" onClick={() => add()}>
+                  <div>
+                    <div>
+                      <Button type="button" onClick={() => add()} variant={"outlined"}>
                         Add member
-                      </button>
-                    </li>
+                      </Button>
+                    </div>
                     {fields.map((member, idx) => (
-                      <li key={member}>
+                      <div key={member}>
                         <h3>{`member${idx + 1}`}</h3>
                         <Field name={`${member}.firstName`} validate={required()}>
                           {({ name, value = "", onChange, meta: { error } }) => (
@@ -108,17 +110,19 @@ export class FieldArrayForm extends React.Component {
                             </div>
                           )}
                         </Field>
-                        <button type="button" onClick={() => remove(idx)}>
+                        <Button type="button" onClick={() => remove(idx)} style={{ marginTop: 15 }} color={"secondary"}>
                           Remove members
-                        </button>
+                        </Button>
                         {this.renderHobbies(member)}
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 );
               }}
             </FieldArray>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" variant={"outlined"} color={"primary"} style={{ marginTop: 15 }}>
+              Submit
+            </Button>
           </form>
         )}
       </RxForm>

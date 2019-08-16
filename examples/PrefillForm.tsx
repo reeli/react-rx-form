@@ -1,5 +1,4 @@
-import Button from "@material-ui/core/Button/Button";
-import FormControl from "@material-ui/core/FormControl/FormControl";
+import { Button, FormControl } from "@material-ui/core";
 import { Field, FormValues, RxForm } from "@react-rx/form";
 import { CustomCheckbox } from "guide/components/CustomCheckbox";
 import { CustomInput } from "guide/components/CustomInput";
