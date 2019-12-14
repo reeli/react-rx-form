@@ -131,7 +131,7 @@
     "rxjs": "6.5.2",
     "style-loader": "1.0.0",
     "terser-webpack-plugin": "1.4.1",
-    "ts-jest": "24.0.2",
+    "ts-jest": "24.2.0",
     "ts-loader": "6.0.4",
     "ts-node": "8.3.0",
     "tslint": "5.18.0",
