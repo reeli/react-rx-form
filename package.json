@@ -125,7 +125,7 @@
     "redux": "4.0.4",
     "redux-actions": "2.6.5",
     "redux-logger": "3.0.6",
-    "rollup": "1.19.4",
+    "rollup": "1.27.14",
     "rollup-plugin-babel": "4.3.3",
     "rollup-plugin-typescript": "1.0.1",
     "rxjs": "6.5.2",
