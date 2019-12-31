@@ -80,8 +80,8 @@
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "7.2.0",
     "@emotion/is-prop-valid": "0.8.2",
-    "@material-ui/core": "4.3.2",
-    "@material-ui/icons": "4.2.1",
+    "@material-ui/core": "4.8.2",
+    "@material-ui/icons": "4.5.1",
     "@types/axios-mock-adapter": "1.10.0",
     "@types/config": "0.0.34",
     "@types/enzyme": "3.10.3",
