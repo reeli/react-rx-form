@@ -103,7 +103,7 @@
     "axios-mock-adapter": "1.17.0",
     "babel-plugin-pure-calls-annotation": "0.2.2",
     "config": "3.2.4",
-    "css-loader": "3.4.1",
+    "css-loader": "3.4.2",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
     "file-loader": "5.0.2",
