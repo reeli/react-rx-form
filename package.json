@@ -4,11 +4,11 @@
   "description": "rx form for react, use typescript for development",
   "main": "lib/index.js",
   "module": "module/index.js",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "lib",
     "module",
-    "src",
+    "dist",
     "README.md"
   ],
   "keywords": [
@@ -23,9 +23,10 @@
     "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts",
     "deploy": "./script/deploy.sh",
     "test": "tsc --noEmit && jest",
+    "build:types": "rm -rf dist && tsc --build ./tsconfig.build.types.json",
     "build:ts": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf module && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json",
     "build:rollup": "rm -rf lib/ && rm -rf module/ && rollup -c rollup.config.ts",
-    "prepare": "npm run build:rollup"
+    "prepare": "npm run build:types && npm run build:rollup"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
