@@ -26,7 +26,7 @@
     "build:types": "rm -rf dist && tsc --build ./tsconfig.build.types.json",
     "build:ts": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf module && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json",
     "build:rollup": "rollup -c rollup.config.ts",
-    "prepare": "npm run build:types && npm run build:rollup"
+    "prepare": "npm test && npm run build:types && npm run build:rollup"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -155,7 +155,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "tsc --noEmit && npm test"
+      "pre-push": "npm test"
     }
   }
 }
