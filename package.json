@@ -2,8 +2,8 @@
   "name": "@react-rx/form",
   "version": "1.0.11",
   "description": "rx form for react, use typescript for development",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.es.js",
+  "main": "lib/index.js",
+  "module": "module/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "lib",
@@ -25,7 +25,7 @@
     "test": "tsc --noEmit && jest",
     "build:types": "rm -rf dist && tsc --build ./tsconfig.build.types.json",
     "build:ts": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf module && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json",
-    "build:rollup": "rollup -c rollup.config.ts",
+    "build:rollup": "rm -rf lib/ && rm -rf module/ && rollup -c rollup.config.ts",
     "prepare": "npm test && npm run build:types && npm run build:rollup"
   },
   "lint-staged": {
