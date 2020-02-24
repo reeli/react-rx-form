@@ -10,6 +10,7 @@
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "incremental": true,
     "outDir": ".tmp",
     "moduleResolution": "node",
     "baseUrl": ".",
