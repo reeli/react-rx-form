@@ -7,5 +7,5 @@ public/
 .DS_Store
 coverage/
 lib/
-module/
+es/
 dist/

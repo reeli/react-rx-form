@@ -2,7 +2,7 @@
   "extends": "./tsconfig.build.es5.json",
   "compilerOptions": {
     "target": "es5",
-    "outDir": "module",
+    "outDir": "es",
     "module": "ES6",
     "declaration": false
   }

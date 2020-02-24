@@ -3,11 +3,11 @@
   "version": "1.0.11",
   "description": "rx form for react, use typescript for development",
   "main": "lib/index.js",
-  "module": "module/index.js",
+  "module": "es/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "lib",
-    "module",
+    "es",
     "dist",
     "README.md"
   ],
@@ -24,8 +24,8 @@
     "deploy": "./script/deploy.sh",
     "test": "tsc && jest",
     "build:types": "rm -rf dist && tsc --build ./tsconfig.build.types.json",
-    "build:ts": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf module && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json",
-    "build:rollup": "rm -rf lib/ && rm -rf module/ && rollup -c rollup.config.ts",
+    "build:ts": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf es && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json",
+    "build:rollup": "rm -rf lib/ && rm -rf es/ && rollup -c rollup.config.ts",
     "prepare": "npm test && npm run build:types && npm run build:rollup"
   },
   "lint-staged": {
