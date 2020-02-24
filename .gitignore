@@ -6,4 +6,6 @@ public/
 .tmp/
 .DS_Store
 coverage/
+lib/
+module/
 dist/
