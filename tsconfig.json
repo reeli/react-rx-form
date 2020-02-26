@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "incremental": true,
+    "tsBuildInfoFile": ".tmp/tsconfig.tsbuildinfo",
     "outDir": ".tmp",
     "moduleResolution": "node",
     "baseUrl": ".",
