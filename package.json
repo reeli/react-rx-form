@@ -74,8 +74,8 @@
   "peerDependencies": {
     "react": ">=16.8.x",
     "react-dom": ">=16.8.x",
-    "rxjs": "6.5.x",
-    "@emotion/is-prop-valid": "0.8.x",
+    "rxjs": ">=6.5.x",
+    "@emotion/is-prop-valid": ">=0.8.x",
     "lodash": ">=4.17.15"
   },
   "devDependencies": {
