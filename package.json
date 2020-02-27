@@ -102,7 +102,7 @@
     "@types/terser-webpack-plugin": "2.2.0",
     "axios": "0.19.2",
     "axios-mock-adapter": "1.17.0",
-    "babel-plugin-pure-calls-annotation": "0.3.0",
+    "babel-plugin-pure-calls-annotation": "0.3.1",
     "config": "3.2.6",
     "css-loader": "3.4.2",
     "enzyme": "3.11.0",
