@@ -42,24 +42,25 @@ export function RxForm(props: IRxFormProps) {
     const formActionSubject$ = new Subject();
 
     const dispatch = (action: IFieldAction | IFormAction) => {
-      const formState = formStateSubject$.getValue();
-      const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(formState);
+      const prevState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(
+        formStateSubject$.getValue(),
+      );
 
       switch (action.type) {
         case FieldActionTypes.register:
         case FieldActionTypes.blur:
         case FieldActionTypes.change: {
-          const nextFormState = formUpdateField(formState, action as IFieldAction);
+          const nextFormState = formUpdateField(formStateSubject$.getValue(), action as IFieldAction);
           formStateSubject$.next(nextFormState);
           break;
         }
         case FieldActionTypes.focus: {
-          const nextFormState = formFocusField(formState, action as IFieldAction);
+          const nextFormState = formFocusField(formStateSubject$.getValue(), action as IFieldAction);
           formStateSubject$.next(nextFormState);
           break;
         }
         case FieldActionTypes.destroy: {
-          const nextFormState = formRemoveField(formState, action as IFieldAction);
+          const nextFormState = formRemoveField(formStateSubject$.getValue(), action as IFieldAction);
           formStateSubject$.next(nextFormState);
           break;
         }
@@ -69,7 +70,9 @@ export function RxForm(props: IRxFormProps) {
         }
       }
 
-      const nextState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(formState);
+      const nextState = (process.env.NODE_ENV === "development" ? cloneDeep : (v: IFormState) => v)(
+        formStateSubject$.getValue(),
+      );
 
       log({
         action,
