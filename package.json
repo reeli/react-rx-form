@@ -112,7 +112,7 @@
     "html-webpack-plugin": "4.0.0-beta.8",
     "husky": "4.2.3",
     "jest": "25.1.0",
-    "lint-staged": "10.0.7",
+    "lint-staged": "10.2.11",
     "lodash": "4.17.15",
     "lodash-es": "4.17.15",
     "markdown-loader": "5.1.0",
