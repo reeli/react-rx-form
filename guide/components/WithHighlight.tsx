@@ -4,7 +4,7 @@ import { findDOMNode } from "react-dom";
 
 export class WithHighlight extends React.Component {
   componentDidMount() {
-    const current = findDOMNode(this) as Element;
+    const current = findDOMNode(this) as HTMLElement;
     if (current) {
       highlightBlock(current);
     }
