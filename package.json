@@ -88,7 +88,7 @@
     "@types/enzyme": "3.10.5",
     "@types/highlight.js": "9.12.4",
     "@types/html-webpack-plugin": "3.2.3",
-    "@types/jest": "26.0.10",
+    "@types/jest": "26.0.12",
     "@types/lodash": "4.14.160",
     "@types/lodash-es": "4.17.3",
     "@types/react": "16.9.48",
