@@ -129,7 +129,7 @@
     "rollup": "2.26.9",
     "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-typescript": "1.0.1",
-    "rxjs": "6.6.2",
+    "rxjs": "6.6.3",
     "style-loader": "1.2.1",
     "terser-webpack-plugin": "4.1.0",
     "ts-jest": "26.3.0",
