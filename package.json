@@ -109,7 +109,7 @@
     "enzyme-adapter-react-16": "1.15.3",
     "file-loader": "6.1.0",
     "highlight.js": "10.1.2",
-    "html-webpack-plugin": "4.3.0",
+    "html-webpack-plugin": "4.5.0",
     "husky": "4.2.5",
     "jest": "26.4.2",
     "lint-staged": "10.2.13",
