@@ -106,7 +106,7 @@
     "config": "3.3.1",
     "css-loader": "4.2.2",
     "enzyme": "3.11.0",
-    "enzyme-adapter-react-16": "1.15.3",
+    "enzyme-adapter-react-16": "1.15.5",
     "file-loader": "6.1.0",
     "highlight.js": "10.1.2",
     "html-webpack-plugin": "4.3.0",
