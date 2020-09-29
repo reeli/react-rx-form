@@ -115,7 +115,7 @@
     "lint-staged": "10.2.13",
     "lodash": "4.17.20",
     "lodash-es": "4.17.15",
-    "markdown-loader": "5.1.0",
+    "markdown-loader": "6.0.0",
     "prettier": "2.1.1",
     "raw-loader": "4.0.1",
     "react": "16.13.1",
