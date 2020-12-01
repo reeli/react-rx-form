@@ -60,7 +60,7 @@ export class FormValuesDemo extends React.Component {
               )}
             </FormValues>
             <Field name="email">
-              {({ value = "", onFocus, onBlur, onChange }) => (
+              {({ value = "", name, onFocus, onBlur, onChange }) => (
                 <input
                   name={name}
                   value={value}
