@@ -42,7 +42,7 @@ export class SimpleForm extends React.Component {
               )}
             </Field>
             <Field name="email">
-              {({ value = "", onFocus, onBlur, onChange }) => (
+              {({ value = "", name, onFocus, onBlur, onChange }) => (
                 <input
                   name={name}
                   value={value}
