@@ -17,13 +17,13 @@ jobs:
         with:
           node-version: "16"
 
-      - name: Run tests
-        run: npm test
-
-      - name: Install and Build
+      - name: Install and test
         run: |
           npm install
-          npm run release
+          npm test
+
+      - name: Build
+        run: npm run release
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
