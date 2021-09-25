@@ -20,7 +20,8 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "webpack-dev-server --config=webpack.config.ts --port=5000 --compress --open --history-api-fallback",
-    "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts",
+    "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts && npm run copy",
+    "copy": "cp public/index.html public/200.html && cp -R docs public",
     "deploy": "./script/deploy.sh",
     "test": "tsc && jest",
     "build:types": "rm -rf dist && tsc --build ./tsconfig.build.types.json",
