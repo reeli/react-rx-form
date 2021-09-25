@@ -42,7 +42,9 @@ function FieldArrayCore(props: IFieldArrayProps) {
 
       add: () => {
         const formValues = getFormValues();
-        const nextFormValues = set(formValues, props.name, get(formValues, props.name, []).concat(undefined));
+        // undefined 只是为了增加一个节点，让 Field 自己去渲染，然后 Field 渲染时才会把 key 注册给 form，得到新的包含 field 的 form value
+        const fieldValues = get(formValues, props.name, []).concat(undefined);
+        const nextFormValues = set(formValues, props.name, fieldValues);
 
         updateFormValues(nextFormValues);
 
