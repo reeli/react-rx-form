@@ -99,7 +99,7 @@
     "@types/redux-actions": "2.6.1",
     "@types/redux-logger": "3.0.8",
     "@types/rollup": "0.54.0",
-    "@types/terser-webpack-plugin": "4.2.0",
+    "@types/terser-webpack-plugin": "4.2.2",
     "axios": "0.20.0",
     "axios-mock-adapter": "1.18.2",
     "babel-plugin-pure-calls-annotation": "0.3.1",
