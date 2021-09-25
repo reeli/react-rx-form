@@ -9,6 +9,8 @@ const BASE_DIRS = {
   dist: "./public",
 };
 
+const BASE_PATH = process.env.NODE_ENV === "production" ? "/react-rx-form" : "/";
+
 const GLOBALS = {
   process: {
     env: {
@@ -24,6 +26,7 @@ const webpackConfig: webpack.Configuration = {
   output: {
     path: path.resolve(__dirname, BASE_DIRS.dist),
     filename: "[name]-[hash].js",
+    publicPath: BASE_PATH,
   },
   module: {
     rules: [
