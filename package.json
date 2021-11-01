@@ -1,6 +1,6 @@
 {
   "name": "@react-rx/form",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "rx form for react, use typescript for development",
   "main": "lib/index.js",
   "module": "es/index.js",
