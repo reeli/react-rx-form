@@ -19,13 +19,14 @@
   ],
   "scripts": {
     "start": "npm run dev",
+    "release": "rm -rf public/ && NODE_ENV=production webpack --config=webpack.config.ts && npm run copy",
     "dev": "webpack-dev-server --config=webpack.config.ts --port=5000 --compress --open --history-api-fallback",
     "copy": "cp public/index.html public/404.html && cp -R docs public",
     "test": "tsc && jest",
     "build:types": "rm -rf dist && tsc --build ./tsconfig.build.types.json",
     "build:ts": "rm -rf src/{,**/}*.js && rm -rf lib && rm -rf es && tsc --build ./tsconfig.build.es5.json && tsc --build ./tsconfig.build.es6.json",
-    "release": "rm -rf lib/ && rm -rf es/ && rollup -c rollup.config.ts",
-    "prepare": "npm test && npm run build:types && npm run release"
+    "build:rollup": "rm -rf lib/ && rm -rf es/ && rollup -c rollup.config.ts",
+    "prepare": "npm test && npm run build:types && npm run build:rollup"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

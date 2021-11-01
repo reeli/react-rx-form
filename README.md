@@ -1,6 +1,6 @@
 # React Rx Form 
 
-[![Build Status](https://travis-ci.com/reeli/react-rx-form.svg?branch=master&status=passed)](https://travis-ci.com/github/reeli/react-rx-form)
+![Build Status](https://github.com/reeli/react-rx-form/actions/workflows/deploy.yml/badge.svg)
 [![codecov](https://codecov.io/gh/reeli/react-rx-form/branch/master/graph/badge.svg?style=flat-square)](https://codecov.io/gh/reeli/react-rx-form)
 [![License](https://img.shields.io/npm/l/@react-rx/form.svg?style=flat-square)](https://npmjs.org/package/@react-rx/form)
 
