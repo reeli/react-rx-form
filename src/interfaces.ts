@@ -1,6 +1,5 @@
 import { Dictionary } from "lodash";
-import * as React from "react";
-import { Observer } from "rxjs/internal/types";
+import { Observer } from "rxjs";
 
 export type TChildrenRender<TProps> = (props: TProps) => JSX.Element | null;
 

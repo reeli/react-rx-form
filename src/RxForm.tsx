@@ -1,7 +1,6 @@
 import { cloneDeep } from "lodash";
 import React, { useMemo } from "react";
-import { BehaviorSubject, Subject } from "rxjs";
-import { Observer } from "rxjs/internal/types";
+import { BehaviorSubject, Subject, Observer } from "rxjs";
 import { FormProvider } from "./FormContext";
 import {
   formFocusField,
