@@ -1,8 +1,8 @@
-import * as config from "config";
+import config from "config";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import * as path from "path";
+import path from "path";
 import TerserPlugin from "terser-webpack-plugin";
-import * as webpack from "webpack";
+import webpack from "webpack";
 
 const BASE_DIRS = {
   app: "./guide",
@@ -82,7 +82,6 @@ const webpackConfig: webpack.Configuration = {
   ],
   optimization: {
     splitChunks: {
-      name: true,
       cacheGroups: {
         common: {
           test: /[\\/]node_modules[\\/](react|redux|rxjs|lodash)/,
@@ -99,7 +98,6 @@ const webpackConfig: webpack.Configuration = {
     },
     minimizer: [
       new TerserPlugin({
-        cache: true,
         parallel: true,
         terserOptions: {
           ecma: 5, // check if the code for uglify is ES5, especially for npm packages in node_modules
