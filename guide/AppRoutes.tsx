@@ -6,7 +6,7 @@ import Toolbar from "@material-ui/core/Toolbar/Toolbar";
 import Typography from "@material-ui/core/Typography/Typography";
 import { map } from "lodash";
 import * as React from "react";
-import { Route } from "react-router";
+import { Route } from "react-router-dom";
 import { GettingStart } from "../examples/GettingStart";
 import { WithHighlight } from "./components/WithHighlight";
 
@@ -77,7 +77,7 @@ const HomePage = () => {
 export const AppRoutes = () => {
   return (
     <div>
-      <Route path={"/"} component={HomePage} i={"GettingStart"} exact />
+      <Route path={"/"} component={HomePage} exact />
       {routes.map((route, i) => (
         <Route key={i} {...route} />
       ))}
