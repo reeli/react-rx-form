@@ -6,8 +6,7 @@ import Toolbar from "@material-ui/core/Toolbar/Toolbar";
 import Typography from "@material-ui/core/Typography/Typography";
 import { map } from "lodash";
 import * as React from "react";
-import { Route } from "react-router-dom";
-import { GettingStart } from "../examples/GettingStart";
+import { Redirect, Route } from "react-router-dom";
 import { WithHighlight } from "./components/WithHighlight";
 
 const PageComp = ({ Comp, pageName }: { Comp: any; pageName: string }) => {
@@ -23,7 +22,6 @@ const PageComp = ({ Comp, pageName }: { Comp: any; pageName: string }) => {
         <CardContent>
           <Comp />
         </CardContent>
-        <CardHeader title={<Typography variant="subtitle1">API</Typography>} />
         <CardContent>
           {Comp.doc && (
             <WithHighlight>
@@ -70,14 +68,10 @@ req.keys().forEach((key: string) => {
   routes = routes.concat(route);
 });
 
-const HomePage = () => {
-  return <PageComp Comp={GettingStart} pageName={"GettingStart"} />;
-};
-
 export const AppRoutes = () => {
   return (
     <div>
-      <Route path={"/"} component={HomePage} exact />
+      <Redirect from={"/"} to={"/SimpleForm"}  exact />
       {routes.map((route, i) => (
         <Route key={i} {...route} />
       ))}
